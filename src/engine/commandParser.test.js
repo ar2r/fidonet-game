@@ -62,7 +62,7 @@ describe('commandParser', () => {
         it('HELP shows manual', () => {
             processCommand('HELP', baseState, dispatch, actions, appendOutput);
             expect(output.length).toBeGreaterThan(0);
-            expect(output[0]).toContain('FIDONET SIMULATOR');
+            expect(output[0]).toContain('СИМУЛЯТОР ФИДОНЕТ');
         });
 
         it('DIAL requires TERMINAL.EXE to be running', () => {
@@ -154,9 +154,9 @@ describe('commandParser', () => {
             expect(output.some(l => l.includes('GoldED'))).toBe(true);
         });
 
-        it('3 fails with disk space error', () => {
+        it('3 downloads DOOM2.WAD (virus)', () => {
             processCommand('3', baseState, dispatch, actions, appendOutput);
-            expect(output.some(l => l.includes('Недостаточно места'))).toBe(true);
+            expect(output.some(l => l.includes('DOOM2.WAD'))).toBe(true);
         });
 
         it('Q returns to menu', () => {
