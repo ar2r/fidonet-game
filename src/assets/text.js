@@ -4,10 +4,10 @@ export const GAME_MANUAL = `
 ========================================
 
 [ INTRODUCTION ]
-Welcome to the year 1995. You are a SysOp (System Operator)
-running your own BBS (Bulletin Board System) from your bedroom.
-The goal is simple: Build the best node in the net, upgrade your
-hardware, and become a Point or even a Coordinator.
+Welcome to the year 1995. You are starting as a Point in FidoNet,
+a worldwide network of Bulletin Board Systems. Your goal: learn
+the ropes, configure your software, exchange mail in echoes,
+and maybe one day become a SysOp or even a Coordinator.
 
 [ VITAL STATISTICS ]
 1. SANITY (MENTAL)
@@ -19,14 +19,18 @@ hardware, and become a Point or even a Coordinator.
    If patience hits 0, she pulls the plug. GAME OVER.
 
 [ BASIC COMMANDS ]
+DOS Commands:
 - HELP / MANUAL : Show this help file.
-- AT...         : Modem commands.
-- DIAL <number> : Dial a BBS.
 - DIR           : List files in current directory.
 - CD <path>     : Change directory.
 - TYPE <file>   : Display file contents.
 - CLS           : Clear screen.
-- EXIT          : Close connection.
+- TERMINAL      : Launch terminal program.
+
+Terminal Program (TERMINAL.EXE):
+- ATZ           : Initialize modem.
+- DIAL <number> : Dial a BBS (555-3389 for The Nexus).
+- EXIT          : Exit terminal program.
 
 [ CONFIGURATION ]
 After downloading T-Mail and GoldED from The Nexus BBS,
@@ -91,12 +95,11 @@ GoldED — это редактор эхопочты. После настройк
 
 ШАГ 3: ПЕРВЫЙ ПОЛЛ
 -------------------
-После настройки обоих программ выполните команду:
+После настройки обоих программ вы сможете позвонить
+на босс-ноду через TERMINAL.EXE и обменяться почтой.
 
-  T-MAIL POLL
-
-Это запустит сеанс связи с босс-нодой. Если всё настроено
-правильно, вы получите первые письма из эхоконференций!
+Если всё настроено правильно, вы получите первые письма
+из эхоконференций!
 
 Удачи в Сети!
 
