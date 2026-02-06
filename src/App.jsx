@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { styleReset } from 'react95';
 import original from 'react95/dist/themes/original';
-import { AppBar, Toolbar, Button, List, ListItem, Divider } from 'react95';
+import { AppBar, Toolbar, Button, List, ListItem, Divider, Window, WindowHeader, WindowContent } from 'react95';
 import { useSelector } from 'react-redux';
 
 import TerminalWindow from './components/TerminalWindow';
+import StatusBar from './components/StatusBar';
+import GameOverScreen from './components/GameOverScreen';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -16,7 +18,7 @@ const GlobalStyles = createGlobalStyle`
 
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
-    const [activeWindow, setActiveWindow] = useState('terminal'); // 'terminal', 't-mail', 'golded', null
+    const [activeWindow, setActiveWindow] = useState('terminal');
     const inventory = useSelector(state => state.player.inventory);
 
     const closeWindow = () => setActiveWindow(null);
@@ -28,6 +30,9 @@ function App() {
             <GlobalStyles />
             <ThemeProvider theme={original}>
 
+                {/* Game Over overlay */}
+                <GameOverScreen />
+
                 {/* Desktop Icons Area */}
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>
                     {/* Always available: Fido.bat (Terminal) */}
@@ -38,22 +43,22 @@ function App() {
 
                     {/* Readme.txt */}
                     <div onDoubleClick={() => setActiveWindow('readme')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>📄</div>
+                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Readme.txt</span>
                     </div>
 
-                    {/* T-Mail (Unlocked in Act 2) */}
+                    {/* T-Mail (Unlocked after download) */}
                     {hasSoftware('t-mail') && (
                         <div onDoubleClick={() => setActiveWindow('t-mail')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                            <div style={{ width: '32px', height: '32px', background: 'navy', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📧</div>
+                            <div style={{ width: '32px', height: '32px', background: 'navy', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'cyan', fontSize: '14px', fontWeight: 'bold' }}>TM</div>
                             <span style={{ background: '#008080', padding: '2px' }}>Setup.exe</span>
                         </div>
                     )}
 
-                    {/* GoldED (Unlocked in Act 2/3) */}
+                    {/* GoldED (Unlocked after download) */}
                     {hasSoftware('golded') && (
                         <div onDoubleClick={() => setActiveWindow('golded')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                            <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black' }}>GED</div>
+                            <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
                             <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
                         </div>
                     )}
@@ -79,8 +84,10 @@ function App() {
                                 <p>Если ты читаешь это, значит ты готов погрузиться в мир Фидонета.</p>
                                 <p>Для начала тебе нужно подключиться к нашей локальной BBS.</p>
                                 <br />
-                                <p>Запусти <b>Fido.bat</b> и набери команду:</p>
-                                <p style={{ fontWeight: 'bold', fontFamily: 'monospace', margin: '10px 0' }}>dial 555-3389</p>
+                                <p>1. Открой <b>Fido.bat</b></p>
+                                <p>2. Набери <b>ATZ</b> для инициализации модема</p>
+                                <p>3. Набери <b>DIAL 555-3389</b> для подключения</p>
+                                <p>4. Зайди в файловую область и скачай софт</p>
                                 <br />
                                 <p>Удачи в Сети!</p>
                                 <p><i>-- SysOp</i></p>
@@ -93,16 +100,17 @@ function App() {
                 {activeWindow === 't-mail' && (
                     <Window style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '400px', height: '300px' }}>
                         <WindowHeader style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span>Установка T-Mail</span>
+                            <span>T-Mail v2605</span>
                             <Button onClick={closeWindow} style={{ marginLeft: 'auto', marginRight: '-6px', marginTop: '1px' }} size="sm" square>
                                 <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>X</span>
                             </Button>
                         </WindowHeader>
                         <WindowContent>
                             <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                <h1>Мастер Установки</h1>
+                                <h3>T-Mail v2605</h3>
                                 <br />
-                                <p>Файл конфигурации не найден.</p>
+                                <p>Файл конфигурации T-MAIL.CTL не заполнен.</p>
+                                <p>Отредактируйте C:\FIDO\T-MAIL.CTL</p>
                                 <br />
                                 <Button onClick={closeWindow}>[ OK ]</Button>
                             </div>
@@ -110,9 +118,10 @@ function App() {
                     </Window>
                 )}
                 {activeWindow === 'golded' && (
-                    <div style={{ position: 'absolute', top: '20%', left: '25%', width: '600px', height: '400px', background: 'blue', color: 'white', border: '2px solid white', padding: '20px', fontFamily: 'DosVga, monospace' }}>
+                    <div style={{ position: 'absolute', top: '20%', left: '25%', width: '600px', height: '400px', background: '#0000AA', color: 'white', border: '2px solid white', padding: '20px', fontFamily: 'DosVga, monospace' }}>
                         <div style={{ background: 'cyan', color: 'black', padding: '5px', marginBottom: '10px' }}>GoldED 2.50+</div>
-                        <p>Эха: SU.FLAME</p>
+                        <p>Конфигурация не заполнена.</p>
+                        <p>Отредактируйте C:\FIDO\GOLDED.CFG</p>
                         <hr />
                         <p>Нет сообщений.</p>
                         <button onClick={closeWindow} style={{ marginTop: '200px' }}>[ Выход ]</button>
@@ -128,25 +137,22 @@ function App() {
                                 active={startMenuOpen}
                                 style={{ fontWeight: 'bold' }}
                             >
-                                <span role="img" aria-label="start" style={{ marginRight: '6px' }}>💻</span>
                                 Пуск
                             </Button>
                             {startMenuOpen && (
                                 <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
                                     <ListItem onClick={() => { setActiveWindow('terminal'); setStartMenuOpen(false); }}>
-                                        <span role="img" aria-label="terminal">📟</span> Терминал Фидонет
+                                        Терминал Фидонет
                                     </ListItem>
                                     <Divider />
                                     <ListItem disabled>
-                                        <span role="img" aria-label="shutdown">🛑</span> Завершение работы...
+                                        Завершение работы...
                                     </ListItem>
                                 </List>
                             )}
                         </div>
 
-                        <div style={{ paddingRight: '10px' }}>
-                            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </div>
+                        <StatusBar />
                     </Toolbar>
                 </AppBar>
 

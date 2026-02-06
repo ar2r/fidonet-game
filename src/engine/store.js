@@ -7,19 +7,45 @@ const gameStateSlice = createSlice({
         day: 1,
         phase: 'night', // 'day', 'night'
         time: '23:00',
+        timeMinutes: 1380, // 23:00 in minutes
         zmh: false, // Zone Mail Hour
+        act: 1,
+        gameOver: false,
+        gameOverReason: null,
     },
     reducers: {
         advanceTime: (state, action) => {
-            // Simple time advancement logic (placeholder)
             state.time = action.payload;
+        },
+        setTimeMinutes: (state, action) => {
+            state.timeMinutes = action.payload;
         },
         setPhase: (state, action) => {
             state.phase = action.payload;
         },
-        toggleZMH: (state) => {
-            state.zmh = !state.zmh;
-        }
+        setZMH: (state, action) => {
+            state.zmh = action.payload;
+        },
+        advanceDay: (state, action) => {
+            state.day += (action.payload || 1);
+        },
+        setAct: (state, action) => {
+            state.act = action.payload;
+        },
+        setGameOver: (state, action) => {
+            state.gameOver = true;
+            state.gameOverReason = action.payload;
+        },
+        resetGame: () => ({
+            day: 1,
+            phase: 'night',
+            time: '23:00',
+            timeMinutes: 1380,
+            zmh: false,
+            act: 1,
+            gameOver: false,
+            gameOverReason: null,
+        }),
     }
 });
 
@@ -31,11 +57,13 @@ const playerSlice = createSlice({
         stats: {
             sanity: 100,
             momsPatience: 100,
-            money: 10,
+            money: 50000, // рублей
         },
         skills: {
             typing: 1,
             hardware: 0,
+            software: 0,
+            eloquence: 0,
         },
         inventory: [],
         karma: 0,
@@ -48,9 +76,28 @@ const playerSlice = createSlice({
                 state.stats[stat] = Math.max(0, Math.min(100, state.stats[stat] + value));
             }
         },
+        updateSkill: (state, action) => {
+            const { skill, value } = action.payload;
+            if (state.skills[skill] !== undefined) {
+                state.skills[skill] = Math.max(0, state.skills[skill] + value);
+            }
+        },
         addItem: (state, action) => {
-            state.inventory.push(action.payload);
-        }
+            if (!state.inventory.includes(action.payload)) {
+                state.inventory.push(action.payload);
+            }
+        },
+        setRank: (state, action) => {
+            state.rank = action.payload;
+        },
+        resetPlayer: () => ({
+            name: 'SysOp',
+            stats: { sanity: 100, momsPatience: 100, money: 50000 },
+            skills: { typing: 1, hardware: 0, software: 0, eloquence: 0 },
+            inventory: [],
+            karma: 0,
+            rank: 'Lamer',
+        }),
     }
 });
 
@@ -60,7 +107,8 @@ const networkSlice = createSlice({
     initialState: {
         connected: false,
         currentBBS: null,
-        connectionStatus: 'IDLE', // IDLE, DIALING, CONNECTED, HANDSHAKE
+        connectionStatus: 'IDLE',
+        terminalMode: 'IDLE',
         downloadQueue: [],
         logs: [],
         modemInitialized: false,
@@ -75,16 +123,29 @@ const networkSlice = createSlice({
             state.connected = false;
             state.currentBBS = null;
             state.connectionStatus = 'IDLE';
+            state.terminalMode = 'IDLE';
         },
         setStatus: (state, action) => {
             state.connectionStatus = action.payload;
+        },
+        setTerminalMode: (state, action) => {
+            state.terminalMode = action.payload;
         },
         addLog: (state, action) => {
             state.logs.push(action.payload);
         },
         initializeModem: (state) => {
             state.modemInitialized = true;
-        }
+        },
+        resetNetwork: () => ({
+            connected: false,
+            currentBBS: null,
+            connectionStatus: 'IDLE',
+            terminalMode: 'IDLE',
+            downloadQueue: [],
+            logs: [],
+            modemInitialized: false,
+        }),
     }
 });
 
@@ -92,8 +153,8 @@ const networkSlice = createSlice({
 const questSlice = createSlice({
     name: 'quests',
     initialState: {
-        active: 'get_online', // Start with the first quest active
-        completed: [] // List of completed quest IDs
+        active: 'init_modem',
+        completed: []
     },
     reducers: {
         completeQuest: (state, action) => {
@@ -108,20 +169,30 @@ const questSlice = createSlice({
         setActiveQuest: (state, action) => {
             state.active = action.payload;
         },
-        resetQuest: (state, action) => {
-            const questId = action.payload;
-            // Remove from completed if present
-            state.completed = state.completed.filter(id => id !== questId);
-            // Set as active
-            state.active = questId;
-        }
+        resetQuests: () => ({
+            active: 'init_modem',
+            completed: [],
+        }),
     }
 });
 
-export const { advanceTime, setPhase, toggleZMH } = gameStateSlice.actions;
-export const { updateStat, addItem } = playerSlice.actions;
-export const { connect, disconnect, setStatus, addLog, initializeModem } = networkSlice.actions;
-export const { completeQuest, setActiveQuest, resetQuest } = questSlice.actions;
+export const {
+    advanceTime, setTimeMinutes, setPhase, setZMH,
+    advanceDay, setAct, setGameOver, resetGame
+} = gameStateSlice.actions;
+
+export const {
+    updateStat, updateSkill, addItem, setRank, resetPlayer
+} = playerSlice.actions;
+
+export const {
+    connect, disconnect, setStatus, setTerminalMode,
+    addLog, initializeModem, resetNetwork
+} = networkSlice.actions;
+
+export const {
+    completeQuest, setActiveQuest, resetQuests
+} = questSlice.actions;
 
 export const store = configureStore({
     reducer: {
