@@ -1,53 +1,54 @@
 export const GAME_MANUAL = `
 ========================================
-      FIDONET SIMULATOR v1.0 MANUAL
+      СИМУЛЯТОР ФИДОНЕТ v1.0
+           СПРАВКА
 ========================================
 
-[ INTRODUCTION ]
-Welcome to the year 1995. You are starting as a Point in FidoNet,
-a worldwide network of Bulletin Board Systems. Your goal: learn
-the ropes, configure your software, exchange mail in echoes,
-and maybe one day become a SysOp or even a Coordinator.
+[ ВВЕДЕНИЕ ]
+Добро пожаловать в 1995 год. Вы начинаете как Поинт в Фидонет —
+всемирной сети электронных досок объявлений (BBS). Ваша цель:
+освоить технологию, настроить софт, обмениваться почтой в эхах,
+и возможно однажды стать Сисопом или даже Координатором.
 
-[ VITAL STATISTICS ]
-1. SANITY (MENTAL)
-   Running a BBS is stressful. Trolls, glitches, and bad connects
-   drain your sanity.
+[ ВАЖНЫЕ ПОКАЗАТЕЛИ ]
+1. РАССУДОК
+   Работа с BBS нервная. Тролли, глюки и обрывы связи
+   истощают ваш рассудок.
 
-2. MOM'S PATIENCE
-   You live with your parents. You use the family phone line.
-   If patience hits 0, she pulls the plug. GAME OVER.
+2. ТЕРПЕНИЕ МАМЫ
+   Вы живёте с родителями. Вы используете семейную телефонную линию.
+   Если терпение упадёт до 0, мама выдернет модем из розетки. GAME OVER.
 
-[ BASIC COMMANDS ]
-DOS Commands:
-- HELP / MANUAL : Show this help file.
-- DIR           : List files in current directory.
-- CD <path>     : Change directory.
-- TYPE <file>   : Display file contents.
-- CLS           : Clear screen.
-- TERMINAL      : Launch terminal program.
+[ ОСНОВНЫЕ КОМАНДЫ ]
+Команды DOS:
+- HELP / MANUAL : Показать эту справку.
+- DIR           : Список файлов в текущем каталоге.
+- CD <путь>     : Сменить каталог.
+- TYPE <файл>   : Показать содержимое файла.
+- CLS           : Очистить экран.
+- TERMINAL      : Запустить терминальную программу.
 
-Terminal Program (TERMINAL.EXE):
-- ATZ           : Initialize modem.
-- DIAL <number> : Dial a BBS (555-3389 for The Nexus).
-- EXIT          : Exit terminal program.
+Терминальная программа (TERMINAL.EXE):
+- ATZ           : Инициализировать модем.
+- DIAL <номер>  : Позвонить на BBS (555-3389 для The Nexus).
+- EXIT          : Выйти из терминальной программы.
 
-[ CONFIGURATION ]
-After downloading T-Mail and GoldED from The Nexus BBS,
-you need to configure them:
+[ НАСТРОЙКА ]
+После скачивания T-Mail и GoldED с BBS The Nexus,
+вам нужно их настроить:
 
-1. Launch T-MAIL.EXE to edit T-Mail configuration.
-   Required fields:
-   - FidoNet Address (ask the SysOp)
-   - Session Password (ask the SysOp)
-   - Boss Node Address (your uplink)
-   - Boss Node Phone (BBS phone number)
-   - Inbound/Outbound directories
+1. Запустите T-MAIL.EXE для настройки конфигурации.
+   Необходимые поля:
+   - FidoNet адрес (спросите у Сисопа)
+   - Пароль сессии (спросите у Сисопа)
+   - Адрес босс-ноды (ваш аплинк)
+   - Телефон босс-ноды (номер BBS)
+   - Каталоги Inbound/Outbound
 
-2. Read C:\\FIDO\\README.1ST for setup instructions.
+2. Прочитайте C:\\FIDO\\README.1ST с инструкциями.
 
-3. Once configured, you can poll your boss node
-   and start exchanging mail!
+3. После настройки вы сможете звонить на босс-ноду
+   и обмениваться почтой!
 
 ========================================
 `;
