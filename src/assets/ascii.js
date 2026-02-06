@@ -39,13 +39,14 @@ export const BBS_FILES = `
 ║       Ф А Й Л О В А Я              ║
 ║       О Б Л А С Т Ь                ║
 ╠══════════════════════════════════════╣
-║  1. T-Mail v2605       [FIDO]  strstrstr 45KB  ║
-║  2. GoldED 2.50+       [FIDO]  strstrstr 78KB  ║
-║  3. DOOM2.WAD          [GAME]  ......  4.2MB ║
+║  1. T-Mail v2605       [FIDO]   45KB  ║
+║  2. GoldED 2.50+       [FIDO]   78KB  ║
+║  3. DOOM2.WAD          [GAME]  4.2MB ║
+║  4. AIDSTEST v1.03     [UTIL]   42KB  ║
 ║                                      ║
 ║  Q. Назад в меню                     ║
 ╚══════════════════════════════════════╝
-Скачать (1-3 или Q): `;
+Скачать (1-4 или Q): `;
 
 export const BBS_CHAT_SYSOP = `
 ┌─── Чат с SysOp'ом ───────────────────┐

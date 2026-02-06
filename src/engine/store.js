@@ -12,6 +12,8 @@ const gameStateSlice = createSlice({
         act: 1,
         gameOver: false,
         gameOverReason: null,
+        virusActive: false,
+        virusStage: 'none', // 'none', 'cascade', 'cleaning'
     },
     reducers: {
         advanceTime: (state, action) => {
@@ -36,6 +38,12 @@ const gameStateSlice = createSlice({
             state.gameOver = true;
             state.gameOverReason = action.payload;
         },
+        setVirusActive: (state, action) => {
+            state.virusActive = action.payload;
+        },
+        setVirusStage: (state, action) => {
+            state.virusStage = action.payload;
+        },
         resetGame: () => ({
             day: 1,
             phase: 'night',
@@ -45,6 +53,8 @@ const gameStateSlice = createSlice({
             act: 1,
             gameOver: false,
             gameOverReason: null,
+            virusActive: false,
+            virusStage: 'none',
         }),
     }
 });
@@ -183,7 +193,7 @@ const questSlice = createSlice({
 
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
-    advanceDay, setAct, setGameOver, resetGame
+    advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame
 } = gameStateSlice.actions;
 
 export const {

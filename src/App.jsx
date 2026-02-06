@@ -9,6 +9,7 @@ import TerminalWindow from './components/TerminalWindow';
 import StatusBar from './components/StatusBar';
 import GameOverScreen from './components/GameOverScreen';
 import ConfigEditor from './components/TUI/ConfigEditor';
+import VirusAnimation from './components/VirusAnimation';
 import { completeQuest as completeQuestAction, setActiveQuest as setActiveQuestAction, updateSkill as updateSkillAction, setAct as setActAction } from './engine/store';
 import { validateTMailConfig, checkConfigCorrectness, generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
@@ -26,6 +27,7 @@ function App() {
     const [activeWindow, setActiveWindow] = useState('terminal');
     const inventory = useSelector(state => state.player.inventory);
     const quests = useSelector(state => state.quests);
+    const gameState = useSelector(state => state.gameState);
     const dispatch = useDispatch();
 
     const closeWindow = () => setActiveWindow(null);
@@ -70,6 +72,12 @@ function App() {
 
                 {/* Game Over overlay */}
                 <GameOverScreen />
+
+                {/* Virus Animation overlay */}
+                <VirusAnimation
+                    stage={gameState.virusStage}
+                    onComplete={() => {}}
+                />
 
                 {/* Desktop Icons Area */}
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>

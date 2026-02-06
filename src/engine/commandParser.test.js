@@ -32,12 +32,12 @@ describe('commandParser', () => {
     describe('IDLE mode', () => {
         it('TERMINAL.EXE launches terminal program', () => {
             processCommand('TERMINAL', baseState, dispatch, actions, appendOutput);
-            expect(output).toContain('TERMINAL v3.14');
+            expect(output.some(l => l.includes('TERMINAL v3.14'))).toBe(true);
         });
 
         it('ATZ requires TERMINAL.EXE to be running', () => {
             processCommand('ATZ', baseState, dispatch, actions, appendOutput);
-            expect(output).toContain('TERMINAL.EXE');
+            expect(output.some(l => l.includes('TERMINAL.EXE'))).toBe(true);
         });
 
         it('ATZ initializes modem when in TERMINAL', () => {

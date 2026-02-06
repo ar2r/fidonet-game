@@ -23,6 +23,8 @@ import {
     advanceDay as advanceDayAction,
     updateStat as updateStatAction,
     setGameOver as setGameOverAction,
+    setVirusActive as setVirusActiveAction,
+    setVirusStage as setVirusStageAction,
 } from '../engine/store';
 
 const TerminalContainer = styled.div`
@@ -71,6 +73,9 @@ const ACTIONS = {
     addItem: addItemAction,
     updateSkill: updateSkillAction,
     setAct: setActAction,
+    setVirusActive: setVirusActiveAction,
+    setVirusStage: setVirusStageAction,
+    updateStat: updateStatAction,
 };
 
 function TerminalWindow({ onClose }) {

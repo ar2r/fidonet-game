@@ -71,9 +71,10 @@ export function getPrompt() {
 
 export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) => {
     const command = cmd.trim().toUpperCase();
-    const { connect, disconnect, initializeModem, setTerminalMode, addItem, setTerminalProgram } = actions;
+    const { connect, disconnect, initializeModem, setTerminalMode, addItem, setTerminalProgram, setVirusActive, setVirusStage, updateStat } = actions;
     const terminalMode = gameState.network?.terminalMode || 'IDLE';
     const terminalProgramRunning = gameState.network?.terminalProgramRunning || false;
+    const virusActive = gameState.gameState?.virusActive || false;
 
     // --- BBS_MENU mode ---
     if (terminalMode === 'BBS_MENU') {
@@ -148,15 +149,34 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                 appendOutput(BBS_FILES);
             });
         } else if (command === '3') {
-            appendOutput("DOOM2.WAD — 4.2MB");
-            appendOutput("ОШИБКА: Недостаточно места на диске!");
+            appendOutput("Начинаю загрузку DOOM2.WAD...");
+            appendOutput("Протокол: Zmodem");
             appendOutput("");
-            appendOutput(BBS_FILES);
+            simulateDownload("DOOM2.WAD", appendOutput, () => {
+                dispatch(addItem('doom2'));
+                fs.createFile('C:\\GAMES\\DOOM2.WAD', '[DOOM 2 Game Data - INFECTED!]');
+                appendOutput("");
+                appendOutput("DOOM2.WAD установлен в C:\\GAMES\\DOOM2.WAD");
+                appendOutput("");
+                appendOutput(BBS_FILES);
+            });
+        } else if (command === '4') {
+            appendOutput("Начинаю загрузку AIDSTEST v1.03...");
+            appendOutput("Протокол: Zmodem");
+            appendOutput("");
+            simulateDownload("AIDSTEST.EXE", appendOutput, () => {
+                dispatch(addItem('aidstest'));
+                fs.createFile('C:\\UTILS\\AIDSTEST.EXE', '[AIDSTEST v1.03 Antivirus]');
+                appendOutput("");
+                appendOutput("AIDSTEST установлен в C:\\UTILS\\AIDSTEST.EXE");
+                appendOutput("");
+                appendOutput(BBS_FILES);
+            });
         } else if (command === 'Q') {
             dispatch(setTerminalMode('BBS_MENU'));
             appendOutput(BBS_MENU);
         } else {
-            appendOutput("Неверный выбор. Введите 1, 2, 3 или Q.");
+            appendOutput("Неверный выбор. Введите 1-4 или Q.");
             appendOutput("");
             appendOutput(BBS_FILES);
         }
@@ -311,6 +331,48 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
         } else {
             appendOutput("Нет активного соединения.");
         }
+    } else if (command === 'DOOM2' || command === 'DOOM2.WAD') {
+        const hasDoom = gameState.player?.inventory?.includes('doom2');
+        if (!hasDoom) {
+            appendOutput("Файл не найден: DOOM2.WAD");
+            return;
+        }
+
+        if (virusActive) {
+            appendOutput("Программа уже запущена.");
+            return;
+        }
+
+        appendOutput("Запуск DOOM2.WAD...");
+        appendOutput("");
+
+        // Activate virus after short delay
+        setTimeout(() => {
+            dispatch(setVirusActive(true));
+            dispatch(setVirusStage('cascade'));
+            dispatch(updateStat({ stat: 'sanity', value: -20 }));
+            dispatch(updateStat({ stat: 'momsPatience', value: -10 }));
+        }, 1000);
+    } else if (command === 'AIDSTEST' || command === 'AIDSTEST.EXE') {
+        if (!virusActive) {
+            appendOutput("AIDSTEST v1.03 (c) Д.Лозинский");
+            appendOutput("Вирусов не обнаружено.");
+            return;
+        }
+
+        appendOutput("Запуск антивируса...");
+        appendOutput("");
+
+        // Start cleaning animation
+        dispatch(setVirusStage('cleaning'));
+
+        // Complete cleaning after 5 seconds
+        setTimeout(() => {
+            dispatch(setVirusActive(false));
+            dispatch(setVirusStage('none'));
+            appendOutput("Система очищена от вирусов.");
+            appendOutput("");
+        }, 5000);
     } else if (command === '') {
         // Empty command — do nothing
     } else {
