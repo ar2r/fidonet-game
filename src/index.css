@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* Retro Fonts and Global Overrides */
+@font-face {
+  font-family: 'MS Sans Serif';
+  src: url('//cdnjs.cloudflare.com/ajax/libs/react95/1.0.0/fonts/ms_sans_serif.woff2') format('woff2'),
+    url('//cdnjs.cloudflare.com/ajax/libs/react95/1.0.0/fonts/ms_sans_serif.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DosVga';
+  src: url('https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css');
+  /* Placeholder for now, usually needs a local font file */
+  /* Using a system monospace fallback that looks retro for now */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #008080;
+  /* Windows 95 Default Teal */
+  font-family: 'MS Sans Serif', 'Segoe UI', sans-serif;
+  overflow: hidden;
+
+  /* CGA/EGA/VGA Palette */
+  --vga-black: #000000;
+  --vga-blue: #0000AA;
+  --vga-green: #00AA00;
+  --vga-cyan: #00AAAA;
+  --vga-red: #AA0000;
+  --vga-magenta: #AA00AA;
+  --vga-brown: #AA5500;
+  --vga-white: #AAAAAA;
+  --vga-gray: #555555;
+  --vga-bright-blue: #5555FF;
+  --vga-bright-green: #55FF55;
+  --vga-bright-cyan: #55FFFF;
+  --vga-bright-red: #FF5555;
+  --vga-bright-magenta: #FF55FF;
+  --vga-yellow: #FFFF55;
+  --vga-bright-white: #FFFFFF;
+}
+
+::selection {
+  background: #000080;
+  color: #ffffff;
+}
+
+/* CRT Scanline Effect (Optional, can be toggled class) */
+/* CRT Scanline Effect */
+@keyframes flicker {
+  0% {
+    opacity: 0.97;
+  }
+
+  5% {
+    opacity: 0.95;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  15% {
+    opacity: 0.95;
+  }
+
+  20% {
+    opacity: 0.98;
+  }
+
+  25% {
+    opacity: 0.95;
+  }
+
+  30% {
+    opacity: 0.9;
+  }
+
+  35% {
+    opacity: 0.96;
+  }
+
+  40% {
+    opacity: 0.98;
+  }
+
+  45% {
+    opacity: 0.95;
+  }
+
+  50% {
+    opacity: 0.99;
+  }
+
+  55% {
+    opacity: 0.93;
+  }
+
+  60% {
+    opacity: 0.9;
+  }
+
+  65% {
+    opacity: 0.96;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0.97;
+  }
+
+  80% {
+    opacity: 0.95;
+  }
+
+  85% {
+    opacity: 0.9;
+  }
+
+  90% {
+    opacity: 0.96;
+  }
+
+  95% {
+    opacity: 0.99;
+  }
+
+  100% {
+    opacity: 0.94;
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.crt {
+  position: relative;
+  overflow: hidden;
+  animation: flicker 0.15s infinite;
+}
+
+.crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.crt::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+.terminal-text {
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 1.2rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Theme Variant: Classic Green */
+.theme-green {
+  color: #33ff00;
+  text-shadow: 0 0 4px #33ff00;
+}
+
+.theme-green .cursor {
+  background-color: #33ff00;
+  box-shadow: 0 0 4px #33ff00;
+}
+
+/* Theme Variant: Norton Blue */
+.theme-blue {
+  background-color: #0000AA !important;
+  /* Norton Blue Background */
+  color: #00FFFF;
+  /* Cyan Text */
+  text-shadow: 0 0 2px #00FFFF;
+  border: 4px double #00AA00;
+  /* Just for style */
+}
+
+.theme-blue .cursor {
+  background-color: #00FFFF;
+}
+
+/* Theme Variant: Amber Retro */
+.theme-amber {
+  color: #FFB000;
+  /* Amber */
+  text-shadow: 0 0 5px #FF7000, 1px 0 2px rgba(255, 176, 0, 0.8);
+  /* Glow + Ghosting */
+}
+
+.theme-amber .cursor {
+  background-color: #FFB000;
+  box-shadow: 0 0 5px #FFB000;
+}
