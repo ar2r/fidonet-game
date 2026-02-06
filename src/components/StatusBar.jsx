@@ -35,7 +35,7 @@ function StatusBar() {
             <StatItem>|</StatItem>
             <StatItem>Рассудок: {player.stats.sanity}</StatItem>
             <StatItem>|</StatItem>
-            <StatItem>Мама: {player.stats.momsPatience}</StatItem>
+            <StatItem>Терпение мамы: {player.stats.momsPatience}</StatItem>
             <StatItem>|</StatItem>
             <StatItem>{player.stats.money} руб.</StatItem>
             <StatItem>|</StatItem>

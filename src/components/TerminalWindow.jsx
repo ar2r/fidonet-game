@@ -10,6 +10,7 @@ import {
     disconnect as disconnectAction,
     initializeModem as initModemAction,
     setTerminalMode as setTerminalModeAction,
+    setTerminalProgram as setTerminalProgramAction,
     completeQuest as completeQuestAction,
     setActiveQuest as setActiveQuestAction,
     addItem as addItemAction,
@@ -28,7 +29,7 @@ const TerminalContainer = styled.div`
   background-color: #000;
   color: #00ff00;
   font-family: 'DosVga', monospace;
-  height: 400px;
+  height: 600px;
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
@@ -64,6 +65,7 @@ const ACTIONS = {
     disconnect: disconnectAction,
     initializeModem: initModemAction,
     setTerminalMode: setTerminalModeAction,
+    setTerminalProgram: setTerminalProgramAction,
     completeQuest: completeQuestAction,
     setActiveQuest: setActiveQuestAction,
     addItem: addItemAction,
@@ -83,13 +85,14 @@ function TerminalWindow({ onClose }) {
     const currentPrompt = getPromptForMode(network.terminalMode);
 
     const [history, setHistory] = useState([
-        FIDO_BANNER,
-        "Эмулятор Фидонет v1.0 [1995]",
-        "------------------------------------------------",
-        "ТЕКУЩИЙ КВЕСТ: Строка инициализации",
-        "ЦЕЛЬ: Инициализируйте модем командой ATZ",
-        "------------------------------------------------",
-        "Введите 'HELP' для списка команд.",
+        "MS-DOS Version 6.22",
+        "(C)Copyright Microsoft Corp 1981-1994.",
+        "",
+        "C:\\>",
+        "",
+        "Добро пожаловать в Фидонет!",
+        "Для подключения к BBS запустите TERMINAL.EXE",
+        "Введите HELP для получения справки.",
         "",
     ]);
     const [inputBuffer, setInputBuffer] = useState("");
@@ -175,7 +178,7 @@ function TerminalWindow({ onClose }) {
     }, [handleKeyDown]);
 
     return (
-        <Window style={{ width: 640, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <Window style={{ width: 900, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
             <WindowHeader className="window-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span>Terminal.exe</span>
                 <Button onClick={onClose} style={{ marginLeft: 'auto', marginRight: '-6px', marginTop: '1px' }} size="sm" square>

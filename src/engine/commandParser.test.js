@@ -17,25 +17,38 @@ describe('commandParser', () => {
             disconnect: vi.fn(() => ({ type: 'network/disconnect' })),
             initializeModem: vi.fn(() => ({ type: 'network/initializeModem' })),
             setTerminalMode: vi.fn((payload) => ({ type: 'network/setTerminalMode', payload })),
+            setTerminalProgram: vi.fn((payload) => ({ type: 'network/setTerminalProgram', payload })),
             completeQuest: vi.fn((payload) => ({ type: 'quests/completeQuest', payload })),
             addItem: vi.fn((payload) => ({ type: 'player/addItem', payload })),
         };
         baseState = {
             gameState: { day: 1, phase: 'night', time: '23:00', zmh: false },
-            network: { connected: false, modemInitialized: false, terminalMode: 'IDLE' },
+            network: { connected: false, modemInitialized: false, terminalMode: 'IDLE', terminalProgramRunning: false },
             player: { inventory: [] },
             quests: { active: 'get_online', completed: [] },
         };
     });
 
     describe('IDLE mode', () => {
-        it('ATZ initializes modem', () => {
+        it('TERMINAL.EXE launches terminal program', () => {
+            processCommand('TERMINAL', baseState, dispatch, actions, appendOutput);
+            expect(output).toContain('TERMINAL v3.14');
+        });
+
+        it('ATZ requires TERMINAL.EXE to be running', () => {
+            processCommand('ATZ', baseState, dispatch, actions, appendOutput);
+            expect(output).toContain('TERMINAL.EXE');
+        });
+
+        it('ATZ initializes modem when in TERMINAL', () => {
+            baseState.network.terminalProgramRunning = true;
             processCommand('ATZ', baseState, dispatch, actions, appendOutput);
             expect(dispatch).toHaveBeenCalled();
             expect(output).toContain('OK');
         });
 
-        it('AT&F initializes modem', () => {
+        it('AT&F initializes modem when in TERMINAL', () => {
+            baseState.network.terminalProgramRunning = true;
             processCommand('AT&F', baseState, dispatch, actions, appendOutput);
             expect(dispatch).toHaveBeenCalled();
             expect(output).toContain('OK');
@@ -52,7 +65,13 @@ describe('commandParser', () => {
             expect(output[0]).toContain('FIDONET SIMULATOR');
         });
 
-        it('DIAL without modem init shows error', () => {
+        it('DIAL requires TERMINAL.EXE to be running', () => {
+            processCommand('DIAL 555-3389', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('TERMINAL.EXE'))).toBe(true);
+        });
+
+        it('DIAL without modem init shows error when in TERMINAL', () => {
+            baseState.network.terminalProgramRunning = true;
             processCommand('DIAL 555-3389', baseState, dispatch, actions, appendOutput);
             expect(output.some(l => l.includes('не инициализирован'))).toBe(true);
         });

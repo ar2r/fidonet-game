@@ -109,6 +109,7 @@ const networkSlice = createSlice({
         currentBBS: null,
         connectionStatus: 'IDLE',
         terminalMode: 'IDLE',
+        terminalProgramRunning: false,
         downloadQueue: [],
         logs: [],
         modemInitialized: false,
@@ -137,11 +138,15 @@ const networkSlice = createSlice({
         initializeModem: (state) => {
             state.modemInitialized = true;
         },
+        setTerminalProgram: (state, action) => {
+            state.terminalProgramRunning = action.payload;
+        },
         resetNetwork: () => ({
             connected: false,
             currentBBS: null,
             connectionStatus: 'IDLE',
             terminalMode: 'IDLE',
+            terminalProgramRunning: false,
             downloadQueue: [],
             logs: [],
             modemInitialized: false,
@@ -187,7 +192,7 @@ export const {
 
 export const {
     connect, disconnect, setStatus, setTerminalMode,
-    addLog, initializeModem, resetNetwork
+    addLog, initializeModem, setTerminalProgram, resetNetwork
 } = networkSlice.actions;
 
 export const {

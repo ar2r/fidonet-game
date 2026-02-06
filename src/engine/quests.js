@@ -3,8 +3,8 @@ export const QUESTS = {
     INIT_MODEM: {
         id: 'init_modem',
         title: 'Строка инициализации',
-        description: 'Инициализируйте модем командой ATZ или AT&F.',
-        hint: 'Введите ATZ в терминале.',
+        description: 'Запустите TERMINAL.EXE и инициализируйте модем.',
+        hint: 'Сначала наберите TERMINAL, затем внутри программы ATZ.',
         act: 1,
         reward: { skills: { typing: 1 } },
         nextQuest: 'first_connect',
@@ -25,8 +25,19 @@ export const QUESTS = {
         hint: 'В меню BBS нажмите F, затем скачайте оба файла.',
         act: 1,
         reward: { skills: { typing: 1, software: 1 } },
-        nextQuest: null, // End of Act 1
+        nextQuest: 'configure_tmail',
         completesAct: 1,
+    },
+    // --- Act 2: Настройка ---
+    CONFIGURE_TMAIL: {
+        id: 'configure_tmail',
+        title: 'Настройка T-Mail',
+        description: 'Настройте T-Mail: заполните адрес, пароль, босс-ноду.',
+        hint: 'Запустите T-Mail Setup.exe с рабочего стола. Информацию можно получить у Сисопа BBS (команда C в меню) и прочитать README.1ST (команда TYPE C:\\FIDO\\README.1ST).',
+        act: 2,
+        reward: { skills: { software: 2, typing: 1 } },
+        nextQuest: null, // TODO: configure_golded
+        completesAct: null,
     },
 };
 

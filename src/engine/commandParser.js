@@ -1,5 +1,5 @@
 import { BBS_WELCOME, BBS_MENU, BBS_FILES, BBS_CHAT_SYSOP, DOWNLOAD_PROGRESS } from '../assets/ascii';
-import { GAME_MANUAL } from '../assets/text';
+import { GAME_MANUAL, README_FIDO } from '../assets/text';
 import fs from './fileSystemInstance';
 import { completeQuestAndProgress, checkDownloadQuestCompletion } from './questEngine';
 
@@ -71,8 +71,9 @@ export function getPrompt() {
 
 export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) => {
     const command = cmd.trim().toUpperCase();
-    const { connect, disconnect, initializeModem, setTerminalMode, addItem } = actions;
+    const { connect, disconnect, initializeModem, setTerminalMode, addItem, setTerminalProgram } = actions;
     const terminalMode = gameState.network?.terminalMode || 'IDLE';
+    const terminalProgramRunning = gameState.network?.terminalProgramRunning || false;
 
     // --- BBS_MENU mode ---
     if (terminalMode === 'BBS_MENU') {
@@ -110,9 +111,11 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                 dispatch(addItem('t-mail'));
                 fs.createFile('C:\\FIDO\\T-MAIL.EXE', '[T-Mail v2605 Executable]');
                 fs.createFile('C:\\FIDO\\T-MAIL.CTL', '; T-Mail Configuration\n; Заполните поля ниже\n\nAddress \nPassword \nBossAddress \nBossPhone \nInbound C:\\FIDO\\INBOUND\nOutbound C:\\FIDO\\OUTBOUND\n');
+                fs.createFile('C:\\FIDO\\README.1ST', README_FIDO);
                 appendOutput("");
                 appendOutput("T-Mail установлен в C:\\FIDO\\T-MAIL.EXE");
                 appendOutput("Конфиг: C:\\FIDO\\T-MAIL.CTL");
+                appendOutput("Документация: C:\\FIDO\\README.1ST");
 
                 // Check if download_software quest is complete
                 const inventory = [...(gameState.player?.inventory || []), 't-mail'];
@@ -169,7 +172,31 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
 
     // --- IDLE mode (DOS terminal) ---
 
-    if (command === 'ATZ' || command === 'AT&F') {
+    // TERMINAL.EXE - запуск терминальной программы
+    if (command === 'TERMINAL' || command === 'TERMINAL.EXE') {
+        if (terminalProgramRunning) {
+            appendOutput("TERMINAL.EXE уже запущен.");
+        } else {
+            dispatch(setTerminalProgram(true));
+            appendOutput("");
+            appendOutput("╔═══════════════════════════════════════════╗");
+            appendOutput("║        TERMINAL v3.14 (c) 1993            ║");
+            appendOutput("║    Простая терминальная программа         ║");
+            appendOutput("╚═══════════════════════════════════════════╝");
+            appendOutput("");
+            appendOutput("Для выхода из TERMINAL наберите EXIT.");
+            appendOutput("");
+        }
+    } else if (command === 'EXIT' && terminalProgramRunning) {
+        dispatch(setTerminalProgram(false));
+        appendOutput("Выход из TERMINAL.EXE...");
+        appendOutput("");
+    } else if (command === 'ATZ' || command === 'AT&F') {
+        if (!terminalProgramRunning) {
+            appendOutput("ОШИБКА: Неверная команда или имя файла");
+            appendOutput("Для работы с модемом запустите TERMINAL.EXE");
+            return;
+        }
         dispatch(initializeModem());
         appendOutput("OK");
         // Quest: init_modem
@@ -227,6 +254,12 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
         const lines = fs.tree();
         lines.forEach(l => appendOutput(l));
     } else if (command.startsWith('ATDT') || command.startsWith('ATDP') || command.startsWith('DIAL')) {
+        if (!terminalProgramRunning) {
+            appendOutput("ОШИБКА: Неверная команда или имя файла");
+            appendOutput("Для звонков на BBS запустите TERMINAL.EXE");
+            return;
+        }
+
         const parts = command.split(/\s+/);
         let number = '';
         if (command.startsWith('DIAL')) {
