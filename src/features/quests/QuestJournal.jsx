@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { Window, WindowHeader, WindowContent, Button } from 'react95';
 import { useSelector } from 'react-redux';
 import { getQuestById } from '../../content/quests';
 
@@ -158,35 +157,7 @@ function QuestJournal({ onClose }) {
     const progress = quest ? calculateProgress() : 0;
 
     return (
-        <Window style={{
-            width: 700,
-            height: 500,
-            position: 'absolute',
-            top: '10%',
-            left: '15%',
-            zIndex: 1000
-        }}>
-            <WindowHeader className="window-header" style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-            }}>
-                <span>Журнал квестов</span>
-                <Button
-                    onClick={onClose}
-                    style={{
-                        marginLeft: 'auto',
-                        marginRight: '-6px',
-                        marginTop: '1px'
-                    }}
-                    size="sm"
-                    square
-                >
-                    <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>X</span>
-                </Button>
-            </WindowHeader>
-            <WindowContent style={{ padding: 0, height: '100%' }}>
-                <TuiContainer>
+        <TuiContainer>
                     <MenuBar>
                         QUEST JOURNAL v1.0 — Текущие задания
                     </MenuBar>
@@ -263,8 +234,6 @@ function QuestJournal({ onClose }) {
                         <span>Акт {quest?.act || 1}</span>
                     </StatusBar>
                 </TuiContainer>
-            </WindowContent>
-        </Window>
     );
 }
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { Window, WindowHeader, WindowContent } from 'react95';
 
 const TuiContainer = styled.div`
   background-color: #0000AA; /* DOS Blue */
@@ -179,10 +178,7 @@ function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
   }, [handleKeyDown]);
 
   return (
-    <Window style={{ width: 700, height: 500, position: 'absolute', top: '10%', left: '15%', zIndex: 1000 }}>
-      <WindowHeader>T-Mail Configuration Editor v2605</WindowHeader>
-      <WindowContent style={{ padding: 0, height: '100%' }}>
-        <TuiContainer>
+    <TuiContainer>
           <MenuBar>
             T-MAIL.CTL — Редактирование конфигурации
           </MenuBar>
@@ -224,8 +220,6 @@ function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
             <span>ESC - Выход</span>
           </StatusBar>
         </TuiContainer>
-      </WindowContent>
-    </Window>
   );
 }
 

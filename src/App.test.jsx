@@ -22,7 +22,7 @@ describe('FidoNet Simulator UI', () => {
         renderWithStore(<App />);
 
         // Terminal is open by default - check for the window header
-        const terminalHeaders = screen.getAllByText(/Terminal.exe/i);
+        const terminalHeaders = screen.getAllByText(/MS-DOS Prompt/i);
         expect(terminalHeaders.length).toBeGreaterThan(0);
 
         const closeButton = screen.getByText('X');
@@ -33,7 +33,7 @@ describe('FidoNet Simulator UI', () => {
         fireEvent.doubleClick(fidoIcon);
 
         // Terminal should be open again
-        const terminalHeadersAfter = screen.getAllByText(/Terminal.exe/i);
+        const terminalHeadersAfter = screen.getAllByText(/MS-DOS Prompt/i);
         expect(terminalHeadersAfter.length).toBeGreaterThan(0);
     });
 });

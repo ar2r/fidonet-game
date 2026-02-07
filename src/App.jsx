@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { styleReset } from 'react95';
 import original from 'react95/dist/themes/original';
-import { AppBar, Toolbar, Button, List, ListItem, Divider, Window, WindowHeader, WindowContent } from 'react95';
+import { AppBar, Toolbar, Button, List, ListItem, Divider } from 'react95';
 import { useSelector, useDispatch } from 'react-redux';
 
+import DesktopWindow from './components/DesktopWindow';
+import TaskbarButton from './components/TaskbarButton';
 import TerminalWindow from './components/TerminalWindow';
 import StatusBar from './components/StatusBar';
 import GameOverScreen from './components/GameOverScreen';
@@ -14,6 +16,7 @@ import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
 import { completeQuest as completeQuestAction, setActiveQuest as setActiveQuestAction, updateSkill as updateSkillAction, setAct as setActAction } from './engine/store';
+import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete } from './domain/quests/service';
@@ -26,21 +29,72 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
+// Определение всех окон приложения
+const WINDOW_DEFINITIONS = {
+    terminal: {
+        id: 'terminal',
+        title: 'MS-DOS Prompt - C:\\',
+        component: 'terminal',
+        position: { x: 100, y: 100 },
+        size: { width: 640, height: 480 },
+    },
+    readme: {
+        id: 'readme',
+        title: 'Notepad - Readme.txt',
+        component: 'readme',
+        position: { x: 150, y: 150 },
+        size: { width: 400, height: 300 },
+    },
+    'tmail-config': {
+        id: 'tmail-config',
+        title: 'T-Mail Setup',
+        component: 'tmail-config',
+        position: { x: 200, y: 100 },
+        size: { width: 600, height: 500 },
+    },
+    'golded-config': {
+        id: 'golded-config',
+        title: 'GoldED Setup',
+        component: 'golded-config',
+        position: { x: 250, y: 150 },
+        size: { width: 600, height: 500 },
+    },
+    'quest-journal': {
+        id: 'quest-journal',
+        title: 'Журнал квестов',
+        component: 'quest-journal',
+        position: { x: 150, y: 100 },
+        size: { width: 700, height: 500 },
+    },
+};
+
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
-    const [activeWindow, setActiveWindow] = useState('terminal');
     const [mailTossingActive, setMailTossingActive] = useState(false);
+
+    const dispatch = useDispatch();
     const inventory = useSelector(state => state.player.inventory);
     const quests = useSelector(state => state.quests);
     const gameState = useSelector(state => state.gameState);
-    const dispatch = useDispatch();
-
-    const closeWindow = () => setActiveWindow(null);
+    const windows = useSelector(state => state.windowManager.windows);
 
     const hasSoftware = (name) => inventory.includes(name);
 
+    // Open terminal on first load
+    React.useEffect(() => {
+        if (Object.keys(windows).length === 0) {
+            dispatch(openWindow(WINDOW_DEFINITIONS.terminal));
+        }
+    }, [dispatch, windows]);
+
+    const handleOpenWindow = (windowId) => {
+        const definition = WINDOW_DEFINITIONS[windowId];
+        if (definition) {
+            dispatch(openWindow(definition));
+        }
+    };
+
     const handleConfigSave = (config) => {
-        // Use quest service for validation and completion
         const actions = {
             completeQuest: completeQuestAction,
             setActiveQuest: setActiveQuestAction,
@@ -54,7 +108,6 @@ function App() {
             return { error: result.error };
         }
 
-        // Save config file (domain operation)
         const configContent = generateTMailConfig(config);
         fs.writeFile('C:\\FIDO\\T-MAIL.CTL', configContent);
 
@@ -62,7 +115,6 @@ function App() {
     };
 
     const handleGoldEDSave = (config) => {
-        // Use quest service for validation and completion
         const actions = {
             completeQuest: completeQuestAction,
             setActiveQuest: setActiveQuestAction,
@@ -76,7 +128,6 @@ function App() {
             return { error: result.error };
         }
 
-        // Generate and save config file (domain operation)
         const configContent = [
             '; GoldED Configuration',
             `USERNAME ${config.username}`,
@@ -87,7 +138,6 @@ function App() {
         ].join('\n');
         fs.writeFile('C:\\FIDO\\GOLDED.CFG', configContent);
 
-        // Trigger mail tossing animation if quest was completed
         if (result.triggerAnimation) {
             setTimeout(() => {
                 setMailTossingActive(true);
@@ -97,7 +147,6 @@ function App() {
         return { success: true };
     };
 
-    // Extract T-Mail address from saved config (for GoldED hint)
     const getTMailAddress = () => {
         const tmailConfig = fs.cat('C:\\FIDO\\T-MAIL.CTL');
         if (!tmailConfig.ok) return '';
@@ -108,7 +157,6 @@ function App() {
         return addressLine.split(' ')[1] || '';
     };
 
-    // DEBUG: Skip to next quest
     const handleSkipQuest = () => {
         if (!quests.active) {
             alert('Нет активного квеста');
@@ -125,6 +173,55 @@ function App() {
         completeQuestAndProgress(quests.active, dispatch, actions);
         setStartMenuOpen(false);
         alert(`Квест "${quests.active}" пропущен!`);
+    };
+
+    // Рендер содержимого окна по компоненту
+    const renderWindowContent = (windowId, component) => {
+        switch (component) {
+            case 'terminal':
+                return <TerminalWindow embedded />;
+
+            case 'readme':
+                return (
+                    <div style={{ fontFamily: 'ms_sans_serif', lineHeight: '1.5', padding: '10px' }}>
+                        <p>Привет, странник!</p>
+                        <br />
+                        <p>Если ты читаешь это, значит ты готов погрузиться в мир Фидонета.</p>
+                        <p>Для начала тебе нужно подключиться к нашей локальной BBS.</p>
+                        <br />
+                        <p>1. Открой <b>Fido.bat</b></p>
+                        <p>2. Набери <b>ATZ</b> для инициализации модема</p>
+                        <p>3. Набери <b>DIAL 555-3389</b> для подключения</p>
+                        <p>4. Зайди в файловую область и скачай софт</p>
+                        <br />
+                        <p>Удачи в Сети!</p>
+                        <p><i>-- SysOp</i></p>
+                    </div>
+                );
+
+            case 'tmail-config':
+                return (
+                    <ConfigEditor
+                        onSave={handleConfigSave}
+                    />
+                );
+
+            case 'golded-config':
+                return (
+                    <GoldEDConfig
+                        onSave={handleGoldEDSave}
+                        tmailAddress={getTMailAddress()}
+                    />
+                );
+
+            case 'quest-journal':
+                return (
+                    <QuestJournal />
+                );
+
+            default:
+                return <div>Unknown window type</div>;
+        }
     };
 
     return (
@@ -150,123 +247,82 @@ function App() {
 
                 {/* Desktop Icons Area */}
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>
-                    {/* Always available: Fido.bat (Terminal) */}
-                    <div onDoubleClick={() => setActiveWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                    {/* Fido.bat (Terminal) */}
+                    <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Fido.bat</span>
                     </div>
 
                     {/* Readme.txt */}
-                    <div onDoubleClick={() => setActiveWindow('readme')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                    <div onDoubleClick={() => handleOpenWindow('readme')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Readme.txt</span>
                     </div>
 
-                    {/* T-Mail (Unlocked after download) */}
+                    {/* T-Mail Setup */}
                     {hasSoftware('t-mail') && (
-                        <div onDoubleClick={() => setActiveWindow('t-mail')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div onDoubleClick={() => handleOpenWindow('tmail-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                             <div style={{ width: '32px', height: '32px', background: 'navy', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'cyan', fontSize: '14px', fontWeight: 'bold' }}>TM</div>
                             <span style={{ background: '#008080', padding: '2px' }}>Setup.exe</span>
                         </div>
                     )}
 
-                    {/* GoldED (Unlocked after download) */}
+                    {/* GoldED Setup */}
                     {hasSoftware('golded') && (
-                        <div onDoubleClick={() => setActiveWindow('golded')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div onDoubleClick={() => handleOpenWindow('golded-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                             <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
                             <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
                         </div>
                     )}
 
-                    {/* Quest Journal (Always available) */}
-                    <div onDoubleClick={() => setActiveWindow('quest-journal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                    {/* Quest Journal */}
+                    <div onDoubleClick={() => handleOpenWindow('quest-journal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: '#0000AA', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFF00', fontSize: '14px', fontWeight: 'bold' }}>Q</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Квесты</span>
                     </div>
                 </div>
 
-                {/* Main Application Windows */}
-                {activeWindow === 'terminal' && (
-                    <TerminalWindow onClose={closeWindow} />
-                )}
-
-                {activeWindow === 'readme' && (
-                    <Window style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '400px' }}>
-                        <WindowHeader style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span>Notepad - Readme.txt</span>
-                            <Button onClick={closeWindow} style={{ marginLeft: 'auto', marginRight: '-6px', marginTop: '1px' }} size="sm" square>
-                                <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>X</span>
-                            </Button>
-                        </WindowHeader>
-                        <WindowContent>
-                            <div style={{ fontFamily: 'ms_sans_serif', lineHeight: '1.5' }}>
-                                <p>Привет, странник!</p>
-                                <br />
-                                <p>Если ты читаешь это, значит ты готов погрузиться в мир Фидонета.</p>
-                                <p>Для начала тебе нужно подключиться к нашей локальной BBS.</p>
-                                <br />
-                                <p>1. Открой <b>Fido.bat</b></p>
-                                <p>2. Набери <b>ATZ</b> для инициализации модема</p>
-                                <p>3. Набери <b>DIAL 555-3389</b> для подключения</p>
-                                <p>4. Зайди в файловую область и скачай софт</p>
-                                <br />
-                                <p>Удачи в Сети!</p>
-                                <p><i>-- SysOp</i></p>
-                            </div>
-                        </WindowContent>
-                    </Window>
-                )}
-
-                {/* T-Mail Config Editor */}
-                {activeWindow === 't-mail' && (
-                    <ConfigEditor
-                        onClose={closeWindow}
-                        onSave={handleConfigSave}
-                    />
-                )}
-
-                {/* GoldED Config Editor */}
-                {activeWindow === 'golded' && (
-                    <GoldEDConfig
-                        onClose={closeWindow}
-                        onSave={handleGoldEDSave}
-                        tmailAddress={getTMailAddress()}
-                    />
-                )}
-
-                {/* Quest Journal */}
-                {activeWindow === 'quest-journal' && (
-                    <QuestJournal
-                        onClose={closeWindow}
-                    />
-                )}
+                {/* Render all open windows */}
+                {Object.values(windows).map(window => (
+                    <DesktopWindow key={window.id} windowId={window.id}>
+                        {renderWindowContent(window.id, window.component)}
+                    </DesktopWindow>
+                ))}
 
                 {/* Taskbar */}
                 <AppBar style={{ top: 'auto', bottom: 0, zIndex: 9999 }}>
                     <Toolbar style={{ justifyContent: 'space-between' }}>
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                            <Button
-                                onClick={() => setStartMenuOpen(!startMenuOpen)}
-                                active={startMenuOpen}
-                                style={{ fontWeight: 'bold' }}
-                            >
-                                Пуск
-                            </Button>
-                            {startMenuOpen && (
-                                <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
-                                    <ListItem onClick={() => { setActiveWindow('terminal'); setStartMenuOpen(false); }}>
-                                        Терминал Фидонет
-                                    </ListItem>
-                                    <Divider />
-                                    <ListItem onClick={handleSkipQuest} style={{ color: '#FF0000', fontWeight: 'bold' }}>
-                                        [DEBUG] Пропустить квест
-                                    </ListItem>
-                                    <Divider />
-                                    <ListItem disabled>
-                                        Завершение работы...
-                                    </ListItem>
-                                </List>
-                            )}
+                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                            {/* Start Menu Button */}
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                                <Button
+                                    onClick={() => setStartMenuOpen(!startMenuOpen)}
+                                    active={startMenuOpen}
+                                    style={{ fontWeight: 'bold' }}
+                                >
+                                    Пуск
+                                </Button>
+                                {startMenuOpen && (
+                                    <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
+                                        <ListItem onClick={() => { handleOpenWindow('terminal'); setStartMenuOpen(false); }}>
+                                            Терминал Фидонет
+                                        </ListItem>
+                                        <Divider />
+                                        <ListItem onClick={handleSkipQuest} style={{ color: '#FF0000', fontWeight: 'bold' }}>
+                                            [DEBUG] Пропустить квест
+                                        </ListItem>
+                                        <Divider />
+                                        <ListItem disabled>
+                                            Завершение работы...
+                                        </ListItem>
+                                    </List>
+                                )}
+                            </div>
+
+                            {/* Window buttons */}
+                            {Object.keys(windows).map(windowId => (
+                                <TaskbarButton key={windowId} windowId={windowId} />
+                            ))}
                         </div>
 
                         <StatusBar />

@@ -78,7 +78,7 @@ const ACTIONS = {
     updateStat: updateStatAction,
 };
 
-function TerminalWindow({ onClose }) {
+function TerminalWindow({ onClose, embedded = false }) {
     const dispatch = useDispatch();
     const gameState = useSelector(state => state.gameState);
     const network = useSelector(state => state.network);
@@ -182,6 +182,22 @@ function TerminalWindow({ onClose }) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
+    const terminalContent = (
+        <TerminalContainer>
+            {history.map((line, i) => (
+                <div key={i}>{line}</div>
+            ))}
+            <div>
+                <span>{currentPrompt}{inputBuffer}</span><Cursor />
+            </div>
+            <div ref={terminalEndRef} />
+        </TerminalContainer>
+    );
+
+    if (embedded) {
+        return terminalContent;
+    }
+
     return (
         <Window style={{ width: 900, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
             <WindowHeader className="window-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -191,15 +207,7 @@ function TerminalWindow({ onClose }) {
                 </Button>
             </WindowHeader>
             <WindowContent>
-                <TerminalContainer>
-                    {history.map((line, i) => (
-                        <div key={i}>{line}</div>
-                    ))}
-                    <div>
-                        <span>{currentPrompt}{inputBuffer}</span><Cursor />
-                    </div>
-                    <div ref={terminalEndRef} />
-                </TerminalContainer>
+                {terminalContent}
             </WindowContent>
         </Window>
     );

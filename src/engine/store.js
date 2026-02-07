@@ -1,4 +1,5 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
+import windowManagerReducer from './windowManager';
 
 // --- Game State Slice ---
 const gameStateSlice = createSlice({
@@ -215,5 +216,6 @@ export const store = configureStore({
         player: playerSlice.reducer,
         network: networkSlice.reducer,
         quests: questSlice.reducer,
+        windowManager: windowManagerReducer,
     },
 });

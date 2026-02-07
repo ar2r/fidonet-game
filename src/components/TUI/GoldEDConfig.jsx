@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { Window, WindowHeader, WindowContent } from 'react95';
 
 const TuiContainer = styled.div`
   background-color: #0000AA; /* DOS Blue */
@@ -173,10 +172,7 @@ function GoldEDConfig({ onClose, onSave, initialConfig = {}, tmailAddress = '' }
   }, [handleKeyDown]);
 
   return (
-    <Window style={{ width: 700, height: 480, position: 'absolute', top: '10%', left: '15%', zIndex: 1000 }}>
-      <WindowHeader>GoldED Configuration Editor v2.50+</WindowHeader>
-      <WindowContent style={{ padding: 0, height: '100%' }}>
-        <TuiContainer>
+    <TuiContainer>
           <MenuBar>
             GOLDED.CFG — Редактирование конфигурации
           </MenuBar>
@@ -218,8 +214,6 @@ function GoldEDConfig({ onClose, onSave, initialConfig = {}, tmailAddress = '' }
             <span>ESC - Выход</span>
           </StatusBar>
         </TuiContainer>
-      </WindowContent>
-    </Window>
   );
 }
 
