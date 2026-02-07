@@ -25,7 +25,6 @@ import {
     setVirusStage as setVirusStageAction,
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
-    setSpeedrunCommand as setSpeedrunCommandAction,
 } from '../engine/store';
 
 const Wrapper = styled.div`
@@ -149,55 +148,6 @@ function TerminalWindow({ onClose, embedded = false }) {
         }
         return () => clearInterval(timer);
     }, [network.connected]);
-
-    const speedrunCommand = gameState.speedrunCommand;
-    const typingTimeoutRef = useRef(null);
-
-    // Speedrun command handler
-    useEffect(() => {
-        if (!speedrunCommand) return;
-
-        console.log(`[Terminal] Starting speedrun command: "${speedrunCommand}"`);
-        let currentIndex = 0;
-        const typeSpeed = 50; // ms per char
-
-        // Clear input first
-        setInputBuffer("");
-
-        const typeChar = () => {
-            if (currentIndex < speedrunCommand.length) {
-                const char = speedrunCommand[currentIndex];
-                // console.log(`[Terminal] Typing char '${char}' at index ${currentIndex}`);
-                if (char === undefined) {
-                    console.error(`[Terminal] Undefined char at index ${currentIndex} for command "${speedrunCommand}"`);
-                }
-                
-                // Use functional update to ensure fresh state
-                setInputBuffer(prev => prev + char);
-                currentIndex++;
-                typingTimeoutRef.current = setTimeout(typeChar, typeSpeed);
-            } else {
-                // Submit command after typing finishes
-                typingTimeoutRef.current = setTimeout(() => {
-                    console.log(`[Terminal] Submitting command: "${speedrunCommand}"`);
-                    // Simulate Enter key press
-                    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
-                    window.dispatchEvent(event);
-                    // Clear the command from store to signal completion
-                    dispatch(setSpeedrunCommandAction(null));
-                }, 200);
-            }
-        };
-
-        // Start typing after a small delay
-        typingTimeoutRef.current = setTimeout(typeChar, 100);
-        
-        return () => {
-            if (typingTimeoutRef.current) {
-                clearTimeout(typingTimeoutRef.current);
-            }
-        };
-    }, [speedrunCommand, dispatch]);
 
     const handleKeyDown = useCallback((e) => {
         if (gameState.gameOver) return;

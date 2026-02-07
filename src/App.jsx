@@ -22,13 +22,11 @@ import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
 import Onboarding from './components/Onboarding';
-import { SpeedrunEngine } from './engine/SpeedrunEngine';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
     updateSkill as updateSkillAction, 
-    setAct as setActAction,
-    setSpeedrunMode as setSpeedrunModeAction
+    setAct as setActAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -46,8 +44,6 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'ms_sans_serif';
   }
 `;
-
-const ENABLE_ONBOARDING = false;
 
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
@@ -281,10 +277,7 @@ function App() {
                 <GameOverScreen />
 
                 {/* Onboarding overlay */}
-                {ENABLE_ONBOARDING && !gameState.onboardingSeen && <Onboarding />}
-
-                {/* Speedrun Engine */}
-                <SpeedrunEngine />
+                {!gameState.onboardingSeen && <Onboarding />}
 
                 {/* Virus Animation overlay */}
                 <VirusAnimation
@@ -338,12 +331,6 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('artmoney')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'silver', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
                         <span style={{ background: '#008080', padding: '2px' }}>ArtMoney</span>
-                    </div>
-
-                    {/* Speedrun Mode */}
-                    <div onDoubleClick={() => dispatch(setSpeedrunModeAction(true))} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>RUN</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>RUN.BAT</span>
                     </div>
 
                     {/* T-Mail Setup */}

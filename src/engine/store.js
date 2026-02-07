@@ -16,16 +16,8 @@ const gameStateSlice = createSlice({
         virusActive: false,
         virusStage: 'none', // 'none', 'cascade', 'cleaning'
         onboardingSeen: false,
-        speedrunMode: false,
-        speedrunCommand: null,
     },
     reducers: {
-        setSpeedrunMode: (state, action) => {
-            state.speedrunMode = action.payload;
-        },
-        setSpeedrunCommand: (state, action) => {
-            state.speedrunCommand = action.payload;
-        },
         setOnboardingSeen: (state) => {
             state.onboardingSeen = true;
         },
@@ -57,26 +49,19 @@ const gameStateSlice = createSlice({
         setVirusStage: (state, action) => {
             state.virusStage = action.payload;
         },
-        resetGame: (state) => {
-            const speedrunMode = state.speedrunMode;
-            const speedrunCommand = state.speedrunCommand;
-            
-            return {
-                day: 1,
-                phase: 'night',
-                time: '23:00',
-                timeMinutes: 1380,
-                zmh: false,
-                act: 1,
-                gameOver: false,
-                gameOverReason: null,
-                virusActive: false,
-                virusStage: 'none',
-                onboardingSeen: false,
-                speedrunMode: speedrunMode,
-                speedrunCommand: speedrunCommand,
-            };
-        },
+        resetGame: () => ({
+            day: 1,
+            phase: 'night',
+            time: '23:00',
+            timeMinutes: 1380,
+            zmh: false,
+            act: 1,
+            gameOver: false,
+            gameOverReason: null,
+            virusActive: false,
+            virusStage: 'none',
+            onboardingSeen: false,
+        }),
     }
 });
 
@@ -259,7 +244,7 @@ const questSlice = createSlice({
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen, setSpeedrunMode, setSpeedrunCommand
+    setOnboardingSeen
 } = gameStateSlice.actions;
 
 export const {
