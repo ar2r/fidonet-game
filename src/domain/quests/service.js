@@ -1,5 +1,7 @@
 import { completeQuestAndProgress } from '../../engine/questEngine';
 import { validateTMailConfig, checkConfigCorrectness } from '../../engine/configValidator';
+import { eventBus } from '../events/bus';
+import { FILE_SAVED } from '../events/types';
 
 /**
  * Quest Service
@@ -36,6 +38,12 @@ export function handleTMailConfigComplete(config, fileSystem, questState, dispat
         completeQuestAndProgress('configure_tmail', dispatch, actions);
     }
 
+    // Publish file.saved event
+    eventBus.publish(FILE_SAVED, {
+        path: 'C:\\FIDO\\T-MAIL.CTL',
+        valid: true,
+    });
+
     return { success: true };
 }
 
@@ -62,6 +70,12 @@ export function handleGoldEDConfigComplete(config, questState, dispatch, actions
         completeQuestAndProgress('configure_golded', dispatch, actions);
         triggerAnimation = true; // Signal to trigger mail tossing animation
     }
+
+    // Publish file.saved event
+    eventBus.publish(FILE_SAVED, {
+        path: 'C:\\FIDO\\GOLDED.CFG',
+        valid: true,
+    });
 
     return { success: true, triggerAnimation };
 }

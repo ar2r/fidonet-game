@@ -2,6 +2,8 @@ import { BBS_WELCOME, BBS_MENU, BBS_FILES, BBS_CHAT_SYSOP, DOWNLOAD_PROGRESS } f
 import { GAME_MANUAL, README_FIDO } from '../assets/text';
 import fs from './fileSystemInstance';
 import { completeQuestAndProgress, checkDownloadQuestCompletion } from './questEngine';
+import { eventBus } from '../domain/events/bus';
+import { MODEM_INITIALIZED, BBS_CONNECTED, DOWNLOAD_COMPLETED, COMMAND_EXECUTED } from '../domain/events/types';
 
 function simulateDownload(filename, appendOutput, onComplete) {
     const steps = [0, 10, 25, 40, 55, 70, 85, 100];
@@ -118,6 +120,12 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                 appendOutput("Конфиг: C:\\FIDO\\T-MAIL.CTL");
                 appendOutput("Документация: C:\\FIDO\\README.1ST");
 
+                // Publish domain event
+                eventBus.publish(DOWNLOAD_COMPLETED, {
+                    item: 't-mail',
+                    source: 'BBS The Nexus',
+                });
+
                 // Check if download_software quest is complete
                 const inventory = [...(gameState.player?.inventory || []), 't-mail'];
                 if (checkDownloadQuestCompletion(inventory, gameState.quests?.active)) {
@@ -138,6 +146,12 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                 appendOutput("");
                 appendOutput("GoldED установлен в C:\\FIDO\\GOLDED.EXE");
                 appendOutput("Конфиг: C:\\FIDO\\GOLDED.CFG");
+
+                // Publish domain event
+                eventBus.publish(DOWNLOAD_COMPLETED, {
+                    item: 'golded',
+                    source: 'BBS The Nexus',
+                });
 
                 // Check if download_software quest is complete
                 const inventory = [...(gameState.player?.inventory || []), 'golded'];
@@ -219,6 +233,10 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
         }
         dispatch(initializeModem());
         appendOutput("OK");
+
+        // Publish domain event
+        eventBus.publish(MODEM_INITIALIZED, { command });
+
         // Quest: init_modem
         triggerQuest('init_modem', gameState, dispatch, actions, appendOutput);
     } else if (command === 'CLS' || command === 'CLEAR') {
@@ -309,6 +327,12 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                     appendOutput("");
                     appendOutput("Логин: Гость");
                     appendOutput("Доступ разрешён.");
+
+                    // Publish domain event
+                    eventBus.publish(BBS_CONNECTED, {
+                        bbs: 'The Nexus',
+                        phone: number,
+                    });
 
                     // Quest: first_connect
                     triggerQuest('first_connect', gameState, dispatch, actions, appendOutput);
