@@ -46,6 +46,8 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
+const ENABLE_ONBOARDING = false;
+
 const BuildInfo = styled.div`
   position: absolute;
   bottom: 35px;
@@ -298,7 +300,7 @@ function App() {
                 <GameOverScreen />
 
                 {/* Onboarding overlay */}
-                {!gameState.onboardingSeen && <Onboarding />}
+                {ENABLE_ONBOARDING && !gameState.onboardingSeen && <Onboarding />}
 
                 <HintSystem />
 
