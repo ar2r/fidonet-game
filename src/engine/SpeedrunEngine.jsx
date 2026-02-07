@@ -23,6 +23,8 @@ const SPEEDRUN_SCRIPT = [
     }},
     { type: 'wait', ms: 1000 },
 
+    // --- ACT 1 & 2 ---
+
     // Step 1: Open Terminal
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
     { type: 'wait', ms: 1500 },
@@ -73,10 +75,8 @@ const SPEEDRUN_SCRIPT = [
     },
     { type: 'wait', ms: 2000 },
 
-    // Step 11: Close T-Mail Config (it closes automatically on save, but just in case)
-    // Actually handleSave in ConfigEditor closes it after timeout.
-    // So we wait for it to close.
-    { type: 'wait', ms: 2000 },
+    // Step 11: Wait for close
+    { type: 'wait', ms: 1000 },
 
     // Step 12: Open GoldED Config
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-config'])) },
@@ -94,14 +94,164 @@ const SPEEDRUN_SCRIPT = [
         ],
         submitKey: 'F2'
     },
+    { type: 'wait', ms: 3000 }, // Wait for mail tossing animation (auto-triggered by config save)
+
+    // --- ACT 3 ---
+
+    // Step 16: Poll Boss
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: 'T-MAIL POLL' },
+    { type: 'wait', ms: 5000 }, // Wait for tossing animation
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
+    { type: 'wait', ms: 1000 },
+
+    // Step 17: Read Rules
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-reader'])) },
+    { type: 'wait', ms: 1500 },
+    { type: 'clickText', text: 'SU.FLAME' }, // Select Area
+    { type: 'wait', ms: 1000 },
+    { type: 'key', key: 'Enter' }, // Enter Area
+    { type: 'wait', ms: 1000 },
+    { type: 'clickText', text: 'Rules' }, // Select Message
+    { type: 'wait', ms: 1000 },
+    { type: 'key', key: 'Enter' }, // Read Message
+    { type: 'wait', ms: 2000 }, // Reading...
+    { type: 'key', key: 'Escape' }, // Back to list
+    { type: 'wait', ms: 1000 },
+
+    // Step 18: Write Hello (Diplomat)
+    { type: 'key', key: 'n' }, // New Message
+    { type: 'wait', ms: 1000 },
+    { 
+        type: 'fillForm', 
+        fields: [
+            { index: 0, value: 'All' },   // To
+            { index: 1, value: 'Hello' }, // Subj
+            { index: 2, value: 'Hello everyone! Peace and love.' } // Body
+        ]
+    },
+    { type: 'wait', ms: 1000 },
+    { type: 'clickText', text: 'Send (Ctrl+Enter)' }, // Click Send button
+    { type: 'wait', ms: 1500 },
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('golded-reader')) },
+    { type: 'wait', ms: 1000 },
+
+    // --- ACT 4 ---
+
+    // Step 19: Buy Modem
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['radio-market'])) },
+    { type: 'wait', ms: 1500 },
+    { type: 'clickText', text: 'US Robotics' }, // Select Modem
+    { type: 'wait', ms: 1000 },
+    { type: 'key', key: 'Enter' }, // Buy
+    { type: 'wait', ms: 1000 },
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('radio-market')) },
+    { type: 'wait', ms: 1000 },
+
+    // Step 20: Request Node
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: 'ATZ' }, // Init new modem
+    { type: 'wait', ms: 1000 },
+    { type: 'terminal', command: 'DIAL 555-3389' },
+    { type: 'wait', ms: 4000 },
+    { type: 'terminal', command: 'CHAT' }, // Enter Chat
+    { type: 'wait', ms: 2000 },
+    // Dialogue: 1. Hello -> 1. Request Node -> 1. Yes -> 1. Thanks
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 2000 },
+    
+    // Step 21: Download Binkley
+    { type: 'terminal', command: 'FILES' }, // Go to Files
+    { type: 'wait', ms: 2000 },
+    { type: 'terminal', command: 'DOWNLOAD BINKLEY' }, // Download
+    { type: 'wait', ms: 4000 },
+    { type: 'terminal', command: 'EXIT' },
+    { type: 'wait', ms: 2000 },
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
+    { type: 'wait', ms: 1000 },
+
+    // Step 22: Configure Binkley
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['binkley-config'])) },
+    { type: 'wait', ms: 1500 },
+    { 
+        type: 'fillForm', 
+        fields: [
+            { index: 0, value: 'SysOp' },         // Sysop
+            { index: 1, value: '2:5020/730' },    // Address
+            { index: 2, value: '19200' },         // Baud
+            { index: 3, value: 'COM2' },          // Port
+            { index: 4, value: 'C:\\FIDO\\IN' },  // Inbound
+            { index: 5, value: 'C:\\FIDO\\OUT' }  // Outbound
+        ],
+        submitKey: 'F2'
+    },
     { type: 'wait', ms: 2000 },
 
-    // Step 14: Wait for Mail Tossing Animation
-    { type: 'wait', ms: 5000 },
+    // Step 23: Nightly Uptime
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['binkley-term'])) },
+    { type: 'wait', ms: 5000 }, // Wait for ZMH check (simulated)
+    // We cannot simulate time passing easily without cheating or waiting long.
+    // Assuming the user runs this at "night" or the game is fast.
+    // For speedrun demo, we might need to close it.
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('binkley-term')) },
+    { type: 'wait', ms: 1000 },
 
-    // Step 15: Open Map to show progress
+    // --- ACT 5 ---
+    
+    // Step 24: Crisis (Diplomat)
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-reader'])) },
+    { type: 'wait', ms: 1500 },
+    { type: 'clickText', text: 'SU.FLAME' }, // Enter Area
+    { type: 'wait', ms: 1000 },
+    { type: 'key', key: 'Enter' },
+    { type: 'wait', ms: 1000 },
+    // Find "War" thread - assumes it exists in mock data
+    // If not, we just write a new message to win.
+    { type: 'key', key: 'n' },
+    { type: 'wait', ms: 1000 },
+    { 
+        type: 'fillForm', 
+        fields: [
+            { index: 0, value: 'All' },
+            { index: 1, value: 'Peace' },
+            { index: 2, value: 'Stop the war!' }
+        ]
+    },
+    { type: 'wait', ms: 1000 },
+    { type: 'clickText', text: 'Send (Ctrl+Enter)' },
+    { type: 'wait', ms: 1500 },
+    { type: 'fn', action: (dispatch) => dispatch(closeWindow('golded-reader')) },
+    { type: 'wait', ms: 1000 },
+
+    // --- ACT 6 ---
+
+    // Step 25: Meet Coordinator
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: 'ATZ' },
+    { type: 'wait', ms: 1000 },
+    { type: 'terminal', command: 'DIAL 555-3389' },
+    { type: 'wait', ms: 4000 },
+    { type: 'terminal', command: 'CHAT' },
+    { type: 'wait', ms: 2000 },
+    // Coordinator Dialogue
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: '1' },
+    { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: '1' }, // "I agree"
+    { type: 'wait', ms: 3000 },
+
+    // End
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['district-map'])) },
-    { type: 'wait', ms: 2000 },
 ];
 
 export const SpeedrunEngine = () => {
@@ -115,49 +265,56 @@ export const SpeedrunEngine = () => {
 
     // Debug logging
     useEffect(() => {
-        console.log(`[Speedrun] Mode: ${speedrunMode}, Step: ${stepIndex}, Waiting: ${waitingForCommand}`);
-    }, [speedrunMode, stepIndex, waitingForCommand]);
+        if (speedrunMode) {
+            console.log(`[Speedrun] Step: ${stepIndex}/${SPEEDRUN_SCRIPT.length}`);
+        }
+    }, [speedrunMode, stepIndex]);
 
-    // Helper to simulate typing into input fields
+    // Helpers
     const simulateTyping = (input, value) => {
         if (!input) return;
-        
-        // Focus the input
         input.focus();
-        
-        // Set value using property descriptor to bypass React's value tracking
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
         nativeInputValueSetter.call(input, value);
-        
-        // Dispatch input event so React state updates
         const event = new Event('input', { bubbles: true });
         input.dispatchEvent(event);
     };
 
-    // Helper to simulate key press
     const simulateKeyPress = (key) => {
         const event = new KeyboardEvent('keydown', { key: key, bubbles: true });
         window.dispatchEvent(event);
     };
 
+    const simulateClickText = (text) => {
+        // Find all elements that might contain text
+        const elements = Array.from(document.querySelectorAll('div, span, button, li'));
+        const target = elements.find(el => 
+            el.innerText && el.innerText.includes(text) && el.offsetParent !== null // visible
+        );
+        if (target) {
+            target.click();
+            console.log(`[Speedrun] Clicked text: "${text}"`);
+        } else {
+            console.warn(`[Speedrun] Text not found: "${text}"`);
+        }
+    };
+
     // Main execution loop
     useEffect(() => {
         if (!speedrunMode) {
-            // Reset state asynchronously to avoid linter warnings about sync updates in effect
             if (stepIndex !== 0) setTimeout(() => setStepIndex(0), 0);
             if (waitingForCommand) setTimeout(() => setWaitingForCommand(false), 0);
             return;
         }
 
         if (stepIndex >= SPEEDRUN_SCRIPT.length) {
-            // End of script
             dispatch(setSpeedrunMode(false));
             return;
         }
 
         const step = SPEEDRUN_SCRIPT[stepIndex];
 
-        if (waitingForCommand) return; // Wait for command to finish
+        if (waitingForCommand) return; 
 
         const executeStep = () => {
             if (step.type === 'wait') {
@@ -171,26 +328,27 @@ export const SpeedrunEngine = () => {
                 dispatch(setSpeedrunCommand(step.command));
                 setWaitingForCommand(true);
             } else if (step.type === 'fillForm') {
-                // Find visible inputs
-                const inputs = document.querySelectorAll('input[type="text"]');
+                const inputs = document.querySelectorAll('input[type="text"], textarea');
                 if (inputs.length > 0) {
                     step.fields.forEach(field => {
                         if (inputs[field.index]) {
                             simulateTyping(inputs[field.index], field.value);
                         }
                     });
-                    
-                    // Submit form
                     setTimeout(() => {
-                        simulateKeyPress(step.submitKey);
+                        if (step.submitKey) simulateKeyPress(step.submitKey);
                         setStepIndex(prev => prev + 1);
                     }, 500);
                 } else {
-                    // Retry or skip if inputs not found (maybe window didn't open yet)
-                    // For now, retry once or skip
                     console.warn("Speedrun: Inputs not found for fillForm step");
                     setStepIndex(prev => prev + 1);
                 }
+            } else if (step.type === 'key') {
+                simulateKeyPress(step.key);
+                setStepIndex(prev => prev + 1);
+            } else if (step.type === 'clickText') {
+                simulateClickText(step.text);
+                setStepIndex(prev => prev + 1);
             }
         };
 
@@ -204,7 +362,6 @@ export const SpeedrunEngine = () => {
     // Command completion listener
     useEffect(() => {
         if (waitingForCommand && speedrunCommand === null) {
-            // Command finished
             setTimeout(() => {
                 setWaitingForCommand(false);
                 setStepIndex(prev => prev + 1);
