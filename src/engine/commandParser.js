@@ -8,6 +8,7 @@ import * as bbsMenu from '../domain/command/handlers/bbsMenu';
 import * as bbsChat from '../domain/command/handlers/bbsChat';
 import { getTimeCost, computeTickEffects } from './gameTick';
 import { checkRandomEvents } from '../domain/events/random/scheduler';
+import { checkBills, checkDebtGameOver } from './economy';
 
 // --- Registration ---
 
@@ -56,6 +57,7 @@ commandRegistry.register('IDLE', 'T-MAIL.EXE', apps.handleTMail);
 commandRegistry.register('IDLE', 'POLL', apps.handleTMail);
 commandRegistry.register('IDLE', 'WORK', apps.handleWork);
 commandRegistry.register('IDLE', 'ALLOWANCE', apps.handleAllowance);
+commandRegistry.register('IDLE', 'PAY', apps.handlePay);
 
 // BBS_MENU Mode
 commandRegistry.register('BBS_MENU', 'F', bbsMenu.handleFilesCommand);
@@ -138,6 +140,10 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
 
         // 3. Random Events
         checkRandomEvents(gameState, dispatch, actions, appendOutput);
+
+        // 4. Economy Checks
+        checkBills(gameState, dispatch, actions, appendOutput);
+        checkDebtGameOver(gameState, dispatch, actions);
 
         if (result.output === 'CLEAR') return 'CLEAR';
         return;

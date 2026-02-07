@@ -24,6 +24,8 @@ import {
     setGameOver as setGameOverAction,
     setVirusActive as setVirusActiveAction,
     setVirusStage as setVirusStageAction,
+    payBill as payBillAction,
+    setLastBillDay as setLastBillDayAction,
 } from '../engine/store';
 
 const TerminalContainer = styled.div`
@@ -81,6 +83,8 @@ const ACTIONS = {
     setPhase: setPhaseAction,
     setZMH: setZMHAction,
     advanceDay: advanceDayAction,
+    payBill: payBillAction,
+    setLastBillDay: setLastBillDayAction,
 };
 
 function TerminalWindow({ onClose, embedded = false }) {

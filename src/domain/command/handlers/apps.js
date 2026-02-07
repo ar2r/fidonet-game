@@ -106,3 +106,22 @@ export function handleAllowance({ gameState, dispatch, actions, appendOutput }) 
     
     return { handled: true };
 }
+
+export function handlePay({ gameState, dispatch, actions, appendOutput }) {
+    const { debt, money } = gameState.player.stats;
+    
+    if (debt <= 0) {
+        appendOutput("У вас нет задолженностей.");
+        return { handled: true };
+    }
+    
+    if (money < debt) {
+        appendOutput(`ОШИБКА: Недостаточно средств. Ваш долг: ${debt} руб. Баланс: ${money} руб.`);
+        return { handled: true };
+    }
+    
+    dispatch(actions.payBill(debt));
+    appendOutput(`Счет оплачен. Сумма: ${debt} руб. Спасибо!`);
+    
+    return { handled: true };
+}

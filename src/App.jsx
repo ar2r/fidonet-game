@@ -22,7 +22,9 @@ import {
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
     updateSkill as updateSkillAction, 
-    setAct as setActAction
+    setAct as setActAction,
+    payBill as payBillAction,
+    setLastBillDay as setLastBillDayAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -403,6 +405,21 @@ function App() {
                             <div onDoubleClick={() => handleOpenWindow('golded-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                                 <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
                                 <span style={{ background: '#008080', padding: '2px' }}>Setup</span>
+                            </div>
+                        )
+                    )}
+
+                    {/* BinkleyTerm */}
+                    {hasSoftware('binkley') && (
+                        quests.completed.includes('configure_binkley') ? (
+                            <div onDoubleClick={() => handleOpenWindow('binkley-term')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                                <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
+                                <span style={{ background: '#008080', padding: '2px' }}>Binkley</span>
+                            </div>
+                        ) : (
+                            <div onDoubleClick={() => handleOpenWindow('binkley-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                                <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
+                                <span style={{ background: '#008080', padding: '2px' }}>Setup.exe</span>
                             </div>
                         )
                     )}

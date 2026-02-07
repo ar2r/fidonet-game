@@ -38,6 +38,12 @@ function StatusBar() {
             <StatItem>Терпение мамы: {player.stats.momsPatience}</StatItem>
             <StatItem>|</StatItem>
             <StatItem>{player.stats.money} руб.</StatItem>
+            {player.stats.debt > 0 && (
+                <>
+                    <StatItem>|</StatItem>
+                    <StatItem style={{ color: 'red' }}>Долг: {player.stats.debt}</StatItem>
+                </>
+            )}
             <StatItem>|</StatItem>
             <StatItem>{player.rank}</StatItem>
         </StatusContainer>

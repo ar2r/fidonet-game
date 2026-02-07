@@ -69,6 +69,7 @@ const playerSlice = createSlice({
             sanity: 100,
             momsPatience: 100,
             money: 50000, // рублей
+            debt: 0,
         },
         skills: {
             typing: 1,
@@ -78,14 +79,30 @@ const playerSlice = createSlice({
         },
         inventory: [],
         karma: 0,
-        rank: 'Lamer'
+        rank: 'Lamer',
+        lastBillDay: 0,
     },
     reducers: {
         updateStat: (state, action) => {
             const { stat, value } = action.payload;
             if (state.stats[stat] !== undefined) {
-                state.stats[stat] = Math.max(0, Math.min(100, state.stats[stat] + value));
+                // Allow debt to grow indefinitely, others capped 0-100 usually (except money)
+                if (stat === 'money' || stat === 'debt') {
+                    state.stats[stat] += value;
+                } else {
+                    state.stats[stat] = Math.max(0, Math.min(100, state.stats[stat] + value));
+                }
             }
+        },
+        payBill: (state, action) => {
+            const amount = action.payload;
+            if (state.stats.money >= amount) {
+                state.stats.money -= amount;
+                state.stats.debt = Math.max(0, state.stats.debt - amount);
+            }
+        },
+        setLastBillDay: (state, action) => {
+            state.lastBillDay = action.payload;
         },
         updateSkill: (state, action) => {
             const { skill, value } = action.payload;
@@ -209,7 +226,7 @@ export const {
 } = gameStateSlice.actions;
 
 export const {
-    updateStat, updateSkill, addItem, setRank, resetPlayer
+    updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay
 } = playerSlice.actions;
 
 export const {
