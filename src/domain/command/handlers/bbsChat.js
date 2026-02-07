@@ -43,6 +43,74 @@ const DIALOGUES = {
                 ]
             }
         ]
+    },
+    crisis_dialogue: {
+        steps: [
+            {
+                text: "Архитектор: Ситуация критическая. Шум на линии забивает половину пакетов, а в SU.FLAME началась настоящая война. Ноды отваливаются.",
+                options: [
+                    { id: 1, text: "Я могу собрать фильтр и почистить линию. (Путь Технаря)", nextStep: 1 },
+                    { id: 2, text: "Я попробую успокоить народ в эхе. (Путь Дипломата)", nextStep: 2 },
+                ]
+            },
+            {
+                text: "Архитектор: Хорошо. Если ты шаришь в железе — действуй. Тебе понадобится паяльник.",
+                onEnter: (dispatch, actions) => {
+                    // Manually switch quest branch
+                    dispatch(actions.completeQuest('crisis_choice'));
+                    dispatch(actions.setActiveQuest('fix_hardware'));
+                },
+                options: [
+                    { id: 1, text: "Уже бегу на рынок.", nextStep: 'exit' }
+                ]
+            },
+            {
+                text: "Архитектор: Смело. Там сейчас такое пекло... Если сможешь их успокоить, я буду впечатлен.",
+                onEnter: (dispatch, actions) => {
+                    // Manually switch quest branch
+                    dispatch(actions.completeQuest('crisis_choice'));
+                    dispatch(actions.setActiveQuest('negotiate_peace'));
+                },
+                options: [
+                    { id: 1, text: "Я найду нужные слова.", nextStep: 'exit' }
+                ]
+            }
+        ]
+    },
+    flame_war_peace: {
+        steps: [
+            {
+                text: "Troll.Master: ТЫ КТО ТАКОЙ? ВАЛИ ОТСЮДА ПОКА ЦЕЛ! ЛАМЕР!",
+                options: [
+                    { id: 1, text: "Сам ламер. (Атака)", nextStep: 3 },
+                    { id: 2, text: "Давайте успокоимся и обсудим всё конструктивно. (Дипломатия)", nextStep: 1 },
+                ]
+            },
+            {
+                text: "User1: Слушайте, он дело говорит. Хватит ругаться.",
+                options: [
+                    { id: 1, text: "Вот именно. Фидонет — это сеть друзей.", nextStep: 2 },
+                ]
+            },
+            {
+                text: "Troll.Master: ...Ладно. Может ты и прав. Скучно с вами.",
+                onEnter: (dispatch, actions) => {
+                    eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: true });
+                },
+                options: [
+                    { id: 1, text: "Мир.", nextStep: 'exit' }
+                ]
+            },
+            {
+                text: "Troll.Master: АХАХА! СЛИВ ЗАЩИТАН! (Вас забанили)",
+                onEnter: (dispatch, actions) => {
+                    eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: false });
+                },
+                options: [
+                    { id: 1, text: "...", nextStep: 'exit' }
+                ]
+            }
+        ]
     }
 };
 
@@ -61,6 +129,10 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
         // Context-aware dialogue selection
         if (quests.active === 'request_node') {
             dialogueId = 'request_node_status';
+        } else if (quests.active === 'crisis_choice') {
+            dialogueId = 'crisis_dialogue';
+        } else if (quests.active === 'negotiate_peace') {
+            dialogueId = 'flame_war_peace';
         }
 
         if (dialogueId === 'default') {

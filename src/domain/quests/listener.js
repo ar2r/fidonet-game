@@ -98,6 +98,20 @@ export function setupQuestListeners(dispatch, actions, getState) {
             }
         }
 
+        if (eventType === ITEM_BOUGHT && activeQuestId === 'fix_hardware') {
+            const { item } = payload;
+            if (item === 'solder_kit') {
+                completeQuestAndProgress('fix_hardware', dispatch, actions);
+            }
+        }
+
+        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'negotiate_peace') {
+            const { dialogueId, success } = payload;
+            if (dialogueId === 'flame_war_peace' && success) {
+                completeQuestAndProgress('negotiate_peace', dispatch, actions);
+            }
+        }
+
         if (eventType === ZMH_ACTIVITY_COMPLETED && activeQuestId === 'nightly_uptime') {
             completeQuestAndProgress('nightly_uptime', dispatch, actions);
         }

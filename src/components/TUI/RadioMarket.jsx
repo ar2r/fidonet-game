@@ -87,6 +87,13 @@ const MARKET_ITEMS = [
         price: 12000,
         description: 'Позволяют запускать более тяжелые программы и Windows 95 без тормозов.',
         type: 'hardware'
+    },
+    {
+        id: 'solder_kit',
+        name: 'Набор для пайки (Паяльник 40Вт)',
+        price: 500,
+        description: 'Все для ремонта и моддинга. Припой и канифоль в комплекте. Требуется навык Hardware.',
+        type: 'item'
     }
 ];
 
