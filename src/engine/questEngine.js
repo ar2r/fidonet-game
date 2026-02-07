@@ -1,4 +1,5 @@
 import { getQuestById } from '../content/quests';
+import { addItem, updateStat } from './store'; // Direct import from store slice exports if possible, or pass as arguments
 
 export function completeQuestAndProgress(questId, dispatch, actions) {
     const quest = getQuestById(questId);
@@ -21,8 +22,16 @@ export function completeQuestAndProgress(questId, dispatch, actions) {
             if (reward.type === 'skill') {
                 dispatch(updateSkill({ skill: reward.key, value: reward.delta }));
                 notifications.push(`║  +${reward.delta} ${reward.key}`);
+            } else if (reward.type === 'stat') {
+                dispatch(updateStat({ stat: reward.key, value: reward.delta }));
+                notifications.push(`║  ${reward.delta > 0 ? '+' : ''}${reward.delta} ${reward.key}`);
+            } else if (reward.type === 'item') {
+                dispatch(addItem(reward.item));
+                notifications.push(`║  ПОЛУЧЕНО: ${reward.item}`);
+            } else if (reward.type === 'money') {
+                dispatch(updateStat({ stat: 'money', value: reward.delta }));
+                notifications.push(`║  +${reward.delta} руб.`);
             }
-            // TODO: Handle other reward types (item, stat, money) in future phases
         });
     }
     // Backwards compatibility with old reward format
