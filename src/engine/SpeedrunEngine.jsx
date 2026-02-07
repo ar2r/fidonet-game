@@ -2,259 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     setSpeedrunMode, 
-    setSpeedrunCommand, 
-    resetGame,
-    resetPlayer,
-    resetNetwork,
-    resetQuests,
-    setOnboardingSeen
+    setSpeedrunCommand,
 } from './store';
-import { openWindow, closeWindow } from './windowManager';
-import { WINDOW_DEFINITIONS } from '../config/windows';
+import { SPEEDRUN_SCRIPT as DEFAULT_SCRIPT } from './SpeedrunScript';
 
-const SPEEDRUN_SCRIPT = [
-    // Initial State
-    { type: 'fn', action: (dispatch) => {
-        dispatch(resetGame());
-        dispatch(resetPlayer());
-        dispatch(resetNetwork());
-        dispatch(resetQuests());
-        dispatch(setOnboardingSeen());
-    }},
-    { type: 'wait', ms: 1000 },
-
-    // --- ACT 1 & 2 ---
-
-    // Step 1: Open Terminal
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
-    { type: 'wait', ms: 1500 },
-
-    // Step 2: Init Modem
-    { type: 'terminal', command: 'ATZ' },
-    { type: 'wait', ms: 2000 },
-
-    // Step 3: Dial BBS
-    { type: 'terminal', command: 'DIAL 555-3389' },
-    { type: 'wait', ms: 5000 }, // Wait for connection animation
-
-    // Step 4: Check Files
-    { type: 'terminal', command: 'FILES' },
-    { type: 'wait', ms: 2000 },
-
-    // Step 5: Download T-Mail
-    { type: 'terminal', command: 'DOWNLOAD T-MAIL' },
-    { type: 'wait', ms: 4000 },
-
-    // Step 6: Download GoldED
-    { type: 'terminal', command: 'DOWNLOAD GOLDED' },
-    { type: 'wait', ms: 4000 },
-
-    // Step 7: Disconnect
-    { type: 'terminal', command: 'EXIT' },
-    { type: 'wait', ms: 2000 },
-
-    // Step 8: Close Terminal
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
-    { type: 'wait', ms: 1000 },
-
-    // Step 9: Open T-Mail Config
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['tmail-config'])) },
-    { type: 'wait', ms: 1500 },
-
-    // Step 10: Fill T-Mail Config
-    { 
-        type: 'fillForm', 
-        windowId: 'tmail-config',
-        fields: [
-            { index: 0, value: '2:5020/730.15' }, // Address
-            { index: 1, value: 'secret' },        // Password
-            { index: 2, value: '2:5020/730' },    // Boss Node
-            { index: 3, value: '555-3389' }       // Boss Phone
-        ],
-        submitKey: 'F2'
-    },
-    { type: 'wait', ms: 2000 },
-
-    // Step 11: Wait for close
-    { type: 'wait', ms: 1000 },
-
-    // Step 12: Open GoldED Config
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-config'])) },
-    { type: 'wait', ms: 1500 },
-
-    // Step 13: Fill GoldED Config
-    { 
-        type: 'fillForm', 
-        windowId: 'golded-config',
-        fields: [
-            { index: 0, value: 'SysOp' },         // Username
-            { index: 1, value: 'Fido User' },     // Realname
-            { index: 2, value: '2:5020/730.15' }, // Address
-            { index: 3, value: 'My BBS' }         // Origin
-        ],
-        submitKey: 'F2'
-    },
-    { type: 'wait', ms: 3000 }, // Wait for mail tossing animation (auto-triggered by config save)
-
-    // --- ACT 3 ---
-
-    // Step 16: Poll Boss
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: 'T-MAIL POLL' },
-    { type: 'wait', ms: 5000 }, // Wait for tossing animation
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
-    { type: 'wait', ms: 1000 },
-
-    // Step 17: Read Rules
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-reader'])) },
-    { type: 'wait', ms: 1500 },
-    { type: 'clickText', text: 'SU.FLAME' }, // Select Area
-    { type: 'wait', ms: 1000 },
-    { type: 'key', key: 'Enter' }, // Enter Area
-    { type: 'wait', ms: 1000 },
-    { type: 'clickText', text: 'Rules' }, // Select Message
-    { type: 'wait', ms: 1000 },
-    { type: 'key', key: 'Enter' }, // Read Message
-    { type: 'wait', ms: 2000 }, // Reading...
-    { type: 'key', key: 'Escape' }, // Back to list
-    { type: 'wait', ms: 1000 },
-
-    // Step 18: Write Hello (Diplomat)
-    { type: 'key', key: 'n' }, // New Message
-    { type: 'wait', ms: 1000 },
-    { 
-        type: 'fillForm', 
-        fields: [
-            { index: 0, value: 'All' },   // To
-            { index: 1, value: 'Hello' }, // Subj
-            { index: 2, value: 'Hello everyone! Peace and love.' } // Body
-        ]
-    },
-    { type: 'wait', ms: 1000 },
-    { type: 'clickText', text: 'Send (Ctrl+Enter)' }, // Click Send button
-    { type: 'wait', ms: 1500 },
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('golded-reader')) },
-    { type: 'wait', ms: 1000 },
-
-    // --- ACT 4 ---
-
-    // Step 19: Buy Modem
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['radio-market'])) },
-    { type: 'wait', ms: 1500 },
-    { type: 'clickText', text: 'US Robotics' }, // Select Modem
-    { type: 'wait', ms: 1000 },
-    { type: 'key', key: 'Enter' }, // Buy
-    { type: 'wait', ms: 1000 },
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('radio-market')) },
-    { type: 'wait', ms: 1000 },
-
-    // Step 20: Request Node
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: 'ATZ' }, // Init new modem
-    { type: 'wait', ms: 1000 },
-    { type: 'terminal', command: 'DIAL 555-3389' },
-    { type: 'wait', ms: 4000 },
-    { type: 'terminal', command: 'CHAT' }, // Enter Chat
-    { type: 'wait', ms: 2000 },
-    // Dialogue: 1. Hello -> 1. Request Node -> 1. Yes -> 1. Thanks
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 2000 },
-    
-    // Step 21: Download Binkley
-    { type: 'terminal', command: 'FILES' }, // Go to Files
-    { type: 'wait', ms: 2000 },
-    { type: 'terminal', command: 'DOWNLOAD BINKLEY' }, // Download
-    { type: 'wait', ms: 4000 },
-    { type: 'terminal', command: 'EXIT' },
-    { type: 'wait', ms: 2000 },
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
-    { type: 'wait', ms: 1000 },
-
-    // Step 22: Configure Binkley
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['binkley-config'])) },
-    { type: 'wait', ms: 1500 },
-    { 
-        type: 'fillForm', 
-        fields: [
-            { index: 0, value: 'SysOp' },         // Sysop
-            { index: 1, value: '2:5020/730' },    // Address
-            { index: 2, value: '19200' },         // Baud
-            { index: 3, value: 'COM2' },          // Port
-            { index: 4, value: 'C:\\FIDO\\IN' },  // Inbound
-            { index: 5, value: 'C:\\FIDO\\OUT' }  // Outbound
-        ],
-        submitKey: 'F2'
-    },
-    { type: 'wait', ms: 2000 },
-
-    // Step 23: Nightly Uptime
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['binkley-term'])) },
-    { type: 'wait', ms: 5000 }, // Wait for ZMH check (simulated)
-    // We cannot simulate time passing easily without cheating or waiting long.
-    // Assuming the user runs this at "night" or the game is fast.
-    // For speedrun demo, we might need to close it.
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('binkley-term')) },
-    { type: 'wait', ms: 1000 },
-
-    // --- ACT 5 ---
-    
-    // Step 24: Crisis (Diplomat)
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-reader'])) },
-    { type: 'wait', ms: 1500 },
-    { type: 'clickText', text: 'SU.FLAME' }, // Enter Area
-    { type: 'wait', ms: 1000 },
-    { type: 'key', key: 'Enter' },
-    { type: 'wait', ms: 1000 },
-    // Find "War" thread - assumes it exists in mock data
-    // If not, we just write a new message to win.
-    { type: 'key', key: 'n' },
-    { type: 'wait', ms: 1000 },
-    { 
-        type: 'fillForm', 
-        fields: [
-            { index: 0, value: 'All' },
-            { index: 1, value: 'Peace' },
-            { index: 2, value: 'Stop the war!' }
-        ]
-    },
-    { type: 'wait', ms: 1000 },
-    { type: 'clickText', text: 'Send (Ctrl+Enter)' },
-    { type: 'wait', ms: 1500 },
-    { type: 'fn', action: (dispatch) => dispatch(closeWindow('golded-reader')) },
-    { type: 'wait', ms: 1000 },
-
-    // --- ACT 6 ---
-
-    // Step 25: Meet Coordinator
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: 'ATZ' },
-    { type: 'wait', ms: 1000 },
-    { type: 'terminal', command: 'DIAL 555-3389' },
-    { type: 'wait', ms: 4000 },
-    { type: 'terminal', command: 'CHAT' },
-    { type: 'wait', ms: 2000 },
-    // Coordinator Dialogue
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: '1' },
-    { type: 'wait', ms: 1500 },
-    { type: 'terminal', command: '1' }, // "I agree"
-    { type: 'wait', ms: 3000 },
-
-    // End
-    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['district-map'])) },
-];
-
-export const SpeedrunEngine = () => {
+export const SpeedrunEngine = ({ script = DEFAULT_SCRIPT }) => {
     const dispatch = useDispatch();
     const gameState = useSelector(state => state.gameState);
     const speedrunMode = gameState?.speedrunMode || false;
@@ -267,12 +19,12 @@ export const SpeedrunEngine = () => {
     // Debug logging
     useEffect(() => {
         if (speedrunMode) {
-            console.log(`[Speedrun] Step: ${stepIndex}/${SPEEDRUN_SCRIPT.length}`);
+            console.log(`[Speedrun] Step: ${stepIndex}/${script.length}`);
         }
         if (gameState && !('speedrunMode' in gameState)) {
             console.error('[Speedrun] speedrunMode missing from gameState!', gameState);
         }
-    }, [speedrunMode, stepIndex, gameState]);
+    }, [speedrunMode, stepIndex, gameState, script]);
 
     // Helpers
     const simulateTyping = (input, value) => {
@@ -311,12 +63,12 @@ export const SpeedrunEngine = () => {
             return;
         }
 
-        if (stepIndex >= SPEEDRUN_SCRIPT.length) {
+        if (stepIndex >= script.length) {
             dispatch(setSpeedrunMode(false));
             return;
         }
 
-        const step = SPEEDRUN_SCRIPT[stepIndex];
+        const step = script[stepIndex];
 
         if (waitingForCommand) return; 
 
@@ -361,7 +113,7 @@ export const SpeedrunEngine = () => {
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [speedrunMode, stepIndex, waitingForCommand, dispatch]);
+    }, [speedrunMode, stepIndex, waitingForCommand, dispatch, script]);
 
     // Command completion listener
     useEffect(() => {
@@ -388,7 +140,7 @@ export const SpeedrunEngine = () => {
             border: '2px solid white',
             boxShadow: '2px 2px 5px rgba(0,0,0,0.5)'
         }}>
-            SPEEDRUN MODE ACTIVE (Step {stepIndex}/{SPEEDRUN_SCRIPT.length})
+            SPEEDRUN MODE ACTIVE (Step {stepIndex}/{script.length})
             <button onClick={() => dispatch(setSpeedrunMode(false))} style={{ marginLeft: 10 }}>STOP</button>
         </div>
     );
