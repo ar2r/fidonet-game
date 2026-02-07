@@ -18,7 +18,7 @@ import DistrictMap from './components/TUI/DistrictMap';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
-import QuestLogFile from './components/QuestLogFile';
+import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
 import Onboarding from './components/Onboarding';
@@ -60,10 +60,10 @@ const WINDOW_DEFINITIONS = {
         position: { x: 150, y: 150 },
         size: { width: 400, height: 300 },
     },
-    'todo-list': {
-        id: 'todo-list',
-        title: 'Notepad - TODO.TXT',
-        component: 'todo-list',
+    'history-log': {
+        id: 'history-log',
+        title: 'Notepad - HISTORY.TXT',
+        component: 'history-log',
         position: { x: 300, y: 100 },
         size: { width: 450, height: 400 },
     },
@@ -301,8 +301,8 @@ function App() {
                     </div>
                 );
 
-            case 'todo-list':
-                return <QuestLogFile />;
+            case 'history-log':
+                return <HistoryLogFile />;
 
             case 'winamp':
                 return <Winamp />;
@@ -403,10 +403,10 @@ function App() {
                         <span style={{ background: '#008080', padding: '2px' }}>Readme.txt</span>
                     </div>
 
-                    {/* Todo.txt */}
-                    <div onDoubleClick={() => handleOpenWindow('todo-list')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Todo.txt</span>
+                    {/* History.txt */}
+                    <div onDoubleClick={() => handleOpenWindow('history-log')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>LOG</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>History.txt</span>
                     </div>
 
                     {/* Map */}

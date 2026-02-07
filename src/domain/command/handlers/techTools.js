@@ -6,7 +6,7 @@
 import { eventBus } from '../../events/bus';
 import { COMMAND_EXECUTED } from '../../events/types';
 
-export function handleTrace({ command, dispatch, actions, appendOutput }) {
+export function handleTrace({ command, appendOutput }) {
     const parts = command.trim().split(/\s+/);
     const target = parts.length > 1 ? parts[1].toUpperCase() : '';
 

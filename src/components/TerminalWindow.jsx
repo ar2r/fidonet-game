@@ -3,7 +3,6 @@ import { Window, WindowHeader, WindowContent, Button } from 'react95';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { processCommand, getPrompt } from '../engine/commandParser';
-import { FIDO_BANNER } from '../assets/ascii';
 import { audioManager } from '../engine/audio/AudioManager';
 import {
     connect as connectAction,
@@ -28,11 +27,18 @@ import {
     setLastBillDay as setLastBillDayAction,
 } from '../engine/store';
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #000;
+`;
+
 const TerminalContainer = styled.div`
   background-color: #000;
   color: #00ff00;
   font-family: 'DosVga', monospace;
-  height: 600px;
+  flex-grow: 1;
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
@@ -41,6 +47,17 @@ const TerminalContainer = styled.div`
   font-size: 16px;
   line-height: 1.2;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+`;
+
+const TerminalStatusBar = styled.div`
+  background-color: #008080; /* Teal background for status */
+  color: #fff;
+  font-family: 'DosVga', monospace;
+  padding: 2px 8px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 2px solid #fff;
+  font-size: 14px;
 `;
 
 const Cursor = styled.span`
@@ -56,10 +73,11 @@ const Cursor = styled.span`
   }
 `;
 
-function getPromptForMode(terminalMode) {
-    if (terminalMode === 'BBS_MENU') return '>';
-    if (terminalMode === 'BBS_FILES') return '>';
-    if (terminalMode === 'BBS_CHAT') return '>';
+function getPromptForMode(network) {
+    if (network.terminalProgramRunning) return '';
+    if (network.terminalMode === 'BBS_MENU') return '>';
+    if (network.terminalMode === 'BBS_FILES') return '>';
+    if (network.terminalMode === 'BBS_CHAT') return '>';
     return getPrompt();
 }
 
@@ -77,7 +95,6 @@ const ACTIONS = {
     setVirusActive: setVirusActiveAction,
     setVirusStage: setVirusStageAction,
     updateStat: updateStatAction,
-    // Time actions
     setTimeMinutes: setTimeMinutesAction,
     advanceTime: advanceTimeAction,
     setPhase: setPhaseAction,
@@ -96,7 +113,7 @@ function TerminalWindow({ onClose, embedded = false }) {
 
     const fullContext = useMemo(() => ({ gameState, network, player, quests }), [gameState, network, player, quests]);
 
-    const currentPrompt = getPromptForMode(network.terminalMode);
+    const currentPrompt = getPromptForMode(network);
 
     const [history, setHistory] = useState([
         "MS-DOS Version 6.22",
@@ -112,10 +129,30 @@ function TerminalWindow({ onClose, embedded = false }) {
     const [inputBuffer, setInputBuffer] = useState("");
     const terminalEndRef = useRef(null);
 
+    // Calculate connection time if connected (mock)
+    const [connTime, setConnTime] = useState("00:00:00");
+
+    useEffect(() => {
+        let timer;
+        if (network.connected) {
+            let seconds = 0;
+            timer = setInterval(() => {
+                seconds++;
+                const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+                const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                setConnTime(`${h}:${m}:${s}`);
+            }, 1000);
+        } else {
+            setConnTime("00:00:00");
+        }
+        return () => clearInterval(timer);
+    }, [network.connected]);
+
     const handleKeyDown = useCallback((e) => {
         if (gameState.gameOver) return;
         
-        audioManager.playClick(); // Mechanical keyboard sound
+        audioManager.playClick(); 
 
         if (e.key === 'Enter') {
             const cmd = inputBuffer;
@@ -146,27 +183,34 @@ function TerminalWindow({ onClose, embedded = false }) {
         }
     }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver]);
 
-    // Auto-scroll
     useEffect(() => {
         terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [history, inputBuffer]);
 
-    // Key listeners
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
     const terminalContent = (
-        <TerminalContainer>
-            {history.map((line, i) => (
-                <div key={i}>{line}</div>
-            ))}
-            <div>
-                <span>{currentPrompt}{inputBuffer}</span><Cursor />
-            </div>
-            <div ref={terminalEndRef} />
-        </TerminalContainer>
+        <Wrapper>
+            <TerminalContainer>
+                {history.map((line, i) => (
+                    <div key={i}>{line}</div>
+                ))}
+                <div>
+                    <span>{currentPrompt}{inputBuffer}</span><Cursor />
+                </div>
+                <div ref={terminalEndRef} />
+            </TerminalContainer>
+            {network.terminalProgramRunning && (
+                <TerminalStatusBar>
+                    <span>Alt-Z Help | Alt-X Exit</span>
+                    <span>ANSI  14400 8-N-1</span>
+                    <span>{network.connected ? 'ONLINE' : 'OFFLINE'} {connTime}</span>
+                </TerminalStatusBar>
+            )}
+        </Wrapper>
     );
 
     if (embedded) {
@@ -181,7 +225,7 @@ function TerminalWindow({ onClose, embedded = false }) {
                     <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>X</span>
                 </Button>
             </WindowHeader>
-            <WindowContent>
+            <WindowContent style={{ padding: 0 }}>
                 {terminalContent}
             </WindowContent>
         </Window>

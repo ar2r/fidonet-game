@@ -93,7 +93,7 @@ function StatusBar() {
 
             <SystemTray variant="well">
                 <span title="День">{gameState.day} д.</span>
-                <span title="Время" style={{ minWidth: 40, textAlign: 'center' }}>
+                <span title="Время" style={{ minWidth: 50, textAlign: 'center', fontSize: '14px', fontWeight: 'bold' }}>
                     {gameState.time}{zmhLabel}
                 </span>
             </SystemTray>
