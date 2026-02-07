@@ -109,6 +109,10 @@ const windowManagerSlice = createSlice({
                 state.windows[id].title = title;
             }
         },
+
+        loadState(state, action) {
+            return action.payload;
+        }
     },
 });
 
@@ -120,6 +124,7 @@ export const {
     updateWindowPosition,
     updateWindowSize,
     updateWindowTitle,
+    loadState
 } = windowManagerSlice.actions;
 
 export default windowManagerSlice.reducer;

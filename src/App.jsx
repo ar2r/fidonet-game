@@ -37,6 +37,7 @@ import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
+import { loadGame, getSaveLink } from './engine/saveSystem';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -76,6 +77,32 @@ function App() {
     const quests = useSelector(state => state.quests);
     const gameState = useSelector(state => state.gameState);
     const windows = useSelector(state => state.windowManager.windows);
+
+    // Load Game on Mount
+    React.useEffect(() => {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#save=')) {
+            const encoded = hash.substring(6);
+            if (loadGame(encoded)) {
+                // Clear hash to prevent reload loop or clutter
+                window.history.replaceState(null, '', window.location.pathname);
+                alert('Игра успешно загружена из ссылки!');
+            } else {
+                alert('Ошибка загрузки сохранения: неверный код.');
+            }
+        }
+    }, []);
+
+    const handleSaveGame = () => {
+        const link = getSaveLink();
+        if (link) {
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Ссылка на сохранение скопирована в буфер обмена!');
+            }).catch(() => {
+                prompt('Скопируйте ссылку для сохранения:', link);
+            });
+        }
+    };
 
     // Setup global quest event listeners
     React.useEffect(() => {
@@ -344,6 +371,12 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('artmoney')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'silver', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
                         <span style={{ background: '#008080', padding: '2px' }}>ArtMoney</span>
+                    </div>
+
+                    {/* Save Game */}
+                    <div onDoubleClick={handleSaveGame} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'blue', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px' }}>💾</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>SAVE.EXE</span>
                     </div>
 
                     {/* T-Mail Setup */}

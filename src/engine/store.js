@@ -62,6 +62,9 @@ const gameStateSlice = createSlice({
             virusStage: 'none',
             onboardingSeen: false,
         }),
+        loadState: (state, action) => {
+            return action.payload;
+        },
     }
 });
 
@@ -93,6 +96,9 @@ const playerSlice = createSlice({
         }
     },
     reducers: {
+        loadState: (state, action) => {
+            return action.payload;
+        },
         updateStat: (state, action) => {
             const { stat, value } = action.payload;
             if (state.stats[stat] !== undefined) {
@@ -211,6 +217,9 @@ const networkSlice = createSlice({
             activeDialogue: null,
             dialogueStep: 0,
         }),
+        loadState: (state, action) => {
+            return action.payload;
+        },
     }
 });
 
@@ -223,6 +232,9 @@ const questSlice = createSlice({
         hintLevel: 0,
     },
     reducers: {
+        loadState: (state, action) => {
+            return action.payload;
+        },
         completeQuest: (state, action) => {
             const questId = action.payload;
             if (!state.completed.includes(questId)) {
@@ -251,20 +263,24 @@ const questSlice = createSlice({
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen
+    setOnboardingSeen,
+    loadState: loadGameState
 } = gameStateSlice.actions;
 
 export const {
-    updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment
+    updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment,
+    loadState: loadPlayerState
 } = playerSlice.actions;
 
 export const {
     connect, disconnect, setStatus, setTerminalMode,
-    addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork
+    addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork,
+    loadState: loadNetworkState
 } = networkSlice.actions;
 
 export const {
-    completeQuest, setActiveQuest, resetQuests, revealHint
+    completeQuest, setActiveQuest, resetQuests, revealHint,
+    loadState: loadQuestState
 } = questSlice.actions;
 
 export const store = configureStore({
