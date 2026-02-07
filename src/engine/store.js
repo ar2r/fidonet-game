@@ -57,19 +57,26 @@ const gameStateSlice = createSlice({
         setVirusStage: (state, action) => {
             state.virusStage = action.payload;
         },
-        resetGame: () => ({
-            day: 1,
-            phase: 'night',
-            time: '23:00',
-            timeMinutes: 1380,
-            zmh: false,
-            act: 1,
-            gameOver: false,
-            gameOverReason: null,
-            virusActive: false,
-            virusStage: 'none',
-            onboardingSeen: false,
-        }),
+        resetGame: (state) => {
+            const speedrunMode = state.speedrunMode;
+            const speedrunCommand = state.speedrunCommand;
+            
+            return {
+                day: 1,
+                phase: 'night',
+                time: '23:00',
+                timeMinutes: 1380,
+                zmh: false,
+                act: 1,
+                gameOver: false,
+                gameOverReason: null,
+                virusActive: false,
+                virusStage: 'none',
+                onboardingSeen: false,
+                speedrunMode: speedrunMode,
+                speedrunCommand: speedrunCommand,
+            };
+        },
     }
 });
 
