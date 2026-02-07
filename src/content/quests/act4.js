@@ -55,7 +55,57 @@ export const ACT4_QUESTS = [
             { type: 'skill', key: 'eloquence', delta: 2 },
             { type: 'stat', key: 'karma', delta: 10 },
         ],
-        nextQuest: null, // Next: Setup BinkleyTerm
+        nextQuest: 'download_binkley',
+    },
+
+    {
+        id: 'download_binkley',
+        act: 4,
+        title: 'Скачать BinkleyTerm',
+        description: 'Сисоп сказал использовать "серьезный мейлер". Скачайте BinkleyTerm с BBS.',
+        hint: 'Подключитесь к BBS и скачайте файл #5 из файловой области.',
+        prerequisites: ['request_node'],
+        steps: [
+            {
+                id: 'dl_bt',
+                type: StepType.EVENT,
+                event: 'download.completed',
+                description: 'Скачать BinkleyTerm',
+                metadata: {
+                    item: 'binkley',
+                },
+            },
+        ],
+        rewards: [
+            { type: 'skill', key: 'software', delta: 1 },
+        ],
+        nextQuest: 'configure_binkley',
+    },
+
+    {
+        id: 'configure_binkley',
+        act: 4,
+        title: 'Настройка Ноды',
+        description: 'Настройте BinkleyTerm для работы в режиме Ноды.',
+        hint: 'Отредактируйте C:\\FIDO\\BT.CFG. Ваш адрес: 2:5020/730. Имя сисопа: SysOp (или ваше). Скорость порта: 19200.',
+        prerequisites: ['download_binkley'],
+        steps: [
+            {
+                id: 'save_bt_cfg',
+                type: StepType.EVENT,
+                event: 'file.saved',
+                description: 'Сохранить конфиг BinkleyTerm',
+                metadata: {
+                    path: 'C:\\FIDO\\BT.CFG',
+                    validator: 'binkley.valid',
+                },
+            },
+        ],
+        rewards: [
+            { type: 'skill', key: 'software', delta: 3 },
+            { type: 'item', key: 'node_status', delta: 1 },
+        ],
+        nextQuest: null, // Next: Nightly Uptime
         completesAct: 4,
     },
 ];

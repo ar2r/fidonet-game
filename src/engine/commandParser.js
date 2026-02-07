@@ -69,6 +69,7 @@ commandRegistry.register('BBS_FILES', '1', bbsFiles.handleDownloadTMail);
 commandRegistry.register('BBS_FILES', '2', bbsFiles.handleDownloadGoldED);
 commandRegistry.register('BBS_FILES', '3', bbsFiles.handleDownloadDoom);
 commandRegistry.register('BBS_FILES', '4', bbsFiles.handleDownloadAidstest);
+commandRegistry.register('BBS_FILES', '5', bbsFiles.handleDownloadBinkley);
 commandRegistry.register('BBS_FILES', 'Q', bbsFiles.handleFilesQuit);
 commandRegistry.register('BBS_FILES', /.*/, bbsFiles.handleUnknownFilesCommand); // Catch-all
 

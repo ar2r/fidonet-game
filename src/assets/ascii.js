@@ -43,10 +43,11 @@ export const BBS_FILES = `
 ║  2. GoldED 2.50+       [FIDO]   78KB  ║
 ║  3. DOOM2.WAD          [GAME]  4.2MB ║
 ║  4. AIDSTEST v1.03     [UTIL]   42KB  ║
+║  5. BinkleyTerm 2.60   [NODE]  200KB ║
 ║                                      ║
 ║  Q. Назад в меню                     ║
 ╚══════════════════════════════════════╝
-Скачать (1-4 или Q): `;
+Скачать (1-5 или Q): `;
 
 export const BBS_CHAT_SYSOP = `
 ┌─── Чат с SysOp'ом ───────────────────┐

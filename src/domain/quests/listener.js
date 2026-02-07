@@ -82,6 +82,20 @@ export function setupQuestListeners(dispatch, actions, getState) {
                 completeQuestAndProgress('request_node', dispatch, actions);
             }
         }
+
+        if (eventType === DOWNLOAD_COMPLETED && activeQuestId === 'download_binkley') {
+            const { item } = payload;
+            if (item === 'binkley') {
+                completeQuestAndProgress('download_binkley', dispatch, actions);
+            }
+        }
+
+        if (eventType === FILE_SAVED && activeQuestId === 'configure_binkley') {
+            const { path } = payload;
+            if (path === 'C:\\FIDO\\BT.CFG') {
+                completeQuestAndProgress('configure_binkley', dispatch, actions);
+            }
+        }
     };
 
     // Subscribe to all relevant events

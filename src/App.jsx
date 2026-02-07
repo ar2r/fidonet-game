@@ -14,6 +14,7 @@ import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
 import GoldED from './components/TUI/GoldED';
 import RadioMarket from './components/TUI/RadioMarket';
+import DistrictMap from './components/TUI/DistrictMap';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
@@ -21,17 +22,12 @@ import {
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
     updateSkill as updateSkillAction, 
-    setAct as setActAction,
-    setTimeMinutes as setTimeMinutesAction,
-    advanceTime as advanceTimeAction,
-    setPhase as setPhaseAction,
-    setZMH as setZMHAction,
-    advanceDay as advanceDayAction
+    setAct as setActAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
-import { handleTMailConfigComplete, handleGoldEDConfigComplete } from './domain/quests/service';
+import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { completeQuestAndProgress } from './engine/questEngine';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
@@ -88,12 +84,26 @@ const WINDOW_DEFINITIONS = {
         position: { x: 100, y: 50 },
         size: { width: 600, height: 500 },
     },
+    'binkley-config': {
+        id: 'binkley-config',
+        title: 'BinkleyTerm Setup',
+        component: 'binkley-config',
+        position: { x: 200, y: 150 },
+        size: { width: 600, height: 500 },
+    },
     'quest-journal': {
         id: 'quest-journal',
         title: 'Журнал квестов',
         component: 'quest-journal',
         position: { x: 150, y: 100 },
         size: { width: 700, height: 500 },
+    },
+    'district-map': {
+        id: 'district-map',
+        title: 'Карта района: путь игрока',
+        component: 'district-map',
+        position: { x: 120, y: 60 },
+        size: { width: 980, height: 640 },
     },
 };
 
@@ -196,6 +206,35 @@ function App() {
         return { success: true };
     };
 
+    const handleBinkleySave = (config) => {
+        const actions = {
+            completeQuest: completeQuestAction,
+            setActiveQuest: setActiveQuestAction,
+            updateSkill: updateSkillAction,
+            setAct: setActAction,
+        };
+
+        const result = handleBinkleyConfigComplete(config, quests, dispatch, actions);
+
+        if (!result.success) {
+            return { error: result.error };
+        }
+
+        const configContent = [
+            '; BinkleyTerm Configuration',
+            `SYSOP ${config.sysopName}`,
+            `ADDRESS ${config.address}`,
+            `BAUD ${config.baudRate}`,
+            `PORT ${config.port}`,
+            `INBOUND ${config.inbound}`,
+            `OUTBOUND ${config.outbound}`,
+            '',
+        ].join('\n');
+        fs.writeFile('C:\\FIDO\\BT.CFG', configContent);
+
+        return { success: true };
+    };
+
     const getTMailAddress = () => {
         const tmailConfig = fs.cat('C:\\FIDO\\T-MAIL.CTL');
         if (!tmailConfig.ok) return '';
@@ -273,9 +312,21 @@ function App() {
                     <RadioMarket />
                 );
 
+            case 'binkley-config':
+                return (
+                    <BinkleyConfig
+                        onSave={handleBinkleySave}
+                    />
+                );
+
             case 'quest-journal':
                 return (
                     <QuestJournal />
+                );
+
+            case 'district-map':
+                return (
+                    <DistrictMap />
                 );
 
             default:
@@ -381,6 +432,9 @@ function App() {
                                     <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
                                         <ListItem onClick={() => { handleOpenWindow('terminal'); setStartMenuOpen(false); }}>
                                             Терминал Фидонет
+                                        </ListItem>
+                                        <ListItem onClick={() => { handleOpenWindow('district-map'); setStartMenuOpen(false); }}>
+                                            Карта района
                                         </ListItem>
                                         <Divider />
                                         <ListItem onClick={handleSkipQuest} style={{ color: '#FF0000', fontWeight: 'bold' }}>

@@ -124,6 +124,40 @@ export function handleDownloadAidstest({ dispatch, actions, appendOutput }) {
     return { handled: true };
 }
 
+export function handleDownloadBinkley({ gameState, dispatch, actions, appendOutput }) {
+    appendOutput("Начинаю загрузку BinkleyTerm 2.60...");
+    appendOutput("Протокол: Zmodem");
+    appendOutput("");
+    simulateDownload("BT260.EXE", appendOutput, () => {
+        dispatch(actions.addItem('binkley'));
+        fs.createFile('C:\\FIDO\\BINKLEY.EXE', '[BinkleyTerm 2.60 Executable]');
+        fs.createFile('C:\\FIDO\\BT.CFG', `; BinkleyTerm Configuration
+; Заполните поля ниже
+
+SysopName 
+Address 
+BaudRate 
+`);
+        appendOutput("");
+        appendOutput("BinkleyTerm установлен в C:\\FIDO\\BINKLEY.EXE");
+        appendOutput("Конфиг: C:\\FIDO\\BT.CFG");
+
+        // Publish domain event
+        eventBus.publish(DOWNLOAD_COMPLETED, {
+            item: 'binkley',
+            source: 'BBS The Nexus',
+        });
+
+        // Quest handling logic for 'download_binkley' will be in listener.js (via DOWNLOAD_COMPLETED)
+        // or check manually if we prefer. But ACT1 used triggerQuest here.
+        // ACT4 quests are event-driven in listener.js, so we just publish.
+
+        appendOutput("");
+        appendOutput(BBS_FILES);
+    });
+    return { handled: true };
+}
+
 export function handleFilesQuit({ dispatch, actions, appendOutput }) {
     dispatch(actions.setTerminalMode('BBS_MENU'));
     appendOutput(BBS_MENU);
@@ -131,7 +165,7 @@ export function handleFilesQuit({ dispatch, actions, appendOutput }) {
 }
 
 export function handleUnknownFilesCommand({ appendOutput }) {
-    appendOutput("Неверный выбор. Введите 1-4 или Q.");
+    appendOutput("Неверный выбор. Введите 1-5 или Q.");
     appendOutput("");
     appendOutput(BBS_FILES);
     return { handled: true };
