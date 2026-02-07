@@ -1,4 +1,4 @@
-import { getQuestById } from './quests';
+import { getQuestById } from '../content/quests';
 
 export function completeQuestAndProgress(questId, dispatch, actions) {
     const quest = getQuestById(questId);
@@ -15,7 +15,18 @@ export function completeQuestAndProgress(questId, dispatch, actions) {
     notifications.push(`║  КВЕСТ ВЫПОЛНЕН!              ║`);
     notifications.push(`║  "${quest.title}"`);
 
-    if (quest.reward?.skills) {
+    // Process rewards (new schema format)
+    if (quest.rewards && Array.isArray(quest.rewards)) {
+        quest.rewards.forEach(reward => {
+            if (reward.type === 'skill') {
+                dispatch(updateSkill({ skill: reward.key, value: reward.delta }));
+                notifications.push(`║  +${reward.delta} ${reward.key}`);
+            }
+            // TODO: Handle other reward types (item, stat, money) in future phases
+        });
+    }
+    // Backwards compatibility with old reward format
+    else if (quest.reward?.skills) {
         for (const [skill, value] of Object.entries(quest.reward.skills)) {
             dispatch(updateSkill({ skill, value }));
             notifications.push(`║  +${value} ${skill}`);
