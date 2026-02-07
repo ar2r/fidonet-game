@@ -25,6 +25,10 @@ export const SPEEDRUN_SCRIPT = [
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
     { type: 'wait', ms: 1500 },
 
+    // Start Terminal Program
+    { type: 'terminal', command: 'TERMINAL' },
+    { type: 'wait', ms: 1000 },
+
     // Step 2: Init Modem
     { type: 'terminal', command: 'ATZ' },
     { type: 'wait', ms: 2000 },
@@ -148,6 +152,8 @@ export const SPEEDRUN_SCRIPT = [
     // Step 20: Request Node
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
     { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: 'TERMINAL' },
+    { type: 'wait', ms: 1000 },
     { type: 'terminal', command: 'ATZ' }, // Init new modem
     { type: 'wait', ms: 1000 },
     { type: 'terminal', command: 'DIAL 555-3389' },
@@ -227,6 +233,8 @@ export const SPEEDRUN_SCRIPT = [
     // Step 25: Meet Coordinator
     { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
     { type: 'wait', ms: 1500 },
+    { type: 'terminal', command: 'TERMINAL' },
+    { type: 'wait', ms: 1000 },
     { type: 'terminal', command: 'ATZ' },
     { type: 'wait', ms: 1000 },
     { type: 'terminal', command: 'DIAL 555-3389' },
