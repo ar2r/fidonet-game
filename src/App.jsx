@@ -12,10 +12,12 @@ import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
+import QuestJournal from './features/quests/QuestJournal';
 import { completeQuest as completeQuestAction, setActiveQuest as setActiveQuestAction, updateSkill as updateSkillAction, setAct as setActAction } from './engine/store';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete } from './domain/quests/service';
+import { completeQuestAndProgress } from './engine/questEngine';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -175,6 +177,12 @@ function App() {
                             <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
                         </div>
                     )}
+
+                    {/* Quest Journal (Always available) */}
+                    <div onDoubleClick={() => setActiveWindow('quest-journal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: '#0000AA', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFF00', fontSize: '14px', fontWeight: 'bold' }}>Q</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>Квесты</span>
+                    </div>
                 </div>
 
                 {/* Main Application Windows */}
@@ -223,6 +231,13 @@ function App() {
                         onClose={closeWindow}
                         onSave={handleGoldEDSave}
                         tmailAddress={getTMailAddress()}
+                    />
+                )}
+
+                {/* Quest Journal */}
+                {activeWindow === 'quest-journal' && (
+                    <QuestJournal
+                        onClose={closeWindow}
                     />
                 )}
 

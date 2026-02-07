@@ -4,6 +4,7 @@ import fs from './fileSystemInstance';
 import { completeQuestAndProgress, checkDownloadQuestCompletion } from './questEngine';
 import { eventBus } from '../domain/events/bus';
 import { MODEM_INITIALIZED, BBS_CONNECTED, DOWNLOAD_COMPLETED, COMMAND_EXECUTED } from '../domain/events/types';
+import { getQuestById } from '../content/quests';
 
 function simulateDownload(filename, appendOutput, onComplete) {
     const steps = [0, 10, 25, 40, 55, 70, 85, 100];
@@ -243,6 +244,42 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
         return 'CLEAR';
     } else if (command === 'HELP' || command === 'MANUAL') {
         appendOutput(GAME_MANUAL);
+    } else if (command === 'HINT' || command === 'QUEST') {
+        const activeQuestId = gameState.quests?.active;
+        if (!activeQuestId) {
+            appendOutput("══════════════════════════════════════");
+            appendOutput("  Нет активного квеста");
+            appendOutput("");
+            appendOutput("  Все задания выполнены!");
+            appendOutput("══════════════════════════════════════");
+        } else {
+            const quest = getQuestById(activeQuestId);
+            if (quest) {
+                appendOutput("══════════════════════════════════════");
+                appendOutput(`  ${quest.title}`);
+                appendOutput("══════════════════════════════════════");
+                appendOutput("");
+                appendOutput(`Цель: ${quest.description}`);
+                appendOutput("");
+                if (quest.hint) {
+                    appendOutput(`💡 Подсказка: ${quest.hint}`);
+                    appendOutput("");
+                }
+                if (quest.steps && quest.steps.length > 0) {
+                    appendOutput("Шаги:");
+                    quest.steps.forEach((step, index) => {
+                        const desc = step.description || step.id;
+                        appendOutput(`  ${index + 1}. ${desc}`);
+                    });
+                    appendOutput("");
+                }
+                appendOutput("Подробнее: дважды щелкните 'Квесты'");
+                appendOutput("на рабочем столе.");
+                appendOutput("══════════════════════════════════════");
+            } else {
+                appendOutput(`Квест "${activeQuestId}" не найден.`);
+            }
+        }
     } else if (command === 'DIR' || command === 'LS') {
         const result = fs.ls();
         const lines = formatDirListing(result, fs.pwd());

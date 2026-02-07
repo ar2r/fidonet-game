@@ -27,7 +27,7 @@ export const VALIDATORS = {
  * @returns {boolean}
  */
 function validateTMailConfigStep(context) {
-    const { event, state, fileSystem } = context;
+    const { event, fileSystem } = context;
 
     // Check if config file was saved
     if (event.type !== 'file.saved' || event.path !== 'C:\\FIDO\\T-MAIL.CTL') {

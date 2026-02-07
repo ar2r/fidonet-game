@@ -106,6 +106,7 @@ const CHICKEN_ASCII = `
 
 const CHARS = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789!@#$%^&*()';
 
+// eslint-disable-next-line no-unused-vars
 function VirusAnimation({ stage, onComplete }) {
   const [fallingChars, setFallingChars] = useState([]);
   const [showChicken, setShowChicken] = useState(false);
@@ -124,6 +125,7 @@ function VirusAnimation({ stage, onComplete }) {
           duration: 2 + Math.random() * 3,
         });
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFallingChars(chars);
 
       // Show chicken after 3 seconds

@@ -31,12 +31,12 @@ export function initializeQuestEventListeners(getState, dispatch, actions) {
     });
 
     // Downloads
-    eventBus.subscribe(DOWNLOAD_COMPLETED, (event) => {
+    eventBus.subscribe(DOWNLOAD_COMPLETED, () => {
         const state = getState();
 
         // Check if download_software quest is complete
         if (state.quests.active === 'download_software') {
-            const hasT mail = state.player.inventory.includes('t-mail');
+            const hasTmail = state.player.inventory.includes('t-mail');
             const hasGolded = state.player.inventory.includes('golded');
 
             if (hasTmail && hasGolded) {

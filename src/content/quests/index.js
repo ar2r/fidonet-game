@@ -69,6 +69,7 @@ export function getFirstQuestInAct(act) {
 const validation = validateQuestCollection(ALL_QUESTS);
 if (!validation.valid) {
     console.error('Quest validation errors:', validation.errors);
+    // eslint-disable-next-line no-undef
     if (process.env.NODE_ENV === 'development') {
         throw new Error(`Quest validation failed:\n${validation.errors.join('\n')}`);
     }
