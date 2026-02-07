@@ -49,7 +49,7 @@ function QuestLogFile() {
             <Header>СПИСОК ЗАДАЧ (TODO.TXT)</Header>
             
             {completedQuests.length > 0 ? (
-                completedQuests.map((q, i) => (
+                completedQuests.map((q) => (
                     <CompletedItem key={q.id}>
                         [x] {q.title}
                     </CompletedItem>

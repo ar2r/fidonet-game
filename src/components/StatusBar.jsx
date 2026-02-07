@@ -37,11 +37,6 @@ const SystemTray = styled(Panel)`
   font-size: 11px;
 `;
 
-const PHASE_ICONS = {
-    day: '\u2600',   // ☀
-    night: '\u263E',  // ☾
-};
-
 function getAtmosphereLabel(value) {
     if (value >= 80) return "Тишина и покой";
     if (value >= 60) return "Родители дома";
@@ -55,7 +50,6 @@ function StatusBar() {
     const player = useSelector(state => state.player);
     const [muted, setMuted] = useState(false);
 
-    const phaseIcon = PHASE_ICONS[gameState.phase] || '';
     const zmhLabel = gameState.zmh ? ' [ZMH]' : '';
     const atmosphereLabel = getAtmosphereLabel(player.stats.atmosphere);
 

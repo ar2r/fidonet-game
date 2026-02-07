@@ -31,7 +31,6 @@ import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
-import { completeQuestAndProgress } from './engine/questEngine';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';

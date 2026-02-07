@@ -203,7 +203,6 @@ class AudioManager {
         const sequence = TRACKS[trackId];
         if (!sequence) return;
 
-        let currentTime = 0;
         const playNext = (index) => {
             if (index >= sequence.length) {
                 // Loop

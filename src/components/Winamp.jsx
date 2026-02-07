@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { Button } from 'react95';
 import { audioManager } from '../engine/audio/AudioManager';
 
@@ -173,7 +173,6 @@ function Winamp() {
     const [visuals, setVisuals] = useState(Array(18).fill(5));
     const [time, setTime] = useState(0);
     const timerRef = useRef(null);
-    const progressRef = useRef(null);
 
     // Audio simulation
     useEffect(() => {
@@ -186,7 +185,6 @@ function Winamp() {
             audioManager.playMelody(MOCK_TRACKS[currentTrackIndex].id); 
         } else {
             clearInterval(timerRef.current);
-            setVisuals(Array(18).fill(2));
             audioManager.stopMusic();
         }
         return () => {
@@ -197,7 +195,7 @@ function Winamp() {
 
     const play = () => setIsPlaying(true);
     const pause = () => setIsPlaying(!isPlaying);
-    const stop = () => { setIsPlaying(false); setTime(0); };
+    const stop = () => { setIsPlaying(false); setTime(0); setVisuals(Array(18).fill(2)); };
     const prev = () => { setCurrentTrackIndex(i => Math.max(0, i - 1)); setTime(0); };
     const next = () => { setCurrentTrackIndex(i => Math.min(MOCK_TRACKS.length - 1, i + 1)); setTime(0); };
 
