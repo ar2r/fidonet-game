@@ -9,7 +9,7 @@ let buildDate = new Date().toISOString();
 try {
     commitHash = execSync('git rev-parse --short HEAD').toString().trim();
     console.log('Build version (git):', commitHash);
-} catch (e) {
+} catch {
     console.log('Could not get git commit hash via command, checking environment variables...');
     const envVars = [
         'VERCEL_GIT_COMMIT_SHA',

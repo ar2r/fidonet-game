@@ -83,11 +83,4 @@ export const WINDOW_DEFINITIONS = {
         position: { x: 150, y: 100 },
         size: { width: 700, height: 500 },
     },
-    'district-map': {
-        id: 'district-map',
-        title: 'Карта района: путь игрока',
-        component: 'district-map',
-        position: { x: 120, y: 60 },
-        size: { width: 980, height: 640 },
-    },
 };

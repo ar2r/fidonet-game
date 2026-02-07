@@ -36,17 +36,4 @@ describe('FidoNet Simulator UI', () => {
         const terminalHeadersAfter = screen.getAllByText(/MS-DOS Prompt/i);
         expect(terminalHeadersAfter.length).toBeGreaterThan(0);
     });
-
-    it('opens district map from start menu', () => {
-        renderWithStore(<App />);
-
-        const startButton = screen.getByText(/Пуск/);
-        fireEvent.click(startButton);
-
-        const mapMenuItem = screen.getByText('Карта района');
-        fireEvent.click(mapMenuItem);
-
-        const mapHeaders = screen.getAllByText(/Карта района: путь игрока/i);
-        expect(mapHeaders.length).toBeGreaterThan(0);
-    });
 });

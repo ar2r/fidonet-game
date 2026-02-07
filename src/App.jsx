@@ -14,7 +14,6 @@ import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
 import GoldED from './components/TUI/GoldED';
 import RadioMarket from './components/TUI/RadioMarket';
-import DistrictMap from './components/TUI/DistrictMap';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
@@ -281,11 +280,6 @@ function App() {
                     <QuestJournal />
                 );
 
-            case 'district-map':
-                return (
-                    <DistrictMap />
-                );
-
             default:
                 return <div>Unknown window type</div>;
         }
@@ -338,12 +332,6 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('history-log')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>LOG</div>
                         <span style={{ background: '#008080', padding: '2px' }}>History.txt</span>
-                    </div>
-
-                    {/* Map */}
-                    <div onDoubleClick={() => handleOpenWindow('district-map')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: '#333399', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>MAP</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Карта</span>
                     </div>
 
                     {/* Winamp */}
@@ -441,9 +429,6 @@ function App() {
                                     <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
                                         <ListItem onClick={() => { handleOpenWindow('terminal'); setStartMenuOpen(false); }}>
                                             Терминал Фидонет
-                                        </ListItem>
-                                        <ListItem onClick={() => { handleOpenWindow('district-map'); setStartMenuOpen(false); }}>
-                                            Карта района
                                         </ListItem>
                                         <Divider />
                                         <ListItem disabled>
