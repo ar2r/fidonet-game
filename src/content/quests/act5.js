@@ -76,6 +76,7 @@ export const ACT5_QUESTS = [
         prerequisites: ['fix_hardware', 'negotiate_peace'], // OR logic handled in engine? No, usually AND. Logic needs dynamic branching.
         steps: [],
         rewards: [{ type: 'stat', key: 'fido_fame', delta: 100 }],
+        nextQuest: 'meet_coordinator',
         completesAct: 5,
     }
 ];

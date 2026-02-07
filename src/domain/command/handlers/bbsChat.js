@@ -111,6 +111,39 @@ const DIALOGUES = {
                 ]
             }
         ]
+    },
+    coordinator_finale: {
+        steps: [
+            {
+                text: "RC5020: Приветствую, Super SysOp. Я наслышан о твоих подвигах. Ты быстро поднялся.",
+                options: [
+                    { id: 1, text: "Я просто делал свою работу.", nextStep: 1 },
+                    { id: 2, text: "Да, я лучший.", nextStep: 2 },
+                ]
+            },
+            {
+                text: "RC5020: Скромность украшает. Мы ищем нового координатора на твой сектор. Ты готов?",
+                options: [
+                    { id: 1, text: "Всегда готов!", nextStep: 3 },
+                ]
+            },
+            {
+                text: "RC5020: Амбициозно. Но нам нужны лидеры. Докажи, что ты достоин.",
+                options: [
+                    { id: 1, text: "Посмотрите на мой аптайм и карму.", nextStep: 3 },
+                ]
+            },
+            {
+                text: "RC5020: Хм... Впечатляет. Добро пожаловать в элиту. Теперь ты - Координатор.",
+                onEnter: (dispatch, actions) => {
+                    eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'coordinator_finale', success: true });
+                    dispatch(actions.setRank('Coordinator'));
+                },
+                options: [
+                    { id: 1, text: "Спасибо! (Конец игры)", nextStep: 'exit' }
+                ]
+            }
+        ]
     }
 };
 
@@ -133,6 +166,8 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
             dialogueId = 'crisis_dialogue';
         } else if (quests.active === 'negotiate_peace') {
             dialogueId = 'flame_war_peace';
+        } else if (quests.active === 'meet_coordinator') {
+            dialogueId = 'coordinator_finale';
         }
 
         if (dialogueId === 'default') {

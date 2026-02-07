@@ -112,6 +112,13 @@ export function setupQuestListeners(dispatch, actions, getState) {
             }
         }
 
+        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'meet_coordinator') {
+            const { dialogueId, success } = payload;
+            if (dialogueId === 'coordinator_finale' && success) {
+                completeQuestAndProgress('meet_coordinator', dispatch, actions);
+            }
+        }
+
         if (eventType === ZMH_ACTIVITY_COMPLETED && activeQuestId === 'nightly_uptime') {
             completeQuestAndProgress('nightly_uptime', dispatch, actions);
         }
