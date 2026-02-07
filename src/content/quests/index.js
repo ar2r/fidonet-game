@@ -7,6 +7,7 @@ import { ACT1_QUESTS } from './act1';
 import { ACT2_QUESTS } from './act2';
 import { ACT3_QUESTS } from './act3';
 import { ACT4_QUESTS } from './act4';
+import { ACT5_QUESTS } from './act5';
 import { validateQuestCollection } from '../../domain/quests/schema';
 
 /**
@@ -17,6 +18,7 @@ export const ALL_QUESTS = [
     ...ACT2_QUESTS,
     ...ACT3_QUESTS,
     ...ACT4_QUESTS,
+    ...ACT5_QUESTS,
 ];
 
 /**
