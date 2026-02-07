@@ -91,6 +91,13 @@ const WINDOW_DEFINITIONS = {
         position: { x: 200, y: 150 },
         size: { width: 600, height: 500 },
     },
+    'binkley-term': {
+        id: 'binkley-term',
+        title: 'BinkleyTerm - Node 2:5020/730',
+        component: 'binkley-term',
+        position: { x: 50, y: 50 },
+        size: { width: 800, height: 600 },
+    },
     'quest-journal': {
         id: 'quest-journal',
         title: 'Журнал квестов',
@@ -317,6 +324,11 @@ function App() {
                     <BinkleyConfig
                         onSave={handleBinkleySave}
                     />
+                );
+
+            case 'binkley-term':
+                return (
+                    <BinkleyTerm />
                 );
 
             case 'quest-journal':

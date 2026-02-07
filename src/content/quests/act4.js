@@ -105,7 +105,29 @@ export const ACT4_QUESTS = [
             { type: 'skill', key: 'software', delta: 3 },
             { type: 'item', key: 'node_status', delta: 1 },
         ],
-        nextQuest: null, // Next: Nightly Uptime
+        nextQuest: 'nightly_uptime',
+    },
+
+    {
+        id: 'nightly_uptime',
+        act: 4,
+        title: 'Ночной Дозвон',
+        description: 'Оставьте BinkleyTerm запущенным на ночь (ZMH: 04:00 - 05:00), чтобы принять почту от босса.',
+        hint: 'Запустите BinkleyTerm с рабочего стола и ждите наступления 4 утра. Не закрывайте окно!',
+        prerequisites: ['configure_binkley'],
+        steps: [
+            {
+                id: 'zmh_session',
+                type: StepType.EVENT,
+                event: 'zmh.activity.completed',
+                description: 'Успешная сессия в ZMH',
+            },
+        ],
+        rewards: [
+            { type: 'stat', key: 'fido_fame', delta: 20 },
+            { type: 'skill', key: 'hardware', delta: 1 },
+        ],
+        nextQuest: null, // Act 4 Complete!
         completesAct: 4,
     },
 ];

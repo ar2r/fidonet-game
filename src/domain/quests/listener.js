@@ -6,6 +6,7 @@ import {
     MESSAGE_POSTED,
     ITEM_BOUGHT,
     DIALOGUE_COMPLETED,
+    ZMH_ACTIVITY_COMPLETED,
     FILE_SAVED,
     DOWNLOAD_COMPLETED,
     BBS_CONNECTED,
@@ -96,6 +97,10 @@ export function setupQuestListeners(dispatch, actions, getState) {
                 completeQuestAndProgress('configure_binkley', dispatch, actions);
             }
         }
+
+        if (eventType === ZMH_ACTIVITY_COMPLETED && activeQuestId === 'nightly_uptime') {
+            completeQuestAndProgress('nightly_uptime', dispatch, actions);
+        }
     };
 
     // Subscribe to all relevant events
@@ -105,6 +110,7 @@ export function setupQuestListeners(dispatch, actions, getState) {
         MESSAGE_POSTED,
         ITEM_BOUGHT,
         DIALOGUE_COMPLETED,
+        ZMH_ACTIVITY_COMPLETED,
         // Add others if we move logic from commandParser
     ];
 

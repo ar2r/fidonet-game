@@ -56,6 +56,9 @@ export const ITEM_BOUGHT = 'economy.item.bought';
 // Dialogue events
 export const DIALOGUE_COMPLETED = 'dialogue.completed';
 
+// ZMH events
+export const ZMH_ACTIVITY_COMPLETED = 'zmh.activity.completed';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *
