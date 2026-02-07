@@ -47,6 +47,9 @@ export const MAIL_TOSSING_COMPLETED = 'mail.tossed';
 export const MESSAGE_READ = 'message.read';
 export const MESSAGE_POSTED = 'message.posted';
 
+// Random events
+export const MOM_PICKUP = 'event.random.mom_pickup';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *

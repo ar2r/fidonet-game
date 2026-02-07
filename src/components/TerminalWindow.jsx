@@ -3,7 +3,6 @@ import { Window, WindowHeader, WindowContent, Button } from 'react95';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { processCommand, getPrompt } from '../engine/commandParser';
-import { getTimeCost, computeTickEffects } from '../engine/gameTick';
 import { FIDO_BANNER } from '../assets/ascii';
 import {
     connect as connectAction,
@@ -76,6 +75,12 @@ const ACTIONS = {
     setVirusActive: setVirusActiveAction,
     setVirusStage: setVirusStageAction,
     updateStat: updateStatAction,
+    // Time actions
+    setTimeMinutes: setTimeMinutesAction,
+    advanceTime: advanceTimeAction,
+    setPhase: setPhaseAction,
+    setZMH: setZMHAction,
+    advanceDay: advanceDayAction,
 };
 
 function TerminalWindow({ onClose, embedded = false }) {
@@ -103,41 +108,6 @@ function TerminalWindow({ onClose, embedded = false }) {
     const [inputBuffer, setInputBuffer] = useState("");
     const terminalEndRef = useRef(null);
 
-    const advanceGameTime = useCallback((cmd) => {
-        const cost = getTimeCost(cmd);
-        if (cost <= 0) return;
-
-        const effects = computeTickEffects(
-            gameState.timeMinutes,
-            cost,
-            network.connected
-        );
-
-        dispatch(advanceTimeAction(effects.newTimeString));
-        dispatch(setTimeMinutesAction(effects.newMinutes));
-        dispatch(setPhaseAction(effects.newPhase));
-        dispatch(setZMHAction(effects.newZMH));
-
-        if (effects.daysAdvanced > 0) {
-            dispatch(advanceDayAction(effects.daysAdvanced));
-        }
-
-        if (effects.momPatienceDelta !== 0) {
-            dispatch(updateStatAction({ stat: 'momsPatience', value: effects.momPatienceDelta }));
-        }
-
-        // Check game over: mom's patience
-        const newPatience = player.stats.momsPatience + effects.momPatienceDelta;
-        if (newPatience <= 0) {
-            dispatch(setGameOverAction('mom'));
-        }
-
-        // Check game over: sanity
-        if (player.stats.sanity <= 0) {
-            dispatch(setGameOverAction('sanity'));
-        }
-    }, [gameState.timeMinutes, network.connected, player.stats.momsPatience, player.stats.sanity, dispatch]);
-
     const handleKeyDown = useCallback((e) => {
         if (gameState.gameOver) return;
 
@@ -147,12 +117,11 @@ function TerminalWindow({ onClose, embedded = false }) {
             setHistory(prev => [...prev, `${currentPrompt}${cmd}`]);
 
             const result = processCommand(cmd, fullContext, dispatch, ACTIONS, (output) => {
-                const lines = output.split('\n');
-                setHistory(prev => [...prev, ...lines]);
+                if (output) {
+                    const lines = output.split('\n');
+                    setHistory(prev => [...prev, ...lines]);
+                }
             });
-
-            // Advance game time
-            advanceGameTime(cmd);
 
             if (result === 'CLEAR') {
                 setHistory([]);
@@ -169,7 +138,7 @@ function TerminalWindow({ onClose, embedded = false }) {
         } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
             setInputBuffer(prev => prev + e.key);
         }
-    }, [inputBuffer, currentPrompt, fullContext, dispatch, advanceGameTime, gameState.gameOver]);
+    }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver]);
 
     // Auto-scroll
     useEffect(() => {

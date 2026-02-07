@@ -20,11 +20,23 @@ describe('commandParser', () => {
             setTerminalProgram: vi.fn((payload) => ({ type: 'network/setTerminalProgram', payload })),
             completeQuest: vi.fn((payload) => ({ type: 'quests/completeQuest', payload })),
             addItem: vi.fn((payload) => ({ type: 'player/addItem', payload })),
+            setTimeMinutes: vi.fn((payload) => ({ type: 'gameState/setTimeMinutes', payload })),
+            advanceTime: vi.fn((payload) => ({ type: 'gameState/advanceTime', payload })),
+            setPhase: vi.fn((payload) => ({ type: 'gameState/setPhase', payload })),
+            setZMH: vi.fn((payload) => ({ type: 'gameState/setZMH', payload })),
+            advanceDay: vi.fn((payload) => ({ type: 'gameState/advanceDay', payload })),
+            updateStat: vi.fn((payload) => ({ type: 'player/updateStat', payload })),
+            setVirusActive: vi.fn((payload) => ({ type: 'gameState/setVirusActive', payload })),
+            setVirusStage: vi.fn((payload) => ({ type: 'gameState/setVirusStage', payload })),
+            disconnect: vi.fn(() => ({ type: 'network/disconnect' })),
         };
         baseState = {
-            gameState: { day: 1, phase: 'night', time: '23:00', zmh: false },
+            gameState: { day: 1, phase: 'night', time: '23:00', zmh: false, virusActive: false },
             network: { connected: false, modemInitialized: false, terminalMode: 'IDLE', terminalProgramRunning: false },
-            player: { inventory: [] },
+            player: { 
+                inventory: [],
+                stats: { momsPatience: 100, sanity: 100 } 
+            },
             quests: { active: 'get_online', completed: [] },
         };
     });

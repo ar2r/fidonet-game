@@ -16,7 +16,17 @@ import GoldED from './components/TUI/GoldED';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
-import { completeQuest as completeQuestAction, setActiveQuest as setActiveQuestAction, updateSkill as updateSkillAction, setAct as setActAction } from './engine/store';
+import { 
+    completeQuest as completeQuestAction, 
+    setActiveQuest as setActiveQuestAction, 
+    updateSkill as updateSkillAction, 
+    setAct as setActAction,
+    setTimeMinutes as setTimeMinutesAction,
+    advanceTime as advanceTimeAction,
+    setPhase as setPhaseAction,
+    setZMH as setZMHAction,
+    advanceDay as advanceDayAction
+} from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
