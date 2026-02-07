@@ -12,7 +12,11 @@ export const ACT5_QUESTS = [
         act: 5,
         title: 'Выбор Пути',
         description: 'В сети назревает кризис. Помехи на линии мешают работе, а в эхах идет война. Выберите свой способ решения.',
-        hint: 'Поговорите с Сисопом (Чат) или изучите проблемы с железом (Магазин/Инвентарь).',
+        hints: [
+            'Сеть в опасности. Нужно действовать.',
+            'Поговорите с Сисопом или проверьте оборудование.',
+            'Наберите "CHAT" в терминале или купите "Набор для пайки".'
+        ],
         prerequisites: ['nightly_uptime'], // From Act 4
         steps: [
             {
@@ -31,7 +35,11 @@ export const ACT5_QUESTS = [
         act: 5,
         title: 'Шумоподавление',
         description: 'Соберите фильтр для линии, чтобы устранить помехи.',
-        hint: 'Купите "Набор для пайки" на радиорынке и используйте навык Hardware.',
+        hints: [
+            'Нужен ремонт линии.',
+            'Купите "Набор для пайки" на радиорынке.',
+            'Зайдите в Радиорынок и купите набор.'
+        ],
         prerequisites: ['crisis_choice'],
         steps: [
             {
@@ -52,7 +60,11 @@ export const ACT5_QUESTS = [
         act: 5,
         title: 'Миротворец',
         description: 'Успокойте троллей в эхоконференции SU.FLAME.',
-        hint: 'Используйте GoldED. Найдите тред "War" и выберите правильные ответы.',
+        hints: [
+            'Нужно успокоить троллей.',
+            'Используйте GoldED для общения.',
+            'Найдите тред "War" в SU.FLAME и напишите правильный ответ.'
+        ],
         prerequisites: ['crisis_choice'],
         steps: [
             {
@@ -72,7 +84,11 @@ export const ACT5_QUESTS = [
         act: 5,
         title: 'Super SysOp',
         description: 'Вы стали легендой района. Игра пройдена (пока что).',
-        hint: 'Наслаждайтесь статусом.',
+        hints: [
+            'Вы достигли вершины.',
+            'Наслаждайтесь статусом.',
+            'Ждите вызова координатора.'
+        ],
         prerequisites: ['fix_hardware', 'negotiate_peace'], // OR logic handled in engine? No, usually AND. Logic needs dynamic branching.
         steps: [],
         rewards: [{ type: 'stat', key: 'fido_fame', delta: 100 }],

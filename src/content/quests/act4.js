@@ -12,7 +12,11 @@ export const ACT4_QUESTS = [
         act: 4,
         title: 'Апгрейд Модема',
         description: 'Для работы нодой нужен быстрый модем. Купите US Robotics Courier на радиорынке.',
-        hint: 'Заработайте денег командой WORK или дождитесь ALLOWANCE. Затем откройте Рынок и купите модем.',
+        hints: [
+            'Нужно улучшить железо.',
+            'Купите модем на Радиорынке.',
+            'Зайдите в "Радиорынок" и купите US Robotics Courier.'
+        ],
         prerequisites: ['reply_welcome'],
         steps: [
             {
@@ -37,7 +41,11 @@ export const ACT4_QUESTS = [
         act: 4,
         title: 'Запрос Ноды',
         description: 'Поговорите с Сисопом (Архитектором) о получении статуса Ноды.',
-        hint: 'Подключитесь к BBS и выберите (C)hat в главном меню. Будьте вежливы и убедительны.',
+        hints: [
+            'Нужно получить статус Ноды.',
+            'Поговорите с Сисопом в Чате.',
+            'Наберите "CHAT" в терминале и выберите вариант про ноду.'
+        ],
         prerequisites: ['hardware_upgrade'],
         steps: [
             {
@@ -63,7 +71,11 @@ export const ACT4_QUESTS = [
         act: 4,
         title: 'Скачать BinkleyTerm',
         description: 'Сисоп сказал использовать "серьезный мейлер". Скачайте BinkleyTerm с BBS.',
-        hint: 'Подключитесь к BBS и скачайте файл #5 из файловой области.',
+        hints: [
+            'Нужен софт для ноды.',
+            'Скачайте BinkleyTerm с BBS.',
+            'В меню BBS (Files) скачайте файл #5.'
+        ],
         prerequisites: ['request_node'],
         steps: [
             {
@@ -87,7 +99,11 @@ export const ACT4_QUESTS = [
         act: 4,
         title: 'Настройка Ноды',
         description: 'Настройте BinkleyTerm для работы в режиме Ноды.',
-        hint: 'Отредактируйте C:\\FIDO\\BT.CFG. Ваш адрес: 2:5020/730. Имя сисопа: SysOp (или ваше). Скорость порта: 19200.',
+        hints: [
+            'Нужно настроить мейлер.',
+            'Отредактируйте BT.CFG.',
+            'Адрес: 2:5020/730, Baud: 19200, Port: COM2.'
+        ],
         prerequisites: ['download_binkley'],
         steps: [
             {
@@ -113,7 +129,11 @@ export const ACT4_QUESTS = [
         act: 4,
         title: 'Ночной Дозвон',
         description: 'Оставьте BinkleyTerm запущенным на ночь (ZMH: 04:00 - 05:00), чтобы принять почту от босса.',
-        hint: 'Запустите BinkleyTerm с рабочего стола и ждите наступления 4 утра. Не закрывайте окно!',
+        hints: [
+            'Нужно проверить связь ночью.',
+            'Оставьте BinkleyTerm запущенным в ZMH (04:00-05:00).',
+            'Запустите BinkleyTerm и не закрывайте его до 5 утра.'
+        ],
         prerequisites: ['configure_binkley'],
         steps: [
             {

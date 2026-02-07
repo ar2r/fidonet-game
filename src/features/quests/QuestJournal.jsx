@@ -128,6 +128,7 @@ const NoQuestMessage = styled.div`
 function QuestJournal({ onClose }) {
     const quests = useSelector(state => state.quests);
     const activeQuestId = quests.active;
+    const hintLevel = quests.hintLevel || 0;
     const quest = activeQuestId ? getQuestById(activeQuestId) : null;
 
     // TODO: Track step progress (будет в следующих фазах)
@@ -156,6 +157,16 @@ function QuestJournal({ onClose }) {
 
     const progress = quest ? calculateProgress() : 0;
 
+    // Resolve hint text
+    let displayHint = null;
+    if (quest) {
+        if (quest.hints && quest.hints.length > 0) {
+            displayHint = quest.hints[Math.min(hintLevel, quest.hints.length - 1)];
+        } else if (quest.hint) {
+            displayHint = quest.hint;
+        }
+    }
+
     return (
         <TuiContainer>
                     <MenuBar>
@@ -178,9 +189,9 @@ function QuestJournal({ onClose }) {
                                     <strong>Цель:</strong> {quest.description}
                                 </QuestDescription>
 
-                                {quest.hint && (
+                                {displayHint && (
                                     <HintBox>
-                                        💡 <strong>Подсказка:</strong> {quest.hint}
+                                        💡 <strong>Подсказка:</strong> {displayHint}
                                     </HintBox>
                                 )}
 

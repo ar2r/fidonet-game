@@ -12,7 +12,11 @@ export const ACT1_QUESTS = [
         act: 1,
         title: 'Строка инициализации',
         description: 'Запустите TERMINAL.EXE и инициализируйте модем.',
-        hint: 'Сначала наберите TERMINAL, затем внутри программы ATZ.',
+        hints: [
+            'Нужно подготовить модем к работе.',
+            'Запустите терминал и введите команду сброса.',
+            'Наберите "TERMINAL", затем "ATZ".'
+        ],
         prerequisites: [],
         steps: [
             {
@@ -38,7 +42,11 @@ export const ACT1_QUESTS = [
         act: 1,
         title: 'Первый Контакт',
         description: 'Подключитесь к BBS The Nexus (555-3389).',
-        hint: 'Наберите DIAL 555-3389 после инициализации модема.',
+        hints: [
+            'Нужно позвонить на BBS.',
+            'Используйте команду DIAL и номер телефона.',
+            'Наберите "DIAL 555-3389" в терминале.'
+        ],
         prerequisites: ['init_modem'],
         steps: [
             {
@@ -62,7 +70,11 @@ export const ACT1_QUESTS = [
         act: 1,
         title: 'Скачать софт',
         description: 'Скачайте T-Mail и GoldED из файловой области BBS.',
-        hint: 'В меню BBS нажмите F, затем скачайте оба файла.',
+        hints: [
+            'Вам нужны программы для работы с почтой. Ищите их на BBS.',
+            'В главном меню нажмите F (Files), затем выберите нужные файлы.',
+            'Наберите "F", затем "1" для T-Mail и "2" для GoldED.'
+        ],
         prerequisites: ['first_connect'],
         steps: [
             {

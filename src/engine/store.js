@@ -219,7 +219,8 @@ const questSlice = createSlice({
     name: 'quests',
     initialState: {
         active: 'init_modem',
-        completed: []
+        completed: [],
+        hintLevel: 0,
     },
     reducers: {
         completeQuest: (state, action) => {
@@ -229,15 +230,21 @@ const questSlice = createSlice({
             }
             if (state.active === questId) {
                 state.active = null;
+                state.hintLevel = 0;
             }
         },
         setActiveQuest: (state, action) => {
             state.active = action.payload;
+            state.hintLevel = 0;
         },
         resetQuests: () => ({
             active: 'init_modem',
             completed: [],
+            hintLevel: 0,
         }),
+        revealHint: (state) => {
+            state.hintLevel = Math.min(state.hintLevel + 1, 2);
+        },
     }
 });
 
@@ -257,7 +264,7 @@ export const {
 } = networkSlice.actions;
 
 export const {
-    completeQuest, setActiveQuest, resetQuests
+    completeQuest, setActiveQuest, resetQuests, revealHint
 } = questSlice.actions;
 
 export const store = configureStore({

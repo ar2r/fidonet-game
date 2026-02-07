@@ -12,7 +12,11 @@ export const ACT2_QUESTS = [
         act: 2,
         title: 'Настройка T-Mail',
         description: 'Настройте T-Mail: заполните адрес, пароль, босс-ноду.',
-        hint: 'Запустите T-Mail Setup.exe с рабочего стола. Информацию можно получить у Сисопа BBS (команда C в меню) и прочитать README.1ST (команда TYPE C:\\FIDO\\README.1ST).',
+        hints: [
+            'Для работы почты нужно настроить программу T-Mail.',
+            'Запустите T-Mail Setup.exe с рабочего стола.',
+            'Адрес: 2:5020/730.15, Босс: 2:5020/730, Телефон: 555-3389, Пароль: secret.'
+        ],
         prerequisites: ['download_software'],
         steps: [
             {
@@ -43,7 +47,11 @@ export const ACT2_QUESTS = [
         act: 2,
         title: 'Настройка GoldED',
         description: 'Настройте GoldED: укажите имя, адрес и Origin.',
-        hint: 'Запустите GoldED с рабочего стола. Используйте тот же адрес, что и в T-Mail. Origin — это подпись в конце ваших писем.',
+        hints: [
+            'Нужно настроить редактор сообщений.',
+            'Запустите GoldED Setup с рабочего стола.',
+            'Используйте адрес 2:5020/730.15 и укажите ваше имя и Origin.'
+        ],
         prerequisites: ['configure_tmail'],
         steps: [
             {

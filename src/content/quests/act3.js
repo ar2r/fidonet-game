@@ -12,7 +12,11 @@ export const ACT3_QUESTS = [
         act: 3,
         title: 'Первая Прозвонка',
         description: 'Сделайте Poll (прозвонку) на босс-ноду, чтобы получить свежую почту.',
-        hint: 'Запустите T-Mail Poll через терминал (наберите T-MAIL POLL) или найдите кнопку Poll в меню BBS/Setup.',
+        hints: [
+            'Нужно проверить почту.',
+            'Запустите T-Mail Poll через терминал или найдите кнопку в меню.',
+            'Наберите "T-MAIL POLL" в терминале.'
+        ],
         prerequisites: ['configure_golded'],
         steps: [
             {
@@ -34,7 +38,11 @@ export const ACT3_QUESTS = [
         act: 3,
         title: 'Чтение Правил',
         description: 'Откройте GoldED и прочитайте правила эхоконференции SU.FLAME.',
-        hint: 'Запустите GoldED, выберите область SU.FLAME, найдите сообщение от SysOp с темой "Rules".',
+        hints: [
+            'Прочитайте важное сообщение в эхе.',
+            'Запустите GoldED, выберите область SU.FLAME.',
+            'Найдите сообщение с темой "Rules" и откройте его.'
+        ],
         prerequisites: ['poll_boss'],
         steps: [
             {
@@ -60,7 +68,11 @@ export const ACT3_QUESTS = [
         act: 3,
         title: 'Выбор Стратегии',
         description: 'В эхе SU.FLAME бушует тролль. Как вы поступите?',
-        hint: 'Поговорите с Сисопом (Чат) или решите сами. Это важный выбор.',
+        hints: [
+            'Вам нужно принять решение.',
+            'Поговорите с Сисопом или решите сами.',
+            'Это сюжетный выбор, конкретных команд нет.'
+        ],
         prerequisites: ['read_rules'],
         steps: [
             {
@@ -79,7 +91,11 @@ export const ACT3_QUESTS = [
         act: 3,
         title: 'Глас Разума',
         description: 'Напишите приветственное сообщение в SU.FLAME и попытайтесь успокоить тролля.',
-        hint: 'В GoldED напишите письмо в SU.FLAME.',
+        hints: [
+            'Напишите письмо в эху.',
+            'В GoldED напишите письмо в SU.FLAME.',
+            'Нажмите "Insert" или "N", выберите Area SU.FLAME, напишите текст.'
+        ],
         prerequisites: ['choose_strategy'],
         steps: [
             {
@@ -107,7 +123,11 @@ export const ACT3_QUESTS = [
         act: 3,
         title: 'Охота на Тролля',
         description: 'Вычислите адрес тролля через служебные заголовки (Kludge) и сообщите Сисопу.',
-        hint: 'Используйте команду TRACE <имя> в терминале (команда будет добавлена).',
+        hints: [
+            'Нужно найти адрес нарушителя.',
+            'Используйте команду TRACE <имя> в терминале.',
+            'Наберите "TRACE TROLL.MASTER".'
+        ],
         prerequisites: ['choose_strategy'],
         steps: [
             {

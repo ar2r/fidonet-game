@@ -12,7 +12,11 @@ export const ACT6_QUESTS = [
         act: 6,
         title: 'Вызов Координатора',
         description: 'Вас вызывает Региональный Координатор (RC5020). Это ваш шанс войти в историю.',
-        hint: 'Подключитесь к BBS и выберите чат. Координатор сам выйдет на связь.',
+        hints: [
+            'Важный звонок.',
+            'Поговорите с координатором в чате.',
+            'Наберите "CHAT" в терминале и пройдите собеседование.'
+        ],
         prerequisites: ['super_sysop'],
         steps: [
             {
@@ -34,7 +38,11 @@ export const ACT6_QUESTS = [
         act: 6,
         title: 'Конец Игры',
         description: 'Поздравляем! Вы прошли FidoNet Simulator.',
-        hint: 'Спасибо за игру.',
+        hints: [
+            'Поздравляем!',
+            'Игра пройдена.',
+            'Спасибо за участие!'
+        ],
         prerequisites: ['meet_coordinator'],
         steps: [],
         rewards: [],

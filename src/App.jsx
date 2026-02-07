@@ -22,6 +22,7 @@ import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
 import Onboarding from './components/Onboarding';
+import { HintSystem } from './components/HintSystem';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
@@ -296,6 +297,8 @@ function App() {
 
                 {/* Onboarding overlay */}
                 {!gameState.onboardingSeen && <Onboarding />}
+
+                <HintSystem />
 
                 {/* Virus Animation overlay */}
                 <VirusAnimation
