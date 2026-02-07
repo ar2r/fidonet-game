@@ -91,8 +91,8 @@ const FIELDS = [
   { key: 'address', label: 'Main Address:', placeholder: 'Z:NNNN/NNN.PP (2:5020/730)' },
   { key: 'baudRate', label: 'Port Speed:', placeholder: '19200' },
   { key: 'port', label: 'COM Port:', placeholder: 'COM1 or COM2' },
-  { key: 'inbound', label: 'Inbound Dir:', placeholder: 'C:\FIDO\INBOUND' },
-  { key: 'outbound', label: 'Outbound Dir:', placeholder: 'C:\FIDO\OUTBOUND' },
+  { key: 'inbound', label: 'Inbound Dir:', placeholder: 'C:\\\\FIDO\\\\INBOUND' },
+  { key: 'outbound', label: 'Outbound Dir:', placeholder: 'C:\\\\FIDO\\\\OUTBOUND' },
 ];
 
 function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
@@ -101,8 +101,8 @@ function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
     address: initialConfig.address || '',
     baudRate: initialConfig.baudRate || '',
     port: initialConfig.port || 'COM1',
-    inbound: initialConfig.inbound || 'C:\FIDO\INBOUND',
-    outbound: initialConfig.outbound || 'C:\FIDO\OUTBOUND',
+    inbound: initialConfig.inbound || 'C:\\\\FIDO\\\\INBOUND',
+    outbound: initialConfig.outbound || 'C:\\\\FIDO\\\\OUTBOUND',
   });
 
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -210,7 +210,7 @@ function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
 
             {saved && (
               <SuccessMessage>
-                ✓ Конфигурация сохранена в C:\FIDO\BT.CFG
+                ✓ Конфигурация сохранена в C:\\\\FIDO\\\\BT.CFG
               </SuccessMessage>
             )}
 

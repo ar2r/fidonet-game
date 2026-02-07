@@ -124,7 +124,7 @@ export function handleDownloadAidstest({ dispatch, actions, appendOutput }) {
     return { handled: true };
 }
 
-export function handleDownloadBinkley({ gameState, dispatch, actions, appendOutput }) {
+export function handleDownloadBinkley({ dispatch, actions, appendOutput }) {
     appendOutput("Начинаю загрузку BinkleyTerm 2.60...");
     appendOutput("Протокол: Zmodem");
     appendOutput("");

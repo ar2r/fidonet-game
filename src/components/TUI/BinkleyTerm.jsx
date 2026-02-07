@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateStat } from '../../engine/store';
-import { eventBus } from '../../domain/events/bus';
+import { useSelector } from 'react-redux';
+import { eventBus } from '../../events/bus';
 import { TIME_ADVANCED, ZMH_ACTIVITY_COMPLETED } from '../../domain/events/types';
 
 const TerminalContainer = styled.div`
@@ -53,25 +52,19 @@ const Footer = styled.div`
 `;
 
 function BinkleyTerm() {
-    const dispatch = useDispatch();
     const gameState = useSelector(state => state.gameState);
-    const [logs, setLogs] = useState([]);
+    const [logs, setLogs] = useState([
+        `${new Date().toLocaleTimeString('ru-RU', { hour12: false })}  BinkleyTerm/386 v2.60 - loading configuration...`,
+        `${new Date().toLocaleTimeString('ru-RU', { hour12: false })}  Initializing modem on COM1...`,
+        `${new Date().toLocaleTimeString('ru-RU', { hour12: false })}  Modem: US Robotics Courier V.Everything`,
+        `${new Date().toLocaleTimeString('ru-RU', { hour12: false })}  Initialization complete. Waiting for calls.`
+    ]);
     const logEndRef = useRef(null);
 
-    // Initial logs
-    useEffect(() => {
-        if (logs.length === 0) {
-            addLog("BinkleyTerm/386 v2.60 - loading configuration...");
-            addLog("Initializing modem on COM1...");
-            addLog("Modem: US Robotics Courier V.Everything");
-            addLog("Initialization complete. Waiting for calls.");
-        }
-    }, []);
-
-    const addLog = (text) => {
+    const addLog = useCallback((text) => {
         const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
         setLogs(prev => [...prev, `${time}  ${text}`]);
-    };
+    }, []);
 
     // Scroll to bottom
     useEffect(() => {
@@ -80,9 +73,8 @@ function BinkleyTerm() {
 
     // Listen for time advancement to simulate "waiting"
     useEffect(() => {
-        const unsubscribe = eventBus.subscribe(TIME_ADVANCED, (payload) => {
+        const unsubscribe = eventBus.subscribe(TIME_ADVANCED, () => {
             // Every hour add a "Waiting..." log or similar
-            // But here we just react to ZMH logic later
         });
         return () => unsubscribe();
     }, []);
@@ -106,7 +98,7 @@ function BinkleyTerm() {
             }, 2000);
             return () => clearTimeout(timer);
         }
-    }, [gameState.zmh]);
+    }, [gameState.zmh, addLog]);
 
     return (
         <TerminalContainer>

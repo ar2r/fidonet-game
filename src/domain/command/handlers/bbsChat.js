@@ -26,7 +26,7 @@ const DIALOGUES = {
             },
             {
                 text: "Архитектор: Отлично. Твой FidoNet адрес будет 2:5020/730. Поздравляю в сети!\nАрхитектор: Теперь тебе нужно настроить серьезный мейлер, например BinkleyTerm.",
-                onEnter: (dispatch, actions) => {
+                onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'request_node_status', success: true });
                 },
                 options: [
@@ -35,7 +35,7 @@ const DIALOGUES = {
             },
             {
                 text: "Архитектор: С 'недо-модемами' даже не подходи ко мне. Настрой сначала железо.",
-                onEnter: (dispatch, actions) => {
+                onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'request_node_status', success: false });
                 },
                 options: [
@@ -94,7 +94,7 @@ const DIALOGUES = {
             },
             {
                 text: "Troll.Master: ...Ладно. Может ты и прав. Скучно с вами.",
-                onEnter: (dispatch, actions) => {
+                onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: true });
                 },
                 options: [
@@ -103,7 +103,7 @@ const DIALOGUES = {
             },
             {
                 text: "Troll.Master: АХАХА! СЛИВ ЗАЩИТАН! (Вас забанили)",
-                onEnter: (dispatch, actions) => {
+                onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: false });
                 },
                 options: [
@@ -152,7 +152,6 @@ const DIALOGUES = {
  */
 export function handleChatInput({ command, gameState, dispatch, actions, appendOutput }) {
     const network = gameState.network;
-    const player = gameState.player;
     const quests = gameState.quests;
 
     // Initialize dialogue if not active

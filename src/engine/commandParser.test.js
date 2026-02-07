@@ -14,7 +14,6 @@ describe('commandParser', () => {
         appendOutput = (text) => output.push(text);
         actions = {
             connect: vi.fn((payload) => ({ type: 'network/connect', payload })),
-            disconnect: vi.fn(() => ({ type: 'network/disconnect' })),
             initializeModem: vi.fn(() => ({ type: 'network/initializeModem' })),
             setTerminalMode: vi.fn((payload) => ({ type: 'network/setTerminalMode', payload })),
             setTerminalProgram: vi.fn((payload) => ({ type: 'network/setTerminalProgram', payload })),

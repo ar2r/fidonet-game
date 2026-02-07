@@ -22,7 +22,6 @@ import {
     setZMH as setZMHAction,
     advanceDay as advanceDayAction,
     updateStat as updateStatAction,
-    setGameOver as setGameOverAction,
     setVirusActive as setVirusActiveAction,
     setVirusStage as setVirusStageAction,
     payBill as payBillAction,

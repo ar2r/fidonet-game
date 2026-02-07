@@ -22,9 +22,7 @@ import {
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
     updateSkill as updateSkillAction, 
-    setAct as setActAction,
-    payBill as payBillAction,
-    setLastBillDay as setLastBillDayAction
+    setAct as setActAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';

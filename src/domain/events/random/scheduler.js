@@ -21,7 +21,7 @@ const EVENT_CONFIG = {
  * @param {Function} appendOutput - Function to print to terminal
  */
 export function checkRandomEvents(gameState, dispatch, actions, appendOutput) {
-    const { phase, virusActive } = gameState.gameState;
+    const { phase } = gameState.gameState;
     const { connected } = gameState.network;
     const { momsPatience } = gameState.player.stats;
 
