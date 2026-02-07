@@ -62,7 +62,7 @@ export function HintSystem() {
 
             {isOpen && (
                 <HintWindowWrapper>
-                    <WindowHeader className="window-header">
+                    <WindowHeader className="window-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span>Подсказка: {quest.title}</span>
                         <Button onClick={() => setIsOpen(false)} size="sm" square>
                             <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>X</span>
