@@ -3,13 +3,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { SpeedrunEngine } from './SpeedrunEngine';
-import { store as realStore, setSpeedrunMode } from './store'; // Import real store to replicate structure
 
 // Mock the windowManager
 vi.mock('./windowManager', () => ({
     openWindow: vi.fn((payload) => ({ type: 'windowManager/openWindow', payload })),
     closeWindow: vi.fn((payload) => ({ type: 'windowManager/closeWindow', payload })),
-    default: (state = {}, action) => state, // Mock reducer
+    default: (state = {}) => state, // Mock reducer
 }));
 
 // Mock the store for controlled testing
