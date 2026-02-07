@@ -122,14 +122,17 @@ function Winamp() {
                 setVisuals(prev => prev.map(() => Math.random() * 100));
             }, 100);
             
-            // In a real app we'd play audio here.
-            // audioManager.playMidi(MOCK_TRACKS[currentTrackIndex].file); 
+            audioManager.playMelody(MOCK_TRACKS[currentTrackIndex].id); 
         } else {
             clearInterval(timerRef.current);
             setVisuals(Array(15).fill(5));
+            audioManager.stopMusic();
         }
-        return () => clearInterval(timerRef.current);
-    }, [isPlaying]);
+        return () => {
+            clearInterval(timerRef.current);
+            audioManager.stopMusic();
+        };
+    }, [isPlaying, currentTrackIndex]);
 
     const play = () => setIsPlaying(true);
     const stop = () => setIsPlaying(false);

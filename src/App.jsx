@@ -20,6 +20,7 @@ import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
 import QuestLogFile from './components/QuestLogFile';
 import Winamp from './components/Winamp';
+import ArtMoney from './components/ArtMoney';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
@@ -72,6 +73,13 @@ const WINDOW_DEFINITIONS = {
         component: 'winamp',
         position: { x: 400, y: 50 },
         size: { width: 275, height: 300 }, // Height accommodates playlist
+    },
+    'artmoney': {
+        id: 'artmoney',
+        title: 'ArtMoney SE v1.0',
+        component: 'artmoney',
+        position: { x: 100, y: 100 },
+        size: { width: 400, height: 300 },
     },
     'tmail-config': {
         id: 'tmail-config',
@@ -269,24 +277,6 @@ function App() {
         return addressLine.split(' ')[1] || '';
     };
 
-    const handleSkipQuest = () => {
-        if (!quests.active) {
-            alert('Нет активного квеста');
-            return;
-        }
-
-        const actions = {
-            completeQuest: completeQuestAction,
-            setActiveQuest: setActiveQuestAction,
-            updateSkill: updateSkillAction,
-            setAct: setActAction,
-        };
-
-        completeQuestAndProgress(quests.active, dispatch, actions);
-        setStartMenuOpen(false);
-        alert(`Квест "${quests.active}" пропущен!`);
-    };
-
     // Рендер содержимого окна по компоненту
     const renderWindowContent = (windowId, component) => {
         switch (component) {
@@ -316,6 +306,9 @@ function App() {
 
             case 'winamp':
                 return <Winamp />;
+
+            case 'artmoney':
+                return <ArtMoney />;
 
             case 'tmail-config':
                 return (
@@ -419,6 +412,12 @@ function App() {
                         <span style={{ background: '#008080', padding: '2px' }}>Winamp</span>
                     </div>
 
+                    {/* ArtMoney */}
+                    <div onDoubleClick={() => handleOpenWindow('artmoney')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'silver', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>ArtMoney</span>
+                    </div>
+
                     {/* T-Mail Setup */}
                     {hasSoftware('t-mail') && (
                         <div onDoubleClick={() => handleOpenWindow('tmail-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
@@ -500,10 +499,6 @@ function App() {
                                         </ListItem>
                                         <ListItem onClick={() => { handleOpenWindow('district-map'); setStartMenuOpen(false); }}>
                                             Карта района
-                                        </ListItem>
-                                        <Divider />
-                                        <ListItem onClick={handleSkipQuest} style={{ color: '#FF0000', fontWeight: 'bold' }}>
-                                            [DEBUG] Пропустить квест
                                         </ListItem>
                                         <Divider />
                                         <ListItem disabled>

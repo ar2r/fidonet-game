@@ -13,16 +13,46 @@ import {
     ITEM_BOUGHT
 } from '../../domain/events/types';
 
+const NOTES = {
+    'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+    'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77
+};
+
+// Simple melodies (Frequency, Duration)
+const TRACKS = {
+    1: [ // Llama Intro
+        { f: NOTES.A4, d: 0.2 }, { f: 0, d: 0.1 }, { f: NOTES.A4, d: 0.2 }, 
+        { f: NOTES.C5, d: 0.4 }, { f: NOTES.A4, d: 0.2 }
+    ],
+    2: [ // The Sign (Ace of Base ish)
+        { f: NOTES.G4, d: 0.2 }, { f: NOTES.E4, d: 0.2 }, { f: NOTES.C4, d: 0.2 },
+        { f: NOTES.C4, d: 0.2 }, { f: NOTES.E4, d: 0.2 }, { f: NOTES.G4, d: 0.4 }
+    ],
+    3: [ // Scatman
+        { f: NOTES.B4, d: 0.1 }, { f: NOTES.B4, d: 0.1 }, { f: NOTES.B4, d: 0.1 }, { f: NOTES.B4, d: 0.1 },
+        { f: NOTES.A4, d: 0.2 }, { f: NOTES.B4, d: 0.2 }
+    ],
+    4: [ // What is Love
+        { f: NOTES.G4, d: 0.2 }, { f: NOTES.A4, d: 0.2 }, { f: NOTES.C5, d: 0.2 },
+        { f: NOTES.A4, d: 0.2 }, { f: NOTES.F4, d: 0.4 }, { f: 0, d: 0.2 },
+        { f: NOTES.G4, d: 0.2 }, { f: NOTES.A4, d: 0.2 }
+    ]
+};
+
 class AudioManager {
     constructor() {
         this.ctx = null;
         this.muted = false;
         this.initialized = false;
+        this.currentSource = null;
+        this.melodyTimeout = null;
         
         // Bind methods
         this.init = this.init.bind(this);
         this.toggleMute = this.toggleMute.bind(this);
         this.playTone = this.playTone.bind(this);
+        this.playMelody = this.playMelody.bind(this);
+        this.stopMusic = this.stopMusic.bind(this);
     }
 
     init() {
@@ -50,6 +80,12 @@ class AudioManager {
 
     toggleMute() {
         this.muted = !this.muted;
+        if (this.muted) {
+            this.stopMusic();
+            if (this.ctx) this.ctx.suspend();
+        } else {
+            if (this.ctx) this.ctx.resume();
+        }
         return this.muted;
     }
 
@@ -71,6 +107,8 @@ class AudioManager {
 
         osc.start(now);
         osc.stop(now + duration);
+        
+        return osc;
     }
 
     playDTMF(char) {
@@ -155,6 +193,42 @@ class AudioManager {
     // For UI click feedback
     playClick() {
         this.playTone(200, 0.05, 'triangle');
+    }
+
+    // Winamp support
+    playMelody(trackId) {
+        this.stopMusic(); // Stop previous
+        if (this.muted || !this.ctx) return;
+
+        const sequence = TRACKS[trackId];
+        if (!sequence) return;
+
+        let currentTime = 0;
+        const playNext = (index) => {
+            if (index >= sequence.length) {
+                // Loop
+                this.melodyTimeout = setTimeout(() => playNext(0), 1000);
+                return;
+            }
+
+            const note = sequence[index];
+            if (note.f > 0) {
+                this.playTone(note.f, note.d, 'sawtooth'); // Sawtooth for "8-bit" feel
+            }
+            
+            this.melodyTimeout = setTimeout(() => {
+                playNext(index + 1);
+            }, note.d * 1000);
+        };
+
+        playNext(0);
+    }
+
+    stopMusic() {
+        if (this.melodyTimeout) {
+            clearTimeout(this.melodyTimeout);
+            this.melodyTimeout = null;
+        }
     }
 }
 
