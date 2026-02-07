@@ -16,8 +16,16 @@ const gameStateSlice = createSlice({
         virusActive: false,
         virusStage: 'none', // 'none', 'cascade', 'cleaning'
         onboardingSeen: false,
+        speedrunMode: false,
+        speedrunCommand: null,
     },
     reducers: {
+        setSpeedrunMode: (state, action) => {
+            state.speedrunMode = action.payload;
+        },
+        setSpeedrunCommand: (state, action) => {
+            state.speedrunCommand = action.payload;
+        },
         setOnboardingSeen: (state) => {
             state.onboardingSeen = true;
         },
@@ -244,7 +252,7 @@ const questSlice = createSlice({
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen
+    setOnboardingSeen, setSpeedrunMode, setSpeedrunCommand
 } = gameStateSlice.actions;
 
 export const {

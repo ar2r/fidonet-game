@@ -25,6 +25,7 @@ import {
     setVirusStage as setVirusStageAction,
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
+    setSpeedrunCommand as setSpeedrunCommandAction,
 } from '../engine/store';
 
 const Wrapper = styled.div`
@@ -148,6 +149,41 @@ function TerminalWindow({ onClose, embedded = false }) {
         }
         return () => clearInterval(timer);
     }, [network.connected]);
+
+    const speedrunCommand = gameState.speedrunCommand;
+
+    // Speedrun command handler
+    useEffect(() => {
+        if (!speedrunCommand) return;
+
+        let currentIndex = 0;
+        const typeSpeed = 50; // ms per char
+
+        // Clear input first
+        setInputBuffer("");
+
+        const typeChar = () => {
+            if (currentIndex < speedrunCommand.length) {
+                // Use functional update to ensure fresh state
+                setInputBuffer(prev => prev + speedrunCommand[currentIndex]);
+                currentIndex++;
+                setTimeout(typeChar, typeSpeed);
+            } else {
+                // Submit command after typing finishes
+                setTimeout(() => {
+                    // Simulate Enter key press
+                    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+                    window.dispatchEvent(event);
+                    // Clear the command from store to signal completion
+                    dispatch(setSpeedrunCommandAction(null));
+                }, 200);
+            }
+        };
+
+        // Start typing after a small delay
+        const timer = setTimeout(typeChar, 100);
+        return () => clearTimeout(timer);
+    }, [speedrunCommand, dispatch]);
 
     const handleKeyDown = useCallback((e) => {
         if (gameState.gameOver) return;

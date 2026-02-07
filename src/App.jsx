@@ -22,11 +22,13 @@ import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
 import Onboarding from './components/Onboarding';
+import { SpeedrunEngine } from './engine/SpeedrunEngine';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
     updateSkill as updateSkillAction, 
-    setAct as setActAction
+    setAct as setActAction,
+    setSpeedrunMode as setSpeedrunModeAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -373,6 +375,9 @@ function App() {
                 {/* Onboarding overlay */}
                 {!gameState.onboardingSeen && <Onboarding />}
 
+                {/* Speedrun Engine */}
+                <SpeedrunEngine />
+
                 {/* Virus Animation overlay */}
                 <VirusAnimation
                     stage={gameState.virusStage}
@@ -508,6 +513,9 @@ function App() {
                                         </ListItem>
                                         <ListItem onClick={() => { handleOpenWindow('district-map'); setStartMenuOpen(false); }}>
                                             Карта района
+                                        </ListItem>
+                                        <ListItem onClick={() => { dispatch(setSpeedrunModeAction(true)); setStartMenuOpen(false); }}>
+                                            SPEEDRUN MODE
                                         </ListItem>
                                         <Divider />
                                         <ListItem disabled>
