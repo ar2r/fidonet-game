@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Window, WindowHeader, WindowContent, Button } from 'react95';
+import { Window, WindowHeader, WindowContent, Button, Radio, GroupBox } from 'react95';
 import { useDispatch } from 'react-redux';
-import { setOnboardingSeen } from '../engine/store';
+import { setOnboardingSeen, setEquipment } from '../engine/store';
 
 const Overlay = styled.div`
   position: fixed;
@@ -24,7 +24,7 @@ const Content = styled.div`
 `;
 
 const Slide = styled.div`
-  min-height: 200px;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -46,16 +46,54 @@ const Warning = styled.div`
   background: #ffcccc;
 `;
 
+const AsciiArt = styled.pre`
+  font-family: 'DosVga', monospace;
+  font-size: 12px;
+  text-align: center;
+  margin: 10px 0;
+  color: #0000AA;
+`;
+
+const START_PC_OPTS = [
+    { value: '286 AT', label: '286 AT (Старое корыто)' },
+    { value: '386 DX-40', label: '386 DX-40 (Золотая середина)' },
+    { value: '486 SX-25', label: '486 SX-25 (Для мажоров)' }
+];
+
+const START_MODEM_OPTS = [
+    { value: 'No-name 2400', label: 'No-name 2400 (Глючит, но дешево)' },
+    { value: 'Acorp 9600', label: 'Acorp 9600 (Внешний)' }
+];
+
 const STEPS = [
     {
         title: "Добро пожаловать в 1995 год",
         content: (
             <div>
+                <AsciiArt>
+{`
+   ._________________.
+   |.---------------.|
+   ||               ||
+   ||   FidoNet     ||
+   ||   Simulator   ||
+   ||_______________||
+   /.-.-.-.-.-.-.-.-.\\
+  /.-.-.-.-.-.-.-.-.-.\\
+ /_____________________\\
+ \\_____________________/
+`}
+                </AsciiArt>
                 <p>Ты — обычный студент, живущий в постсоветском спальном районе.</p>
-                <p>Твоя комната завалена железом, а в углу гудит старенький 386-й компьютер.</p>
-                <p>Твоя цель — стать <b>Координатором Фидонета</b>, легендарной любительской компьютерной сети.</p>
+                <p>Твоя комната завалена железом, а в углу гудит компьютер, собранный из того, что удалось найти.</p>
+                <p>Твоя цель — стать <b>Координатором Фидонета</b>, легендарной любительской компьютерной сети, соединяющей людей через телефонные линии.</p>
             </div>
         )
+    },
+    {
+        title: "Твое Железо",
+        type: 'setup',
+        content: null // Rendered separately
     },
     {
         title: "Твои ресурсы",
@@ -63,24 +101,26 @@ const STEPS = [
             <div>
                 <p>Чтобы выжить и преуспеть, следи за показателями:</p>
                 <ul style={{ listStyle: 'disc', paddingLeft: 20, marginTop: 10 }}>
-                    <li><b>Рассудок (Sanity):</b> Падает от троллинга и глюков. Если упадет до 0 — Game Over.</li>
-                    <li><b>Атмосфера:</b> Твои отношения с родителями. Не шуми ночью (ZMH), иначе отключат линию.</li>
-                    <li><b>Деньги:</b> Нужны для оплаты телефона и апгрейда железа. Работай или экономь.</li>
+                    <li><b>Рассудок (Sanity):</b> Падает от троллинга, вирусов и обрывов связи. Если упадет до 0 — Game Over.</li>
+                    <li><b>Атмосфера:</b> Отношения с родителями. Не шуми ночью (ZMH) и не занимай телефон слишком долго, иначе тебе перережут провод.</li>
+                    <li><b>Деньги:</b> Нужны для оплаты счетов за телефон и покупки крутого железа на радиорынке.</li>
                 </ul>
             </div>
         )
     },
     {
-        title: "Геймплей",
+        title: "Как играть",
         content: (
             <div>
                 <p>Всё взаимодействие происходит через <b>Терминал</b> (Fido.bat) и программы на рабочем столе.</p>
-                <p>— Вводи команды (HELP, DIR, CD, ATZ)</p>
-                <p>— Звони на BBS (DIAL)</p>
-                <p>— Качай софт и читай почту</p>
+                <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                    <li>⌨️ <b>Команды:</b> HELP, DIR, CD, ATZ (инициализация модема)</li>
+                    <li>☎️ <b>Связь:</b> DIAL (звонок на BBS)</li>
+                    <li>💾 <b>Софт:</b> Качай T-Mail и GoldED, чтобы читать почту</li>
+                </ul>
                 <br/>
                 <Warning>
-                    Внимание! Не забывай оплачивать счета за телефон командой PAY. Иначе отключат линию!
+                    <b>ВАЖНО:</b> Каждую неделю приходит счет за телефон. Используй команду <b>PAY</b>, чтобы оплатить его, или заработай денег командой <b>WORK</b>.
                 </Warning>
             </div>
         )
@@ -90,8 +130,18 @@ const STEPS = [
 function Onboarding() {
     const dispatch = useDispatch();
     const [step, setStep] = useState(0);
+    
+    // Hardware state local
+    const [pc, setPc] = useState('386 DX-40');
+    const [modem, setModem] = useState('No-name 2400');
 
     const handleNext = () => {
+        if (step === 1) {
+            // Save hardware choices
+            dispatch(setEquipment({ type: 'pc', value: pc }));
+            dispatch(setEquipment({ type: 'modem', value: modem }));
+        }
+
         if (step < STEPS.length - 1) {
             setStep(step + 1);
         } else {
@@ -101,27 +151,61 @@ function Onboarding() {
 
     const currentStep = STEPS[step];
 
+    const renderSetup = () => (
+        <div>
+            <p>Выбери конфигурацию своего первого ПК:</p>
+            <GroupBox label="Компьютер (CPU)">
+                {START_PC_OPTS.map(opt => (
+                    <Radio
+                        key={opt.value}
+                        checked={pc === opt.value}
+                        onChange={() => setPc(opt.value)}
+                        value={opt.value}
+                        label={opt.label}
+                        name="pc"
+                    />
+                ))}
+            </GroupBox>
+            <br/>
+            <GroupBox label="Модем">
+                {START_MODEM_OPTS.map(opt => (
+                    <Radio
+                        key={opt.value}
+                        checked={modem === opt.value}
+                        onChange={() => setModem(opt.value)}
+                        value={opt.value}
+                        label={opt.label}
+                        name="modem"
+                    />
+                ))}
+            </GroupBox>
+            <p style={{ marginTop: 10, fontSize: 12, color: '#666' }}>
+                * Выбор влияет на стартовые характеристики и уважение сисопов.
+            </p>
+        </div>
+    );
+
     return (
         <Overlay>
-            <Window style={{ width: 500 }}>
+            <Window style={{ width: 550 }}>
                 <WindowHeader className="window-header">
-                    <span>FidoNet Simulator 1995 - Introduction</span>
+                    <span>FidoNet Simulator 1995 - Setup</span>
                 </WindowHeader>
                 <WindowContent>
                     <Slide>
                         <Content>
                             <Title>{currentStep.title}</Title>
-                            {currentStep.content}
+                            {currentStep.type === 'setup' ? renderSetup() : currentStep.content}
                         </Content>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
+                            <div style={{ fontSize: 12, color: '#888' }}>
+                                Шаг {step + 1} из {STEPS.length}
+                            </div>
                             <Button onClick={handleNext} size="lg" style={{ fontWeight: 'bold' }}>
-                                {step < STEPS.length - 1 ? 'Далее >>' : 'Начать игру!'}
+                                {step < STEPS.length - 1 ? 'Далее >>' : 'В СЕТЬ!'}
                             </Button>
                         </div>
                     </Slide>
-                    <div style={{ textAlign: 'center', marginTop: 10, fontSize: 12, color: '#888' }}>
-                        Шаг {step + 1} из {STEPS.length}
-                    </div>
                 </WindowContent>
             </Window>
         </Overlay>

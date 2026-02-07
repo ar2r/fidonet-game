@@ -86,6 +86,11 @@ const playerSlice = createSlice({
         karma: 0,
         rank: 'Lamer',
         lastBillDay: 0,
+        equipment: {
+            pc: '386 DX-40',
+            modem: 'No-name 2400',
+            monitor: '14" VGA'
+        }
     },
     reducers: {
         updateStat: (state, action) => {
@@ -98,6 +103,12 @@ const playerSlice = createSlice({
                     state.stats[stat] = Math.max(0, Math.min(100, state.stats[stat] + value));
                 }
             }
+        },
+        setEquipment: (state, action) => {
+             const { type, value } = action.payload;
+             if (state.equipment[type]) {
+                 state.equipment[type] = value;
+             }
         },
         payBill: (state, action) => {
             const amount = action.payload;
@@ -130,6 +141,11 @@ const playerSlice = createSlice({
             inventory: [],
             karma: 0,
             rank: 'Lamer',
+            equipment: {
+                pc: '386 DX-40',
+                modem: 'No-name 2400',
+                monitor: '14" VGA'
+            }
         }),
     }
 });
@@ -232,7 +248,7 @@ export const {
 } = gameStateSlice.actions;
 
 export const {
-    updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay
+    updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment
 } = playerSlice.actions;
 
 export const {
