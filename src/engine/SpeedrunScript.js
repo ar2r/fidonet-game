@@ -38,22 +38,53 @@ export const SPEEDRUN_SCRIPT = [
     { type: 'wait', ms: 5000 }, // Wait for connection animation
 
     // Step 4: Check Files
-    { type: 'terminal', command: 'FILES' },
+    { type: 'terminal', command: 'F' }, // Enter File Area
     { type: 'wait', ms: 2000 },
 
     // Step 5: Download T-Mail
-    { type: 'terminal', command: 'DOWNLOAD T-MAIL' },
+    { type: 'terminal', command: '1' }, // Download File #1 (T-Mail)
     { type: 'wait', ms: 4000 },
 
     // Step 6: Download GoldED
-    { type: 'terminal', command: 'DOWNLOAD GOLDED' },
+    { type: 'terminal', command: '2' }, // Download File #2 (GoldED)
     { type: 'wait', ms: 4000 },
 
     // Step 7: Disconnect
-    { type: 'terminal', command: 'EXIT' },
+    { type: 'terminal', command: 'G' }, // Goodbye/Exit from File Area (or back to menu then exit?)
+    // If '1' and '2' return to file list, we need to exit file area first?
+    // Let's assume 'G' works globally or we need 'Q' (Quit) then 'G'.
+    // Checking previous script: it used 'EXIT'.
+    // If we are in BBS, 'EXIT' might not work if it expects 'G'.
+    // Let's assume we need to go back to main menu.
+    // If '1' downloads and stays in file menu:
+    // We probably need 'R' (Return) or 'Q' (Quit) to main menu?
+    // Let's verify via tool if possible, or just try 'Q' then 'G'.
+    // For now, I'll update to 'F', '1', '2'.
+    // And for disconnect, if 'EXIT' failed, likely we need 'G' (Goodbye) from Main Menu.
+    // If we are in File Menu, maybe 'M' (Main)?
+    // I'll try `type: 'terminal', command: 'Q' ` (Quit Files) -> `type: 'terminal', command: 'G' ` (Goodbye).
+    
+    // Step 7: Disconnect
+    { type: 'terminal', command: 'Q' }, // Quit Files to Main Menu
+    { type: 'wait', ms: 1000 },
+    { type: 'terminal', command: 'G' }, // Goodbye (Hangup)
     { type: 'wait', ms: 2000 },
-
-    // Step 8: Close Terminal
+    
+    // ...
+    
+    // Also in Step 21 (Act 4 Download Binkley):
+    // It says `FILES` and `DOWNLOAD BINKLEY`.
+    // Should be `F` and `5` (assuming Binkley is #5).
+    
+    // Step 21: Download Binkley
+    { type: 'terminal', command: 'F' }, // Go to Files
+    { type: 'wait', ms: 2000 },
+    { type: 'terminal', command: '5' }, // Download Binkley (File 5)
+    { type: 'wait', ms: 4000 },
+    { type: 'terminal', command: 'Q' }, // Quit Files
+    { type: 'wait', ms: 1000 },
+    { type: 'terminal', command: 'G' }, // Goodbye
+    { type: 'wait', ms: 2000 },
     { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
     { type: 'wait', ms: 1000 },
 
@@ -171,11 +202,13 @@ export const SPEEDRUN_SCRIPT = [
     { type: 'wait', ms: 2000 },
     
     // Step 21: Download Binkley
-    { type: 'terminal', command: 'FILES' }, // Go to Files
+    { type: 'terminal', command: 'F' }, // Go to Files
     { type: 'wait', ms: 2000 },
-    { type: 'terminal', command: 'DOWNLOAD BINKLEY' }, // Download
+    { type: 'terminal', command: '5' }, // Download Binkley (File #5)
     { type: 'wait', ms: 4000 },
-    { type: 'terminal', command: 'EXIT' },
+    { type: 'terminal', command: 'Q' }, // Quit Files to Menu
+    { type: 'wait', ms: 1000 },
+    { type: 'terminal', command: 'G' }, // Goodbye
     { type: 'wait', ms: 2000 },
     { type: 'fn', action: (dispatch) => dispatch(closeWindow('terminal')) },
     { type: 'wait', ms: 1000 },
