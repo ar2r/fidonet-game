@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { processCommand, getPrompt } from '../engine/commandParser';
 import { FIDO_BANNER } from '../assets/ascii';
+import { audioManager } from '../engine/audio/AudioManager';
 import {
     connect as connectAction,
     disconnect as disconnectAction,
@@ -114,6 +115,8 @@ function TerminalWindow({ onClose, embedded = false }) {
 
     const handleKeyDown = useCallback((e) => {
         if (gameState.gameOver) return;
+        
+        audioManager.playClick(); // Mechanical keyboard sound
 
         if (e.key === 'Enter') {
             const cmd = inputBuffer;

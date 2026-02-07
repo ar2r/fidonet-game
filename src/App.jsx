@@ -34,6 +34,7 @@ import { completeQuestAndProgress } from './engine/questEngine';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';
+import { audioManager } from './engine/audio/AudioManager';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -451,7 +452,10 @@ function App() {
                             {/* Start Menu Button */}
                             <div style={{ position: 'relative', display: 'inline-block' }}>
                                 <Button
-                                    onClick={() => setStartMenuOpen(!startMenuOpen)}
+                                    onClick={() => {
+                                        setStartMenuOpen(!startMenuOpen);
+                                        audioManager.init(); // Initialize audio context on user gesture
+                                    }}
                                     active={startMenuOpen}
                                     style={{ fontWeight: 'bold' }}
                                 >

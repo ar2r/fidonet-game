@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Panel } from 'react95';
+import { Panel, Button } from 'react95';
+import { audioManager } from '../engine/audio/AudioManager';
 
 const Container = styled.div`
   display: flex;
@@ -44,9 +45,20 @@ const PHASE_ICONS = {
 function StatusBar() {
     const gameState = useSelector(state => state.gameState);
     const player = useSelector(state => state.player);
+    const [muted, setMuted] = useState(false);
 
     const phaseIcon = PHASE_ICONS[gameState.phase] || '';
     const zmhLabel = gameState.zmh ? ' [ZMH]' : '';
+
+    const handleMute = () => {
+        const isMuted = audioManager.toggleMute();
+        setMuted(isMuted);
+        
+        // Ensure audio context is started on click
+        if (!audioManager.initialized) {
+            audioManager.init();
+        }
+    };
 
     return (
         <Container>
@@ -67,6 +79,9 @@ function StatusBar() {
             </GameStats>
 
             <SystemTray variant="well">
+                <Button size="sm" onClick={handleMute} style={{ padding: '0 4px', height: 18 }}>
+                    {muted ? '🔇' : '🔊'}
+                </Button>
                 <span title="День">{gameState.day} д.</span>
                 <span title="Время" style={{ minWidth: 40, textAlign: 'center' }}>
                     {phaseIcon} {gameState.time}{zmhLabel}
