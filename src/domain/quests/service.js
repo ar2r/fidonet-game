@@ -1,0 +1,87 @@
+import { completeQuestAndProgress } from '../../engine/questEngine';
+import { validateTMailConfig, checkConfigCorrectness } from '../../engine/configValidator';
+
+/**
+ * Quest Service
+ * Handles quest completion logic independently of UI
+ */
+
+/**
+ * Handle T-Mail config save and quest completion
+ * @param {Object} config - T-Mail configuration
+ * @param {Object} fileSystem - FileSystem instance
+ * @param {Object} questState - Current quest state from Redux
+ * @param {Function} dispatch - Redux dispatch
+ * @param {Object} actions - Redux actions
+ * @returns {{success: boolean, error?: string}}
+ */
+export function handleTMailConfigComplete(config, fileSystem, questState, dispatch, actions) {
+    // Validate config format
+    const validation = validateTMailConfig(config, fileSystem);
+    if (!validation.valid) {
+        return { success: false, error: validation.errors.join('\n') };
+    }
+
+    // Check if config matches correct values
+    const correctness = checkConfigCorrectness(config);
+    if (!correctness.correct) {
+        return {
+            success: false,
+            error: 'Конфигурация заполнена, но содержит ошибки.\nПроверьте адрес, пароль и телефон.'
+        };
+    }
+
+    // Complete quest if active
+    if (questState.active === 'configure_tmail') {
+        completeQuestAndProgress('configure_tmail', dispatch, actions);
+    }
+
+    return { success: true };
+}
+
+/**
+ * Handle GoldED config save and quest completion
+ * @param {Object} config - GoldED configuration
+ * @param {Object} questState - Current quest state from Redux
+ * @param {Function} dispatch - Redux dispatch
+ * @param {Object} actions - Redux actions
+ * @returns {{success: boolean, error?: string, triggerAnimation?: boolean}}
+ */
+export function handleGoldEDConfigComplete(config, questState, dispatch, actions) {
+    // Basic validation
+    if (!config.username || !config.username.trim()) {
+        return { success: false, error: 'ОШИБКА: Не указано имя пользователя' };
+    }
+    if (!config.address || !config.address.trim()) {
+        return { success: false, error: 'ОШИБКА: Не указан FidoNet адрес' };
+    }
+
+    // Complete quest if active
+    let triggerAnimation = false;
+    if (questState.active === 'configure_golded') {
+        completeQuestAndProgress('configure_golded', dispatch, actions);
+        triggerAnimation = true; // Signal to trigger mail tossing animation
+    }
+
+    return { success: true, triggerAnimation };
+}
+
+/**
+ * Check if file save should trigger quest completion
+ * Generic function for future file-based quest steps
+ * @param {string} filePath - Path of saved file
+ * @param {Object} questState - Current quest state
+ * @returns {boolean}
+ */
+export function shouldCompleteQuestOnFileSave(filePath, questState) {
+    const { active } = questState;
+
+    if (active === 'configure_tmail' && filePath === 'C:\\FIDO\\T-MAIL.CTL') {
+        return true;
+    }
+    if (active === 'configure_golded' && filePath === 'C:\\FIDO\\GOLDED.CFG') {
+        return true;
+    }
+
+    return false;
+}

@@ -13,9 +13,9 @@ import GoldEDConfig from './components/TUI/GoldEDConfig';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import { completeQuest as completeQuestAction, setActiveQuest as setActiveQuestAction, updateSkill as updateSkillAction, setAct as setActAction } from './engine/store';
-import { validateTMailConfig, checkConfigCorrectness, generateTMailConfig } from './engine/configValidator';
+import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
-import { completeQuestAndProgress } from './engine/questEngine';
+import { handleTMailConfigComplete, handleGoldEDConfigComplete } from './domain/quests/service';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -38,46 +38,43 @@ function App() {
     const hasSoftware = (name) => inventory.includes(name);
 
     const handleConfigSave = (config) => {
-        // Validate config format
-        const validation = validateTMailConfig(config, fs);
-        if (!validation.valid) {
-            return { error: validation.errors.join('\n') };
+        // Use quest service for validation and completion
+        const actions = {
+            completeQuest: completeQuestAction,
+            setActiveQuest: setActiveQuestAction,
+            updateSkill: updateSkillAction,
+            setAct: setActAction,
+        };
+
+        const result = handleTMailConfigComplete(config, fs, quests, dispatch, actions);
+
+        if (!result.success) {
+            return { error: result.error };
         }
 
-        // Check if config matches correct values
-        const correctness = checkConfigCorrectness(config);
-        if (!correctness.correct) {
-            return { error: 'Конфигурация заполнена, но содержит ошибки.\nПроверьте адрес, пароль и телефон.' };
-        }
-
-        // Config is correct! Save it
+        // Save config file (domain operation)
         const configContent = generateTMailConfig(config);
         fs.writeFile('C:\\FIDO\\T-MAIL.CTL', configContent);
-
-        // Complete configure_tmail quest if active
-        if (quests.active === 'configure_tmail') {
-            const actions = {
-                completeQuest: completeQuestAction,
-                setActiveQuest: setActiveQuestAction,
-                updateSkill: updateSkillAction,
-                setAct: setActAction,
-            };
-            completeQuestAndProgress('configure_tmail', dispatch, actions);
-        }
 
         return { success: true };
     };
 
     const handleGoldEDSave = (config) => {
-        // Basic validation
-        if (!config.username || !config.username.trim()) {
-            return { error: 'ОШИБКА: Не указано имя пользователя' };
-        }
-        if (!config.address || !config.address.trim()) {
-            return { error: 'ОШИБКА: Не указан FidoNet адрес' };
+        // Use quest service for validation and completion
+        const actions = {
+            completeQuest: completeQuestAction,
+            setActiveQuest: setActiveQuestAction,
+            updateSkill: updateSkillAction,
+            setAct: setActAction,
+        };
+
+        const result = handleGoldEDConfigComplete(config, quests, dispatch, actions);
+
+        if (!result.success) {
+            return { error: result.error };
         }
 
-        // Generate config file content
+        // Generate and save config file (domain operation)
         const configContent = [
             '; GoldED Configuration',
             `USERNAME ${config.username}`,
@@ -86,21 +83,10 @@ function App() {
             `ORIGIN ${config.origin || 'FidoNet Point'}`,
             '',
         ].join('\n');
-
-        // Save config
         fs.writeFile('C:\\FIDO\\GOLDED.CFG', configContent);
 
-        // Complete configure_golded quest if active
-        if (quests.active === 'configure_golded') {
-            const actions = {
-                completeQuest: completeQuestAction,
-                setActiveQuest: setActiveQuestAction,
-                updateSkill: updateSkillAction,
-                setAct: setActAction,
-            };
-            completeQuestAndProgress('configure_golded', dispatch, actions);
-
-            // Trigger mail tossing animation after config is saved
+        // Trigger mail tossing animation if quest was completed
+        if (result.triggerAnimation) {
             setTimeout(() => {
                 setMailTossingActive(true);
             }, 1500);
