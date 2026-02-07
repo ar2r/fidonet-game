@@ -256,8 +256,9 @@ const SPEEDRUN_SCRIPT = [
 
 export const SpeedrunEngine = () => {
     const dispatch = useDispatch();
-    const speedrunMode = useSelector(state => state.gameState.speedrunMode);
-    const speedrunCommand = useSelector(state => state.gameState.speedrunCommand);
+    const gameState = useSelector(state => state.gameState);
+    const speedrunMode = gameState?.speedrunMode || false;
+    const speedrunCommand = gameState?.speedrunCommand || null;
     
     const [stepIndex, setStepIndex] = useState(0);
     const [waitingForCommand, setWaitingForCommand] = useState(false);
@@ -268,7 +269,10 @@ export const SpeedrunEngine = () => {
         if (speedrunMode) {
             console.log(`[Speedrun] Step: ${stepIndex}/${SPEEDRUN_SCRIPT.length}`);
         }
-    }, [speedrunMode, stepIndex]);
+        if (gameState && !('speedrunMode' in gameState)) {
+            console.error('[Speedrun] speedrunMode missing from gameState!', gameState);
+        }
+    }, [speedrunMode, stepIndex, gameState]);
 
     // Helpers
     const simulateTyping = (input, value) => {

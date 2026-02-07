@@ -47,6 +47,8 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
+const ENABLE_ONBOARDING = false;
+
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
@@ -279,7 +281,7 @@ function App() {
                 <GameOverScreen />
 
                 {/* Onboarding overlay */}
-                {!gameState.onboardingSeen && <Onboarding />}
+                {ENABLE_ONBOARDING && !gameState.onboardingSeen && <Onboarding />}
 
                 {/* Speedrun Engine */}
                 <SpeedrunEngine />
