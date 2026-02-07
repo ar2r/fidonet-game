@@ -81,7 +81,7 @@ export const ACT3_QUESTS = [
             },
         ],
         rewards: [
-            { type: 'skill', key: 'typing', delta: 2 },
+            { type: 'skill', key: 'eloquence', delta: 2 },
             { type: 'stat', key: 'fido_fame', delta: 1 },
         ],
         nextQuest: 'hardware_upgrade',

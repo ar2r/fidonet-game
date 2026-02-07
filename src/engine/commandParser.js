@@ -86,7 +86,7 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
     const terminalMode = gameState.network?.terminalMode || 'IDLE';
 
     // Special case for empty command
-    if (command === '') return;
+    if (command === '' && terminalMode !== 'BBS_CHAT') return;
 
     const context = {
         gameState,

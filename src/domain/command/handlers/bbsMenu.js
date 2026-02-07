@@ -35,6 +35,8 @@ export function handleMessageCommand({ appendOutput }) {
 export function handleChatCommand({ dispatch, actions, appendOutput }) {
     dispatch(actions.setTerminalMode('BBS_CHAT'));
     appendOutput(BBS_CHAT_SYSOP);
+    appendOutput("");
+    appendOutput("Нажмите ENTER (или введите любое слово), чтобы начать разговор.");
     return { handled: true };
 }
 

@@ -124,6 +124,8 @@ const networkSlice = createSlice({
         downloadQueue: [],
         logs: [],
         modemInitialized: false,
+        activeDialogue: null,
+        dialogueStep: 0,
     },
     reducers: {
         connect: (state, action) => {
@@ -136,6 +138,8 @@ const networkSlice = createSlice({
             state.currentBBS = null;
             state.connectionStatus = 'IDLE';
             state.terminalMode = 'IDLE';
+            state.activeDialogue = null;
+            state.dialogueStep = 0;
         },
         setStatus: (state, action) => {
             state.connectionStatus = action.payload;
@@ -152,6 +156,11 @@ const networkSlice = createSlice({
         setTerminalProgram: (state, action) => {
             state.terminalProgramRunning = action.payload;
         },
+        setDialogue: (state, action) => {
+            const { id, step } = action.payload;
+            state.activeDialogue = id;
+            state.dialogueStep = step;
+        },
         resetNetwork: () => ({
             connected: false,
             currentBBS: null,
@@ -161,6 +170,8 @@ const networkSlice = createSlice({
             downloadQueue: [],
             logs: [],
             modemInitialized: false,
+            activeDialogue: null,
+            dialogueStep: 0,
         }),
     }
 });
@@ -203,7 +214,7 @@ export const {
 
 export const {
     connect, disconnect, setStatus, setTerminalMode,
-    addLog, initializeModem, setTerminalProgram, resetNetwork
+    addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork
 } = networkSlice.actions;
 
 export const {

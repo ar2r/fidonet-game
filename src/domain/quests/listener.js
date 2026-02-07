@@ -5,6 +5,7 @@ import {
     MESSAGE_READ, 
     MESSAGE_POSTED,
     ITEM_BOUGHT,
+    DIALOGUE_COMPLETED,
     FILE_SAVED,
     DOWNLOAD_COMPLETED,
     BBS_CONNECTED,
@@ -74,6 +75,13 @@ export function setupQuestListeners(dispatch, actions, getState) {
                 completeQuestAndProgress('hardware_upgrade', dispatch, actions);
             }
         }
+
+        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'request_node') {
+            const { dialogueId, success } = payload;
+            if (dialogueId === 'request_node_status' && success) {
+                completeQuestAndProgress('request_node', dispatch, actions);
+            }
+        }
     };
 
     // Subscribe to all relevant events
@@ -82,6 +90,7 @@ export function setupQuestListeners(dispatch, actions, getState) {
         MESSAGE_READ,
         MESSAGE_POSTED,
         ITEM_BOUGHT,
+        DIALOGUE_COMPLETED,
         // Add others if we move logic from commandParser
     ];
 

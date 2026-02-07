@@ -53,6 +53,9 @@ export const MOM_PICKUP = 'event.random.mom_pickup';
 // Economy events
 export const ITEM_BOUGHT = 'economy.item.bought';
 
+// Dialogue events
+export const DIALOGUE_COMPLETED = 'dialogue.completed';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *

@@ -29,6 +29,33 @@ export const ACT4_QUESTS = [
             { type: 'skill', key: 'hardware', delta: 2 },
             { type: 'stat', key: 'fido_fame', delta: 5 },
         ],
-        nextQuest: null, // Next: Setup Boss Node logic
+        nextQuest: 'request_node',
+    },
+
+    {
+        id: 'request_node',
+        act: 4,
+        title: 'Запрос Ноды',
+        description: 'Поговорите с Сисопом (Архитектором) о получении статуса Ноды.',
+        hint: 'Подключитесь к BBS и выберите (C)hat в главном меню. Будьте вежливы и убедительны.',
+        prerequisites: ['hardware_upgrade'],
+        steps: [
+            {
+                id: 'talk_to_sysop',
+                type: StepType.EVENT,
+                event: 'dialogue.completed',
+                description: 'Договориться с Сисопом о статусе ноды',
+                metadata: {
+                    dialogueId: 'request_node_status',
+                    success: true,
+                },
+            },
+        ],
+        rewards: [
+            { type: 'skill', key: 'eloquence', delta: 2 },
+            { type: 'stat', key: 'karma', delta: 10 },
+        ],
+        nextQuest: null, // Next: Setup BinkleyTerm
+        completesAct: 4,
     },
 ];
