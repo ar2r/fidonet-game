@@ -50,13 +50,15 @@ const BuildInfo = styled.div`
   position: absolute;
   bottom: 35px;
   right: 8px;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
   font-family: 'ms_sans_serif';
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: bold;
   text-align: right;
   z-index: 0;
   pointer-events: none;
   line-height: 1.2;
+  text-shadow: 1px 1px 2px #000000;
 `;
 
 function App() {
