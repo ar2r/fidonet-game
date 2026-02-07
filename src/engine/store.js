@@ -15,8 +15,12 @@ const gameStateSlice = createSlice({
         gameOverReason: null,
         virusActive: false,
         virusStage: 'none', // 'none', 'cascade', 'cleaning'
+        onboardingSeen: false,
     },
     reducers: {
+        setOnboardingSeen: (state) => {
+            state.onboardingSeen = true;
+        },
         advanceTime: (state, action) => {
             state.time = action.payload;
         },
@@ -56,6 +60,7 @@ const gameStateSlice = createSlice({
             gameOverReason: null,
             virusActive: false,
             virusStage: 'none',
+            onboardingSeen: false,
         }),
     }
 });
@@ -222,7 +227,8 @@ const questSlice = createSlice({
 
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
-    advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame
+    advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
+    setOnboardingSeen
 } = gameStateSlice.actions;
 
 export const {

@@ -21,6 +21,7 @@ import QuestJournal from './features/quests/QuestJournal';
 import QuestLogFile from './components/QuestLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
+import Onboarding from './components/Onboarding';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
@@ -369,6 +370,9 @@ function App() {
                 {/* Game Over overlay */}
                 <GameOverScreen />
 
+                {/* Onboarding overlay */}
+                {!gameState.onboardingSeen && <Onboarding />}
+
                 {/* Virus Animation overlay */}
                 <VirusAnimation
                     stage={gameState.virusStage}
@@ -403,6 +407,12 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('todo-list')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Todo.txt</span>
+                    </div>
+
+                    {/* Map */}
+                    <div onDoubleClick={() => handleOpenWindow('district-map')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: '#333399', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>MAP</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>Карта</span>
                     </div>
 
                     {/* Winamp */}
