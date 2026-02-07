@@ -1,5 +1,5 @@
 import fs from '../../../engine/fileSystemInstance';
-import { GAME_MANUAL } from '../../../assets/text';
+import { GAME_MANUAL, TERMINAL_MANUAL } from '../../../assets/text';
 import { getQuestById } from '../../../content/quests';
 
 /**
@@ -124,8 +124,12 @@ export function handleCls() {
     return { handled: true, output: 'CLEAR' };
 }
 
-export function handleHelp({ appendOutput }) {
-    appendOutput(GAME_MANUAL);
+export function handleHelp({ gameState, appendOutput }) {
+    if (gameState.network?.terminalProgramRunning) {
+        appendOutput(TERMINAL_MANUAL);
+    } else {
+        appendOutput(GAME_MANUAL);
+    }
     return { handled: true };
 }
 

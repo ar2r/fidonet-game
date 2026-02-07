@@ -48,6 +48,29 @@ export const GAME_MANUAL = `
 ========================================
 `;
 
+export const TERMINAL_MANUAL = `
+========================================
+      TERMINAL v2.0 HELP
+========================================
+
+COMMANDS:
+- ATZ           : Initialize Modem (Reset).
+- AT&F          : Factory Reset (same as ATZ).
+- DIAL <number> : Dial a phone number (e.g. DIAL 555-3389).
+                  Alternative: ATDT <number> or ATDP <number>.
+- HELP          : Show this help.
+- EXIT / QUIT   : Exit to DOS.
+
+STATUS:
+- ONLINE        : Connected to remote system.
+- OFFLINE       : Modem ready, not connected.
+
+TIPS:
+- Ensure modem is initialized (ATZ) before dialing.
+- Use correct phone number for BBS.
+========================================
+`;
+
 export const README_FIDO = `
 ╔═══════════════════════════════════════════════════════════╗
 ║            FIDONET POINT SETUP GUIDE v1.0                 ║
