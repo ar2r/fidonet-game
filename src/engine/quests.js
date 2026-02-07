@@ -36,8 +36,18 @@ export const QUESTS = {
         hint: 'Запустите T-Mail Setup.exe с рабочего стола. Информацию можно получить у Сисопа BBS (команда C в меню) и прочитать README.1ST (команда TYPE C:\\FIDO\\README.1ST).',
         act: 2,
         reward: { skills: { software: 2, typing: 1 } },
-        nextQuest: null, // TODO: configure_golded
+        nextQuest: 'configure_golded',
         completesAct: null,
+    },
+    CONFIGURE_GOLDED: {
+        id: 'configure_golded',
+        title: 'Настройка GoldED',
+        description: 'Настройте GoldED: укажите имя, адрес и Origin.',
+        hint: 'Запустите GoldED с рабочего стола. Используйте тот же адрес, что и в T-Mail. Origin — это подпись в конце ваших писем.',
+        act: 2,
+        reward: { skills: { software: 2, typing: 1 } },
+        nextQuest: null, // TODO: first_poll in Phase 7
+        completesAct: 2,
     },
 };
 
