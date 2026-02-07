@@ -16,7 +16,7 @@ const HintWindowWrapper = styled(Window)`
   position: absolute;
   top: 50px;
   right: 10px;
-  width: 300px;
+  width: 400px;
   z-index: 1001;
 `;
 
