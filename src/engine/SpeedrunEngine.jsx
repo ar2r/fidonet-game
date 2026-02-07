@@ -9,11 +9,7 @@ import {
     resetQuests
 } from './store';
 import { openWindow, closeWindow } from './windowManager';
-import { WINDOW_DEFINITIONS } from '../App'; // Need to export this or redefine
-
-// Helper to access window definitions (assuming they are static or we duplicate for now)
-// Ideally App.jsx should export this, but let's redefine minimal needed or move to a shared constant file.
-// For now, I'll rely on string IDs which windowManager uses.
+import { WINDOW_DEFINITIONS } from '../config/windows';
 
 const SPEEDRUN_SCRIPT = [
     // Initial State
@@ -26,13 +22,7 @@ const SPEEDRUN_SCRIPT = [
     { type: 'wait', ms: 1000 },
 
     // Step 1: Open Terminal
-    { type: 'fn', action: (dispatch) => dispatch(openWindow({ 
-        id: 'terminal', 
-        title: 'MS-DOS Prompt - C:', 
-        component: 'terminal', 
-        position: { x: 100, y: 100 }, 
-        size: { width: 640, height: 480 } 
-    })) },
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS.terminal)) },
     { type: 'wait', ms: 1500 },
 
     // Step 2: Init Modem
@@ -64,23 +54,51 @@ const SPEEDRUN_SCRIPT = [
     { type: 'wait', ms: 1000 },
 
     // Step 9: Open T-Mail Config
-    { type: 'fn', action: (dispatch) => dispatch(openWindow({
-        id: 'tmail-config',
-        title: 'T-Mail Setup',
-        component: 'tmail-config',
-        position: { x: 200, y: 100 },
-        size: { width: 600, height: 500 },
-    })) },
-    { type: 'wait', ms: 3000 },
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['tmail-config'])) },
+    { type: 'wait', ms: 1500 },
 
-    // Step 10: Open Map
-    { type: 'fn', action: (dispatch) => dispatch(openWindow({
-        id: 'district-map',
-        title: 'Карта района: путь игрока',
-        component: 'district-map',
-        position: { x: 120, y: 60 },
-        size: { width: 980, height: 640 },
-    })) },
+    // Step 10: Fill T-Mail Config
+    { 
+        type: 'fillForm', 
+        windowId: 'tmail-config',
+        fields: [
+            { index: 0, value: '2:5020/730.15' }, // Address
+            { index: 1, value: 'secret' },        // Password
+            { index: 2, value: '2:5020/730' },    // Boss Node
+            { index: 3, value: '555-3389' }       // Boss Phone
+        ],
+        submitKey: 'F2'
+    },
+    { type: 'wait', ms: 2000 },
+
+    // Step 11: Close T-Mail Config (it closes automatically on save, but just in case)
+    // Actually handleSave in ConfigEditor closes it after timeout.
+    // So we wait for it to close.
+    { type: 'wait', ms: 2000 },
+
+    // Step 12: Open GoldED Config
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['golded-config'])) },
+    { type: 'wait', ms: 1500 },
+
+    // Step 13: Fill GoldED Config
+    { 
+        type: 'fillForm', 
+        windowId: 'golded-config',
+        fields: [
+            { index: 0, value: 'SysOp' },         // Username
+            { index: 1, value: 'Fido User' },     // Realname
+            { index: 2, value: '2:5020/730.15' }, // Address
+            { index: 3, value: 'My BBS' }         // Origin
+        ],
+        submitKey: 'F2'
+    },
+    { type: 'wait', ms: 2000 },
+
+    // Step 14: Wait for Mail Tossing Animation
+    { type: 'wait', ms: 5000 },
+
+    // Step 15: Open Map to show progress
+    { type: 'fn', action: (dispatch) => dispatch(openWindow(WINDOW_DEFINITIONS['district-map'])) },
     { type: 'wait', ms: 2000 },
 ];
 
@@ -92,6 +110,28 @@ export const SpeedrunEngine = () => {
     const [stepIndex, setStepIndex] = useState(0);
     const [waitingForCommand, setWaitingForCommand] = useState(false);
     const timeoutRef = useRef(null);
+
+    // Helper to simulate typing into input fields
+    const simulateTyping = (input, value) => {
+        if (!input) return;
+        
+        // Focus the input
+        input.focus();
+        
+        // Set value using property descriptor to bypass React's value tracking
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        nativeInputValueSetter.call(input, value);
+        
+        // Dispatch input event so React state updates
+        const event = new Event('input', { bubbles: true });
+        input.dispatchEvent(event);
+    };
+
+    // Helper to simulate key press
+    const simulateKeyPress = (key) => {
+        const event = new KeyboardEvent('keydown', { key: key, bubbles: true });
+        window.dispatchEvent(event);
+    };
 
     // Main execution loop
     useEffect(() => {
@@ -123,6 +163,27 @@ export const SpeedrunEngine = () => {
             } else if (step.type === 'terminal') {
                 dispatch(setSpeedrunCommand(step.command));
                 setWaitingForCommand(true);
+            } else if (step.type === 'fillForm') {
+                // Find visible inputs
+                const inputs = document.querySelectorAll('input[type="text"]');
+                if (inputs.length > 0) {
+                    step.fields.forEach(field => {
+                        if (inputs[field.index]) {
+                            simulateTyping(inputs[field.index], field.value);
+                        }
+                    });
+                    
+                    // Submit form
+                    setTimeout(() => {
+                        simulateKeyPress(step.submitKey);
+                        setStepIndex(prev => prev + 1);
+                    }, 500);
+                } else {
+                    // Retry or skip if inputs not found (maybe window didn't open yet)
+                    // For now, retry once or skip
+                    console.warn("Speedrun: Inputs not found for fillForm step");
+                    setStepIndex(prev => prev + 1);
+                }
             }
         };
 
