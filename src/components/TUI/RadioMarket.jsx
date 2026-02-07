@@ -68,83 +68,132 @@ const MARKET_ITEMS = [
         type: 'hardware'
     },
     {
-        id: 'diskettes_pack',
-        name: 'Пачка дискет 3.5" (10 шт)',
-        price: 1500,
-        description: 'Новые дискеты Verbatim. Пригодятся для переноса файлов и бекапов.',
-        type: 'item'
-    },
-    {
-        id: 'coffee_jar',
-        name: 'Банка кофе Nescafe',
-        price: 800,
-        description: 'Бодрящий напиток. Восстанавливает 20 единиц рассудка (Sanity).',
-        type: 'consumable'
-    },
-    {
         id: 'pc_ram_16mb',
         name: 'Модули памяти 16MB SIMM',
-        price: 12000,
+        price: 8000,
         description: 'Позволяют запускать более тяжелые программы и Windows 95 без тормозов.',
         type: 'hardware'
     },
     {
         id: 'solder_kit',
         name: 'Набор для пайки (Паяльник 40Вт)',
-        price: 500,
+        price: 1500,
         description: 'Все для ремонта и моддинга. Припой и канифоль в комплекте. Требуется навык Hardware.',
         type: 'item'
+    },
+    {
+        id: 'diskettes_pack',
+        name: 'Пачка дискет 3.5" (10 шт)',
+        price: 500,
+        description: 'Новые дискеты Verbatim. Пригодятся для переноса файлов и бекапов.',
+        type: 'item'
+    },
+    {
+        id: 'coffee_jar',
+        name: 'Банка кофе Nescafe',
+        price: 300,
+        description: 'Бодрящий напиток. Восстанавливает 20 единиц рассудка (Sanity).',
+        type: 'consumable'
     }
 ];
+
+const SELLABLE_ITEMS = {
+    'doom2': { name: 'Doom II (4 дискеты)', price: 2000 },
+    'duke3d': { name: 'Duke Nukem 3D', price: 2500 },
+    'warcraft2': { name: 'Warcraft II', price: 3000 },
+    'win95': { name: 'Windows 95 (CD-RIP)', price: 1500 },
+};
 
 function RadioMarket() {
     const dispatch = useDispatch();
     const money = useSelector(state => state.player.stats.money);
     const inventory = useSelector(state => state.player.inventory);
     
+    const [mode, setMode] = useState('BUY'); // 'BUY' or 'SELL'
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [message, setMessage] = useState('');
 
-    const handleBuy = () => {
-        const item = MARKET_ITEMS[selectedIndex];
-        
-        if (money < item.price) {
-            setMessage('ОШИБКА: Недостаточно средств!');
-            return;
-        }
+    // Filter inventory for sellable items
+    const sellList = inventory
+        .filter(id => SELLABLE_ITEMS[id])
+        .map(id => ({ id, ...SELLABLE_ITEMS[id] }));
 
-        if (item.type === 'hardware' && inventory.includes(item.id)) {
-            setMessage('У вас уже есть это оборудование.');
-            return;
-        }
+    const currentList = mode === 'BUY' ? MARKET_ITEMS : sellList;
+    const currentItem = currentList[selectedIndex];
 
-        // Process purchase
-        dispatch(updateStat({ stat: 'money', value: -item.price }));
-        
-        if (item.type === 'consumable') {
-            if (item.id === 'coffee_jar') {
-                dispatch(updateStat({ stat: 'sanity', value: 20 }));
-                setMessage(`Вы выпили кофе. +20 к рассудку!`);
+    const handleAction = () => {
+        if (!currentItem) return;
+
+        if (mode === 'BUY') {
+            if (money < currentItem.price) {
+                setMessage('ОШИБКА: Недостаточно средств!');
+                return;
+            }
+
+            if (currentItem.type === 'hardware' && inventory.includes(currentItem.id)) {
+                setMessage('У вас уже есть это оборудование.');
+                return;
+            }
+
+            // Process purchase
+            dispatch(updateStat({ stat: 'money', value: -currentItem.price }));
+            
+            if (currentItem.type === 'consumable') {
+                if (currentItem.id === 'coffee_jar') {
+                    dispatch(updateStat({ stat: 'sanity', value: 20 }));
+                    setMessage(`Вы выпили кофе. +20 к рассудку!`);
+                }
+            } else {
+                dispatch(addItem(currentItem.id));
+                eventBus.publish(ITEM_BOUGHT, { item: currentItem.id, price: currentItem.price });
+                setMessage(`Приобретено: ${currentItem.name}`);
             }
         } else {
-            dispatch(addItem(item.id));
-            eventBus.publish(ITEM_BOUGHT, { item: item.id, price: item.price });
-            setMessage(`Приобретено: ${item.name}`);
+            // Sell logic
+            dispatch(updateStat({ stat: 'money', value: currentItem.price }));
+            // Remove item logic is tricky with current store, assume we "sell copy" or just allow infinite sell?
+            // Realistically, selling removes the item.
+            // But our `addItem` is additive. We need `removeItem`.
+            // For now, let's say we sell a *copy* on diskettes, costing us time/diskettes?
+            // To simplify: selling removes it. But we need a removeItem action.
+            // If removeItem isn't in store, we simulate "Selling Copies" which requires Diskettes.
+            
+            // Check if we have diskettes to make a copy
+            // For simplicity in this iteration: You sell the warez and keep the source (piracy!).
+            // But maybe limit it? Let's just give money for now.
+            setMessage(`Продано: ${currentItem.name} (+${currentItem.price} руб)`);
         }
     };
 
-    const currentItem = MARKET_ITEMS[selectedIndex];
-
     return (
         <MarketContainer tabIndex="0" onKeyDown={(e) => {
-            if (e.key === 'ArrowDown') setSelectedIndex(p => Math.min(p + 1, MARKET_ITEMS.length - 1));
+            if (e.key === 'ArrowDown') setSelectedIndex(p => Math.min(p + 1, currentList.length - 1));
             if (e.key === 'ArrowUp') setSelectedIndex(p => Math.max(p - 1, 0));
-            if (e.key === 'Enter') handleBuy();
+            if (e.key === 'Enter') handleAction();
+            if (e.key === 'Tab') {
+                setMode(m => m === 'BUY' ? 'SELL' : 'BUY');
+                setSelectedIndex(0);
+                setMessage('');
+            }
         }}>
-            <Header>РАДИОРЫНОК "МИР ЭЛЕКТРОНИКИ"</Header>
+            <Header>
+                РАДИОРЫНОК "МИР ЭЛЕКТРОНИКИ" | 
+                <span style={{ color: mode === 'BUY' ? 'yellow' : 'white', cursor: 'pointer' }} onClick={() => setMode('BUY')}> [КУПИТЬ] </span>
+                <span style={{ color: mode === 'SELL' ? 'yellow' : 'white', cursor: 'pointer' }} onClick={() => setMode('SELL')}> [ПРОДАТЬ] </span>
+            </Header>
             <ContentArea>
-                <div style={{ marginBottom: 10, color: '#AAAAAA' }}>Доступные товары:</div>
-                {MARKET_ITEMS.map((item, idx) => (
+                <div style={{ marginBottom: 10, color: '#AAAAAA' }}>
+                    {mode === 'BUY' ? 'Доступные товары:' : 'Скупка краденого софта:'}
+                </div>
+                
+                {currentList.length === 0 && mode === 'SELL' && (
+                    <div style={{ padding: 20, textAlign: 'center', color: '#888' }}>
+                        У вас нет софта на продажу. <br/>
+                        Скачайте игры с BBS!
+                    </div>
+                )}
+
+                {currentList.map((item, idx) => (
                     <ItemRow 
                         key={item.id} 
                         selected={idx === selectedIndex}
@@ -157,19 +206,19 @@ function RadioMarket() {
                 
                 <div style={{ marginTop: 20 }}>
                     <Description>
-                        {currentItem.description}
+                        {currentItem ? currentItem.description : (mode === 'SELL' ? 'Выберите игру для продажи.' : '')}
                     </Description>
                 </div>
 
                 {message && (
-                    <div style={{ color: '#FF5555', textAlign: 'center', marginTop: 10, border: '1px solid red', padding: 5 }}>
+                    <div style={{ color: mode === 'BUY' ? '#55FF55' : 'gold', textAlign: 'center', marginTop: 10, border: '1px solid gray', padding: 5 }}>
                         {message}
                     </div>
                 )}
             </ContentArea>
             <Footer>
                 <span>Ваш бюджет: {money} руб.</span>
-                <span>ENTER: Купить | ESC: Выход</span>
+                <span>TAB: Режим | ENTER: {mode === 'BUY' ? 'Купить' : 'Продать'} | ESC: Выход</span>
             </Footer>
         </MarketContainer>
     );

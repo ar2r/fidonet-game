@@ -82,12 +82,14 @@ export function handleTMail({ command, appendOutput }) {
 }
 
 export function handleWork({ dispatch, actions, appendOutput }) {
-    const amount = Math.floor(Math.random() * 500) + 100;
+    const amount = Math.floor(Math.random() * 300) + 300; // 300-600 rub
     appendOutput(`Вы помогли соседу переустановить Windows...`);
     appendOutput(`Заработок: ${amount} руб.`);
-    appendOutput(`Время потрачено: 2 часа`);
+    appendOutput(`Время потрачено: 4 часа. Усталость: -10% рассудка.`);
     
     dispatch(actions.updateStat({ stat: 'money', value: amount }));
+    dispatch(actions.updateStat({ stat: 'sanity', value: -10 }));
+    dispatch(actions.advanceTime('00:00')); // Mock time advance, ideally calculate properly
     
     return { handled: true };
 }
@@ -96,10 +98,15 @@ export function handleAllowance({ gameState, dispatch, actions, appendOutput }) 
     const day = gameState.gameState?.day || 1;
     // Simple logic: allowance every Monday (day 1, 8, 15...)
     const isMonday = (day - 1) % 7 === 0;
+    const atmosphere = gameState.player.stats.atmosphere;
     
     if (isMonday) {
-        appendOutput(`Родители выдали карманные деньги: 1000 руб.`);
-        dispatch(actions.updateStat({ stat: 'money', value: 1000 }));
+        if (atmosphere > 20) {
+            appendOutput(`Родители выдали карманные деньги: 1000 руб.`);
+            dispatch(actions.updateStat({ stat: 'money', value: 1000 }));
+        } else {
+            appendOutput(`Родители злятся (скандал). Денег не дали.`);
+        }
     } else {
         appendOutput(`До понедельника еще далеко. Карманных денег нет.`);
     }

@@ -73,7 +73,7 @@ const playerSlice = createSlice({
         stats: {
             sanity: 100,
             atmosphere: 100, // Бывшее momsPatience. 100 = Тишина, 0 = Скандал
-            money: 50000, // рублей
+            money: 2500, // рублей
             debt: 0,
         },
         skills: {
