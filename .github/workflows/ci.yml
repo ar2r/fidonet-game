@@ -1,0 +1,43 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run Linter
+      run: npm run lint
+    - name: Run Tests
+      run: npm test -- --run
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: fidonet-game:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    - name: Trigger Deployment Webhook
+      if: success()
+      run: curl -X POST http://151.243.3.88:3000/api/deploy/_igpKEOADm0r4_08NUaCp

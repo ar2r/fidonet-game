@@ -72,7 +72,7 @@ const WINDOW_DEFINITIONS = {
         title: 'Winamp',
         component: 'winamp',
         position: { x: 400, y: 50 },
-        size: { width: 275, height: 300 }, // Height accommodates playlist
+        size: { width: 275, height: 240 },
     },
     'artmoney': {
         id: 'artmoney',
