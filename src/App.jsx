@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { styleReset } from 'react95';
 import original from 'react95/dist/themes/original';
 import { AppBar, Toolbar, Button, List, ListItem, Divider } from 'react95';
@@ -45,9 +45,27 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
+const BuildInfo = styled.div`
+  position: absolute;
+  bottom: 35px;
+  right: 8px;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'ms_sans_serif';
+  font-size: 10px;
+  text-align: right;
+  z-index: 0;
+  pointer-events: none;
+  line-height: 1.2;
+`;
+
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
+
+    // eslint-disable-next-line no-undef
+    const buildHash = __COMMIT_HASH__;
+    // eslint-disable-next-line no-undef
+    const buildDate = __BUILD_DATE__;
 
     const dispatch = useDispatch();
     const inventory = useSelector(state => state.player.inventory);
@@ -390,6 +408,11 @@ function App() {
                         {renderWindowContent(window.id, window.component)}
                     </DesktopWindow>
                 ))}
+
+                <BuildInfo>
+                    Ver: {buildHash}<br/>
+                    {buildDate}
+                </BuildInfo>
 
                 {/* Taskbar */}
                 <AppBar style={{ top: 'auto', bottom: 0, zIndex: 9999 }}>
