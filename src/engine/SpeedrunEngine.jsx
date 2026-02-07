@@ -6,7 +6,8 @@ import {
     resetGame,
     resetPlayer,
     resetNetwork,
-    resetQuests
+    resetQuests,
+    setOnboardingSeen
 } from './store';
 import { openWindow, closeWindow } from './windowManager';
 import { WINDOW_DEFINITIONS } from '../config/windows';
@@ -18,6 +19,7 @@ const SPEEDRUN_SCRIPT = [
         dispatch(resetPlayer());
         dispatch(resetNetwork());
         dispatch(resetQuests());
+        dispatch(setOnboardingSeen());
     }},
     { type: 'wait', ms: 1000 },
 
