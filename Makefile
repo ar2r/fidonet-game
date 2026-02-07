@@ -22,7 +22,8 @@ start:
 	else \
 		echo "Starting server on port $(PORT)..."; \
 		nohup npm run dev -- --port $(PORT) --host > $(LOG_FILE) 2>&1 & echo $$! > $(PID_FILE); \
-		echo "Server started. Check $(LOG_FILE) for output."; \
+		echo "Server started. Logs: $(LOG_FILE)"; \
+		echo "App available at: http://localhost:$(PORT)"; \
 	fi
 
 stop:
