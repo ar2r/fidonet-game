@@ -41,6 +41,12 @@ export const MODEM_INITIALIZED = 'modem.initialized';
 export const MODEM_DIALING = 'modem.dialing';
 export const MODEM_CONNECTED = 'modem.connected';
 
+// Mail/Tossing events
+export const UI_START_MAIL_TOSSING = 'ui.start.mail.tossing';
+export const MAIL_TOSSING_COMPLETED = 'mail.tossed';
+export const MESSAGE_READ = 'message.read';
+export const MESSAGE_POSTED = 'message.posted';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *

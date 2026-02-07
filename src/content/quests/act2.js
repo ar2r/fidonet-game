@@ -66,7 +66,7 @@ export const ACT2_QUESTS = [
             { type: 'skill', key: 'software', delta: 2 },
             { type: 'skill', key: 'typing', delta: 1 },
         ],
-        nextQuest: null, // TODO: first_poll in Phase 7
+        nextQuest: 'poll_boss',
         completesAct: 2,
     },
 ];

@@ -25,7 +25,7 @@ describe('FidoNet Simulator UI', () => {
         const terminalHeaders = screen.getAllByText(/MS-DOS Prompt/i);
         expect(terminalHeaders.length).toBeGreaterThan(0);
 
-        const closeButton = screen.getByText('X');
+        const closeButton = screen.getByText('×');
         fireEvent.click(closeButton);
 
         // After closing, terminal header should be gone (but may still be in history)

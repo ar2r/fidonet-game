@@ -5,6 +5,7 @@
 
 import { ACT1_QUESTS } from './act1';
 import { ACT2_QUESTS } from './act2';
+import { ACT3_QUESTS } from './act3';
 import { validateQuestCollection } from '../../domain/quests/schema';
 
 /**
@@ -13,7 +14,7 @@ import { validateQuestCollection } from '../../domain/quests/schema';
 export const ALL_QUESTS = [
     ...ACT1_QUESTS,
     ...ACT2_QUESTS,
-    // ...ACT3_QUESTS,  // TODO: Phase 7
+    ...ACT3_QUESTS,
     // ...ACT4_QUESTS,  // TODO: Phase 12
 ];
 
@@ -82,6 +83,9 @@ export const QUESTS = {
     DOWNLOAD_SOFTWARE: getQuestById('download_software'),
     CONFIGURE_TMAIL: getQuestById('configure_tmail'),
     CONFIGURE_GOLDED: getQuestById('configure_golded'),
+    POLL_BOSS: getQuestById('poll_boss'),
+    READ_RULES: getQuestById('read_rules'),
+    REPLY_WELCOME: getQuestById('reply_welcome'),
 };
 
 export const QUEST_LIST = ALL_QUESTS;

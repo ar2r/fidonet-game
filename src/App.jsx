@@ -12,6 +12,7 @@ import StatusBar from './components/StatusBar';
 import GameOverScreen from './components/GameOverScreen';
 import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
+import GoldED from './components/TUI/GoldED';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
@@ -21,6 +22,9 @@ import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete } from './domain/quests/service';
 import { completeQuestAndProgress } from './engine/questEngine';
+import { setupQuestListeners } from './domain/quests/listener';
+import { eventBus } from './domain/events/bus';
+import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -59,6 +63,13 @@ const WINDOW_DEFINITIONS = {
         position: { x: 250, y: 150 },
         size: { width: 600, height: 500 },
     },
+    'golded-reader': {
+        id: 'golded-reader',
+        title: 'GoldED 2.50+',
+        component: 'golded-reader',
+        position: { x: 150, y: 100 },
+        size: { width: 800, height: 600 },
+    },
     'quest-journal': {
         id: 'quest-journal',
         title: 'Журнал квестов',
@@ -77,6 +88,26 @@ function App() {
     const quests = useSelector(state => state.quests);
     const gameState = useSelector(state => state.gameState);
     const windows = useSelector(state => state.windowManager.windows);
+
+    // Setup global quest event listeners
+    React.useEffect(() => {
+        const actions = {
+            completeQuest: completeQuestAction,
+            setActiveQuest: setActiveQuestAction,
+            updateSkill: updateSkillAction,
+            setAct: setActAction,
+        };
+        const cleanup = setupQuestListeners(dispatch, actions, () => ({ quests: quests })); 
+        
+        // Listen for UI triggers
+        const startTossing = () => setMailTossingActive(true);
+        const unsubscribeTossing = eventBus.subscribe(UI_START_MAIL_TOSSING, startTossing);
+
+        return () => {
+            cleanup();
+            unsubscribeTossing();
+        };
+    }, [dispatch, quests]);
 
     const hasSoftware = (name) => inventory.includes(name);
 
@@ -214,6 +245,11 @@ function App() {
                     />
                 );
 
+            case 'golded-reader':
+                return (
+                    <GoldED />
+                );
+
             case 'quest-journal':
                 return (
                     <QuestJournal />
@@ -241,7 +277,10 @@ function App() {
                 {/* Mail Tossing Animation overlay */}
                 {mailTossingActive && (
                     <MailTossingAnimation
-                        onComplete={() => setMailTossingActive(false)}
+                        onComplete={() => {
+                            setMailTossingActive(false);
+                            eventBus.publish(MAIL_TOSSING_COMPLETED, {});
+                        }}
                     />
                 )}
 
@@ -267,12 +306,19 @@ function App() {
                         </div>
                     )}
 
-                    {/* GoldED Setup */}
+                    {/* GoldED */}
                     {hasSoftware('golded') && (
-                        <div onDoubleClick={() => handleOpenWindow('golded-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                            <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
-                            <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
-                        </div>
+                        quests.completed.includes('configure_golded') ? (
+                            <div onDoubleClick={() => handleOpenWindow('golded-reader')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                                <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
+                                <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
+                            </div>
+                        ) : (
+                            <div onDoubleClick={() => handleOpenWindow('golded-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                                <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
+                                <span style={{ background: '#008080', padding: '2px' }}>Setup</span>
+                            </div>
+                        )
                     )}
 
                     {/* Quest Journal */}

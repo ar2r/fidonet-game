@@ -74,6 +74,7 @@ function DesktopWindow({ windowId, children }) {
                 }}
             >
                 <WindowHeader
+                    active={isActive}
                     className="window-header"
                     style={{
                         display: 'flex',
@@ -83,23 +84,23 @@ function DesktopWindow({ windowId, children }) {
                         userSelect: 'none'
                     }}
                 >
-                    <span>{window.title}</span>
-                    <div style={{ display: 'flex', gap: '2px' }}>
+                    <span style={{ marginLeft: 4 }}>{window.title}</span>
+                    <div style={{ display: 'flex' }}>
                         <Button
                             onClick={handleMinimize}
                             size="sm"
                             square
-                            style={{ fontWeight: 'bold', padding: '0 6px' }}
+                            style={{ marginRight: 2 }}
                         >
-                            _
+                            <span style={{ fontWeight: 'bold', transform: 'translateY(-1px)' }}>_</span>
                         </Button>
                         <Button
                             onClick={handleClose}
                             size="sm"
                             square
-                            style={{ fontWeight: 'bold', marginRight: '-6px', marginTop: '1px' }}
+                            style={{ fontWeight: 'bold' }}
                         >
-                            <span style={{ transform: 'translateY(-1px)' }}>X</span>
+                            <span style={{ transform: 'translateY(-1px)' }}>×</span>
                         </Button>
                     </div>
                 </WindowHeader>

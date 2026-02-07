@@ -49,6 +49,9 @@ commandRegistry.register('IDLE', 'DOOM2', apps.handleDoom);
 commandRegistry.register('IDLE', 'DOOM2.WAD', apps.handleDoom);
 commandRegistry.register('IDLE', 'AIDSTEST', apps.handleAidstest);
 commandRegistry.register('IDLE', 'AIDSTEST.EXE', apps.handleAidstest);
+commandRegistry.register('IDLE', 'T-MAIL', apps.handleTMail);
+commandRegistry.register('IDLE', 'T-MAIL.EXE', apps.handleTMail);
+commandRegistry.register('IDLE', 'POLL', apps.handleTMail);
 
 // BBS_MENU Mode
 commandRegistry.register('BBS_MENU', 'F', bbsMenu.handleFilesCommand);
