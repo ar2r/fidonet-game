@@ -10,7 +10,8 @@ import {
     FILE_SAVED,
     DOWNLOAD_COMPLETED,
     BBS_CONNECTED,
-    MODEM_INITIALIZED
+    MODEM_INITIALIZED,
+    COMMAND_EXECUTED
 } from '../events/types';
 
 /**
@@ -112,6 +113,13 @@ export function setupQuestListeners(dispatch, actions, getState) {
             }
         }
 
+        if (eventType === COMMAND_EXECUTED && activeQuestId === 'trace_troll') {
+            const { command, args, success } = payload;
+            if (command === 'TRACE' && args === 'TROLL.MASTER' && success) {
+                completeQuestAndProgress('trace_troll', dispatch, actions);
+            }
+        }
+
         if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'meet_coordinator') {
             const { dialogueId, success } = payload;
             if (dialogueId === 'coordinator_finale' && success) {
@@ -132,6 +140,7 @@ export function setupQuestListeners(dispatch, actions, getState) {
         ITEM_BOUGHT,
         DIALOGUE_COMPLETED,
         ZMH_ACTIVITY_COMPLETED,
+        COMMAND_EXECUTED
         // Add others if we move logic from commandParser
     ];
 

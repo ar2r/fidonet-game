@@ -44,6 +44,37 @@ const DIALOGUES = {
             }
         ]
     },
+    act3_strategy_dialogue: {
+        steps: [
+            {
+                text: "Архитектор: Видел, что творится в SU.FLAME? Troll.Master совсем озверел. Что думаешь делать?",
+                options: [
+                    { id: 1, text: "Попробую с ним поговорить. (Путь Дипломата)", nextStep: 1 },
+                    { id: 2, text: "Вычислю его адрес и сдам. (Путь Технаря)", nextStep: 2 },
+                ]
+            },
+            {
+                text: "Архитектор: Благородно, но рискованно. Если у тебя подвешен язык (Eloquence), дерзай. Напиши в эху.",
+                onEnter: (dispatch, actions) => {
+                    dispatch(actions.completeQuest('choose_strategy'));
+                    dispatch(actions.setActiveQuest('reply_welcome'));
+                },
+                options: [
+                    { id: 1, text: "Понял. Иду в GoldED.", nextStep: 'exit' }
+                ]
+            },
+            {
+                text: "Архитектор: Хакерский подход? Мне нравится. Используй команду TRACE в терминале, чтобы найти его узел.",
+                onEnter: (dispatch, actions) => {
+                    dispatch(actions.completeQuest('choose_strategy'));
+                    dispatch(actions.setActiveQuest('trace_troll'));
+                },
+                options: [
+                    { id: 1, text: "Будет сделано.", nextStep: 'exit' }
+                ]
+            }
+        ]
+    },
     crisis_dialogue: {
         steps: [
             {
@@ -161,6 +192,8 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
         // Context-aware dialogue selection
         if (quests.active === 'request_node') {
             dialogueId = 'request_node_status';
+        } else if (quests.active === 'choose_strategy') {
+            dialogueId = 'act3_strategy_dialogue';
         } else if (quests.active === 'crisis_choice') {
             dialogueId = 'crisis_dialogue';
         } else if (quests.active === 'negotiate_peace') {

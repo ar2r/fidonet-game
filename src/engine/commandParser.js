@@ -6,6 +6,7 @@ import * as apps from '../domain/command/handlers/apps';
 import * as bbsFiles from '../domain/command/handlers/bbsFiles';
 import * as bbsMenu from '../domain/command/handlers/bbsMenu';
 import * as bbsChat from '../domain/command/handlers/bbsChat';
+import * as techTools from '../domain/command/handlers/techTools';
 import { getTimeCost, computeTickEffects } from './gameTick';
 import { checkRandomEvents } from '../domain/events/random/scheduler';
 import { checkBills, checkDebtGameOver } from './economy';
@@ -58,6 +59,7 @@ commandRegistry.register('IDLE', 'POLL', apps.handleTMail);
 commandRegistry.register('IDLE', 'WORK', apps.handleWork);
 commandRegistry.register('IDLE', 'ALLOWANCE', apps.handleAllowance);
 commandRegistry.register('IDLE', 'PAY', apps.handlePay);
+commandRegistry.register('IDLE', 'TRACE', techTools.handleTrace);
 
 // BBS_MENU Mode
 commandRegistry.register('BBS_MENU', 'F', bbsMenu.handleFilesCommand);

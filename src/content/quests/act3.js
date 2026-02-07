@@ -1,17 +1,10 @@
 /**
  * Act 3 Quests: Почта и Флейм
- * Goal: Poll Boss Node, Read Rules, Participate
+ * Goal: Poll Boss Node, Read Rules, Participate (Branching)
  */
 
 import { StepType } from '../../domain/quests/schema';
-import { BBS_CONNECTED } from '../../domain/events/types'; // We might need a new event for POLL
-
-// Custom event for successful poll
-const MAIL_TOSSING_COMPLETED = 'mail.tossed';
-// Custom event for opening a message
-const MESSAGE_READ = 'message.read';
-// Custom event for posting a message
-const MESSAGE_POSTED = 'message.posted';
+import { MAIL_TOSSING_COMPLETED, MESSAGE_READ, MESSAGE_POSTED, DIALOGUE_COMPLETED, COMMAND_EXECUTED } from '../../domain/events/types';
 
 export const ACT3_QUESTS = [
     {
@@ -59,16 +52,35 @@ export const ACT3_QUESTS = [
             { type: 'skill', key: 'reading', delta: 1 },
             { type: 'stat', key: 'sanity', delta: 5 },
         ],
-        nextQuest: 'reply_welcome',
+        nextQuest: 'choose_strategy',
     },
 
     {
+        id: 'choose_strategy',
+        act: 3,
+        title: 'Выбор Стратегии',
+        description: 'В эхе SU.FLAME бушует тролль. Как вы поступите?',
+        hint: 'Поговорите с Сисопом (Чат) или решите сами. Это важный выбор.',
+        prerequisites: ['read_rules'],
+        steps: [
+            {
+                id: 'make_choice',
+                type: StepType.MANUAL,
+                description: 'Выбрать путь Дипломата или Технаря',
+            }
+        ],
+        rewards: [],
+        nextQuest: null, // Dynamic: 'reply_welcome' or 'trace_troll'
+    },
+
+    // Diplomat Path
+    {
         id: 'reply_welcome',
         act: 3,
-        title: 'Приветствие',
-        description: 'Напишите приветственное сообщение в SU.FLAME.',
-        hint: 'В GoldED, находясь в SU.FLAME, нажмите Insert (или New Msg) и отправьте письмо.',
-        prerequisites: ['read_rules'],
+        title: 'Глас Разума',
+        description: 'Напишите приветственное сообщение в SU.FLAME и попытайтесь успокоить тролля.',
+        hint: 'В GoldED напишите письмо в SU.FLAME.',
+        prerequisites: ['choose_strategy'],
         steps: [
             {
                 id: 'post_hello',
@@ -81,10 +93,39 @@ export const ACT3_QUESTS = [
             },
         ],
         rewards: [
-            { type: 'skill', key: 'eloquence', delta: 2 },
-            { type: 'stat', key: 'fido_fame', delta: 1 },
+            { type: 'skill', key: 'eloquence', delta: 3 },
+            { type: 'stat', key: 'fido_fame', delta: 2 },
+            { type: 'stat', key: 'karma', delta: 5 },
         ],
         nextQuest: 'hardware_upgrade',
         completesAct: 3,
     },
+
+    // Technician Path
+    {
+        id: 'trace_troll',
+        act: 3,
+        title: 'Охота на Тролля',
+        description: 'Вычислите адрес тролля через служебные заголовки (Kludge) и сообщите Сисопу.',
+        hint: 'Используйте команду TRACE <имя> в терминале (команда будет добавлена).',
+        prerequisites: ['choose_strategy'],
+        steps: [
+            {
+                id: 'exec_trace',
+                type: StepType.EVENT,
+                event: COMMAND_EXECUTED, // Need to implement TRACE command
+                description: 'Выполнить TRACE Troll.Master',
+                metadata: {
+                    command: 'TRACE',
+                    args: 'TROLL.MASTER'
+                }
+            }
+        ],
+        rewards: [
+            { type: 'skill', key: 'software', delta: 3 },
+            { type: 'stat', key: 'fido_fame', delta: 1 }, // Less fame but more skill
+        ],
+        nextQuest: 'hardware_upgrade',
+        completesAct: 3,
+    }
 ];
