@@ -193,7 +193,10 @@ function Winamp() {
         };
     }, [isPlaying, currentTrackIndex]);
 
-    const play = () => setIsPlaying(true);
+    const play = () => {
+        if (!audioManager.initialized) audioManager.init();
+        setIsPlaying(true);
+    };
     const pause = () => setIsPlaying(!isPlaying);
     const stop = () => { setIsPlaying(false); setTime(0); setVisuals(Array(18).fill(2)); };
     const prev = () => { setCurrentTrackIndex(i => Math.max(0, i - 1)); setTime(0); };
