@@ -67,7 +67,7 @@ const playerSlice = createSlice({
         name: 'SysOp',
         stats: {
             sanity: 100,
-            momsPatience: 100,
+            atmosphere: 100, // Бывшее momsPatience. 100 = Тишина, 0 = Скандал
             money: 50000, // рублей
             debt: 0,
         },
@@ -120,7 +120,7 @@ const playerSlice = createSlice({
         },
         resetPlayer: () => ({
             name: 'SysOp',
-            stats: { sanity: 100, momsPatience: 100, money: 50000 },
+            stats: { sanity: 100, atmosphere: 100, money: 50000 },
             skills: { typing: 1, hardware: 0, software: 0, eloquence: 0 },
             inventory: [],
             karma: 0,

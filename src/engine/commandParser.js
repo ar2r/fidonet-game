@@ -133,8 +133,8 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
                 dispatch(actions.advanceDay(effects.daysAdvanced));
             }
             
-            if (effects.momPatienceDelta !== 0) {
-                dispatch(actions.updateStat({ stat: 'momsPatience', value: effects.momPatienceDelta }));
+            if (effects.atmosphereDelta !== 0) {
+                dispatch(actions.updateStat({ stat: 'atmosphere', value: effects.atmosphereDelta }));
             }
         }
 

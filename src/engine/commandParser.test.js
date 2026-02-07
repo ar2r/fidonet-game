@@ -34,7 +34,7 @@ describe('commandParser', () => {
             network: { connected: false, modemInitialized: false, terminalMode: 'IDLE', terminalProgramRunning: false },
             player: { 
                 inventory: [],
-                stats: { momsPatience: 100, sanity: 100 } 
+                stats: { atmosphere: 100, sanity: 100 } 
             },
             quests: { active: 'get_online', completed: [] },
         };

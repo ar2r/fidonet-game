@@ -103,7 +103,7 @@ export const ACT4_QUESTS = [
         ],
         rewards: [
             { type: 'skill', key: 'software', delta: 3 },
-            { type: 'item', key: 'node_status', delta: 1 },
+            { type: 'item', item: 'node_status', delta: 1 },
         ],
         nextQuest: 'nightly_uptime',
     },

@@ -72,10 +72,10 @@ export function computeTickEffects(currentMinutes, addedMinutes, isConnected) {
     const daysAfter = Math.floor(newMinutes / 1440);
     const daysAdvanced = daysAfter - daysBefore;
 
-    // Mom's patience: decreases at night when connected
-    let momPatienceDelta = 0;
+    // Atmosphere: decreases at night when connected
+    let atmosphereDelta = 0;
     if (newPhase === 'night' && isConnected && addedMinutes > 0) {
-        momPatienceDelta = -1;
+        atmosphereDelta = -1;
     }
 
     return {
@@ -84,6 +84,6 @@ export function computeTickEffects(currentMinutes, addedMinutes, isConnected) {
         newPhase,
         newZMH,
         daysAdvanced,
-        momPatienceDelta,
+        atmosphereDelta,
     };
 }

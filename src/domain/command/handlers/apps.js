@@ -27,7 +27,7 @@ export function handleDoom({ gameState, dispatch, actions, appendOutput }) {
         dispatch(actions.setVirusActive(true));
         dispatch(actions.setVirusStage('cascade'));
         dispatch(actions.updateStat({ stat: 'sanity', value: -20 }));
-        dispatch(actions.updateStat({ stat: 'momsPatience', value: -10 }));
+        dispatch(actions.updateStat({ stat: 'atmosphere', value: -10 }));
     }, 1000);
 
     return { handled: true };

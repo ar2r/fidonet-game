@@ -42,6 +42,14 @@ const PHASE_ICONS = {
     night: '\u263E',  // ☾
 };
 
+function getAtmosphereLabel(value) {
+    if (value >= 80) return "Тишина и покой";
+    if (value >= 60) return "Родители дома";
+    if (value >= 40) return "Напряжение";
+    if (value >= 20) return "Шум за стеной";
+    return "СКАНДАЛ!";
+}
+
 function StatusBar() {
     const gameState = useSelector(state => state.gameState);
     const player = useSelector(state => state.player);
@@ -49,6 +57,7 @@ function StatusBar() {
 
     const phaseIcon = PHASE_ICONS[gameState.phase] || '';
     const zmhLabel = gameState.zmh ? ' [ZMH]' : '';
+    const atmosphereLabel = getAtmosphereLabel(player.stats.atmosphere);
 
     const handleMute = () => {
         const isMuted = audioManager.toggleMute();
@@ -65,7 +74,7 @@ function StatusBar() {
             <GameStats>
                 <StatItem>Рассудок: {player.stats.sanity}</StatItem>
                 <StatItem>|</StatItem>
-                <StatItem>Терпение мамы: {player.stats.momsPatience}</StatItem>
+                <StatItem title={`Атмосфера: ${player.stats.atmosphere}%`}>{atmosphereLabel}</StatItem>
                 <StatItem>|</StatItem>
                 <StatItem>{player.stats.money} руб.</StatItem>
                 {player.stats.debt > 0 && (
@@ -78,13 +87,20 @@ function StatusBar() {
                 <StatItem>{player.rank}</StatItem>
             </GameStats>
 
+            <Button 
+                onClick={handleMute} 
+                style={{ padding: '0 8px', height: '22px', minWidth: '30px', marginRight: '4px' }}
+                title={muted ? "Включить звук" : "Выключить звук"}
+            >
+                <span style={{ color: muted ? 'gray' : 'black', fontWeight: 'bold', fontSize: '14px', lineHeight: '1' }}>
+                    {muted ? 'x' : '♪'}
+                </span>
+            </Button>
+
             <SystemTray variant="well">
-                <Button size="sm" onClick={handleMute} style={{ padding: '0 4px', height: 18 }}>
-                    {muted ? '🔇' : '🔊'}
-                </Button>
                 <span title="День">{gameState.day} д.</span>
                 <span title="Время" style={{ minWidth: 40, textAlign: 'center' }}>
-                    {phaseIcon} {gameState.time}{zmhLabel}
+                    {gameState.time}{zmhLabel}
                 </span>
             </SystemTray>
         </Container>

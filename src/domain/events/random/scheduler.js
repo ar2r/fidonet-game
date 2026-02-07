@@ -23,15 +23,15 @@ const EVENT_CONFIG = {
 export function checkRandomEvents(gameState, dispatch, actions, appendOutput) {
     const { phase } = gameState.gameState;
     const { connected } = gameState.network;
-    const { momsPatience } = gameState.player.stats;
+    const { atmosphere } = gameState.player.stats;
 
-    // 1. Mom Pickup Event
+    // 1. Mom Pickup Event (Now "Scandal" or similar)
     // Condition: Connected AND Night
     if (connected && phase === 'night') {
-        // Chance increases as patience drops
-        // 100 patience -> 0% extra chance
-        // 0 patience -> 20% extra chance
-        const patienceFactor = (100 - momsPatience) * 0.002;
+        // Chance increases as atmosphere drops
+        // 100 atmosphere -> 0% extra chance
+        // 0 atmosphere -> 20% extra chance
+        const patienceFactor = (100 - atmosphere) * 0.002;
         const chance = EVENT_CONFIG.MOM_PICKUP.baseChance + patienceFactor;
 
         if (Math.random() < chance) {
@@ -46,12 +46,12 @@ export function checkRandomEvents(gameState, dispatch, actions, appendOutput) {
 function triggerMomPickup(dispatch, actions, appendOutput) {
     appendOutput("");
     appendOutput("⚠️ ЩЕЛЧОК В ЛИНИИ...");
-    appendOutput("Мама сняла трубку в соседней комнате!");
-    appendOutput("— Кому там не спится? А ну марш в кровать!");
+    appendOutput("Кто-то снял трубку в коридоре!");
+    appendOutput("— Опять этот интернет! Спать мешаешь!");
     appendOutput("");
     appendOutput("NO CARRIER");
     
     dispatch(actions.disconnect());
     dispatch(actions.updateStat({ stat: 'sanity', value: -10 }));
-    dispatch(actions.updateStat({ stat: 'momsPatience', value: -20 }));
+    dispatch(actions.updateStat({ stat: 'atmosphere', value: -20 }));
 }

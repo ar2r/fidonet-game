@@ -18,6 +18,8 @@ import DistrictMap from './components/TUI/DistrictMap';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
+import QuestLogFile from './components/QuestLogFile';
+import Winamp from './components/Winamp';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
@@ -56,6 +58,20 @@ const WINDOW_DEFINITIONS = {
         component: 'readme',
         position: { x: 150, y: 150 },
         size: { width: 400, height: 300 },
+    },
+    'todo-list': {
+        id: 'todo-list',
+        title: 'Notepad - TODO.TXT',
+        component: 'todo-list',
+        position: { x: 300, y: 100 },
+        size: { width: 450, height: 400 },
+    },
+    'winamp': {
+        id: 'winamp',
+        title: 'Winamp',
+        component: 'winamp',
+        position: { x: 400, y: 50 },
+        size: { width: 275, height: 300 }, // Height accommodates playlist
     },
     'tmail-config': {
         id: 'tmail-config',
@@ -295,6 +311,12 @@ function App() {
                     </div>
                 );
 
+            case 'todo-list':
+                return <QuestLogFile />;
+
+            case 'winamp':
+                return <Winamp />;
+
             case 'tmail-config':
                 return (
                     <ConfigEditor
@@ -383,6 +405,18 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('readme')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Readme.txt</span>
+                    </div>
+
+                    {/* Todo.txt */}
+                    <div onDoubleClick={() => handleOpenWindow('todo-list')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>Todo.txt</span>
+                    </div>
+
+                    {/* Winamp */}
+                    <div onDoubleClick={() => handleOpenWindow('winamp')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'orange', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '10px', fontWeight: 'bold' }}>AMP</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>Winamp</span>
                     </div>
 
                     {/* T-Mail Setup */}

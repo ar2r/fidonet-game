@@ -109,19 +109,18 @@ describe('gameTick', () => {
             expect(effects.newTimeString).toBe('00:05');
         });
 
-        it('decreases mom patience when connected at night', () => {
-            const effects = computeTickEffects(1380, 5, true);
-            expect(effects.momPatienceDelta).toBe(-1);
-        });
-
-        it('does not decrease mom patience during day', () => {
-            const effects = computeTickEffects(720, 5, true);
-            expect(effects.momPatienceDelta).toBe(0);
-        });
-
-        it('does not decrease mom patience when not connected', () => {
-            const effects = computeTickEffects(1380, 5, false);
-            expect(effects.momPatienceDelta).toBe(0);
-        });
-    });
+            it('decreases atmosphere when connected at night', () => {
+                const effects = computeTickEffects(1380, 5, true);
+                expect(effects.atmosphereDelta).toBe(-1);
+            });
+        
+            it('does not decrease atmosphere during day', () => {
+                const effects = computeTickEffects(720, 5, true);
+                expect(effects.atmosphereDelta).toBe(0);
+            });
+        
+            it('does not decrease atmosphere when not connected', () => {
+                const effects = computeTickEffects(1380, 5, false);
+                expect(effects.atmosphereDelta).toBe(0);
+            });    });
 });
