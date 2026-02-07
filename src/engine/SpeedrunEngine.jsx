@@ -113,6 +113,11 @@ export const SpeedrunEngine = () => {
     const [waitingForCommand, setWaitingForCommand] = useState(false);
     const timeoutRef = useRef(null);
 
+    // Debug logging
+    useEffect(() => {
+        console.log(`[Speedrun] Mode: ${speedrunMode}, Step: ${stepIndex}, Waiting: ${waitingForCommand}`);
+    }, [speedrunMode, stepIndex, waitingForCommand]);
+
     // Helper to simulate typing into input fields
     const simulateTyping = (input, value) => {
         if (!input) return;
