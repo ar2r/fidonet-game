@@ -432,6 +432,12 @@ function App() {
                         <span style={{ background: '#008080', padding: '2px' }}>ArtMoney</span>
                     </div>
 
+                    {/* Speedrun Mode */}
+                    <div onDoubleClick={() => dispatch(setSpeedrunModeAction(true))} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>RUN</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>RUN.BAT</span>
+                    </div>
+
                     {/* T-Mail Setup */}
                     {hasSoftware('t-mail') && (
                         <div onDoubleClick={() => handleOpenWindow('tmail-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
@@ -513,9 +519,6 @@ function App() {
                                         </ListItem>
                                         <ListItem onClick={() => { handleOpenWindow('district-map'); setStartMenuOpen(false); }}>
                                             Карта района
-                                        </ListItem>
-                                        <ListItem onClick={() => { dispatch(setSpeedrunModeAction(true)); setStartMenuOpen(false); }}>
-                                            SPEEDRUN MODE
                                         </ListItem>
                                         <Divider />
                                         <ListItem disabled>
