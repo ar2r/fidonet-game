@@ -4,6 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+ARG GITHUB_SHA
+ENV GITHUB_SHA=$GITHUB_SHA
 RUN npm run build
 
 # Production stage
