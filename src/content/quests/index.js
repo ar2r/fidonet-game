@@ -6,6 +6,7 @@
 import { ACT1_QUESTS } from './act1';
 import { ACT2_QUESTS } from './act2';
 import { ACT3_QUESTS } from './act3';
+import { ACT4_QUESTS } from './act4';
 import { validateQuestCollection } from '../../domain/quests/schema';
 
 /**
@@ -15,7 +16,7 @@ export const ALL_QUESTS = [
     ...ACT1_QUESTS,
     ...ACT2_QUESTS,
     ...ACT3_QUESTS,
-    // ...ACT4_QUESTS,  // TODO: Phase 12
+    ...ACT4_QUESTS,
 ];
 
 /**
@@ -86,6 +87,7 @@ export const QUESTS = {
     POLL_BOSS: getQuestById('poll_boss'),
     READ_RULES: getQuestById('read_rules'),
     REPLY_WELCOME: getQuestById('reply_welcome'),
+    HARDWARE_UPGRADE: getQuestById('hardware_upgrade'),
 };
 
 export const QUEST_LIST = ALL_QUESTS;

@@ -13,11 +13,15 @@ export const TIME_COSTS = {
     TREE: 1,
     VER: 0,
     CLS: 0,
+    WORK: 120,
+    ALLOWANCE: 5,
 };
 
 export function getTimeCost(command) {
     const cmd = command.trim().toUpperCase();
     if (cmd === '' || cmd === 'CLS' || cmd === 'CLEAR') return TIME_COSTS.CLS;
+    if (cmd === 'WORK') return TIME_COSTS.WORK;
+    if (cmd === 'ALLOWANCE') return TIME_COSTS.ALLOWANCE;
     if (cmd === 'VER') return TIME_COSTS.VER;
     if (cmd === 'ATZ' || cmd === 'AT&F') return TIME_COSTS.ATZ;
     if (cmd.startsWith('DIAL') || cmd.startsWith('ATDT') || cmd.startsWith('ATDP')) return TIME_COSTS.DIAL;

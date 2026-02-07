@@ -80,3 +80,29 @@ export function handleTMail({ command, appendOutput }) {
     
     return { handled: true };
 }
+
+export function handleWork({ dispatch, actions, appendOutput }) {
+    const amount = Math.floor(Math.random() * 500) + 100;
+    appendOutput(`Вы помогли соседу переустановить Windows...`);
+    appendOutput(`Заработок: ${amount} руб.`);
+    appendOutput(`Время потрачено: 2 часа`);
+    
+    dispatch(actions.updateStat({ stat: 'money', value: amount }));
+    
+    return { handled: true };
+}
+
+export function handleAllowance({ gameState, dispatch, actions, appendOutput }) {
+    const day = gameState.gameState?.day || 1;
+    // Simple logic: allowance every Monday (day 1, 8, 15...)
+    const isMonday = (day - 1) % 7 === 0;
+    
+    if (isMonday) {
+        appendOutput(`Родители выдали карманные деньги: 1000 руб.`);
+        dispatch(actions.updateStat({ stat: 'money', value: 1000 }));
+    } else {
+        appendOutput(`До понедельника еще далеко. Карманных денег нет.`);
+    }
+    
+    return { handled: true };
+}

@@ -54,6 +54,8 @@ commandRegistry.register('IDLE', 'AIDSTEST.EXE', apps.handleAidstest);
 commandRegistry.register('IDLE', 'T-MAIL', apps.handleTMail);
 commandRegistry.register('IDLE', 'T-MAIL.EXE', apps.handleTMail);
 commandRegistry.register('IDLE', 'POLL', apps.handleTMail);
+commandRegistry.register('IDLE', 'WORK', apps.handleWork);
+commandRegistry.register('IDLE', 'ALLOWANCE', apps.handleAllowance);
 
 // BBS_MENU Mode
 commandRegistry.register('BBS_MENU', 'F', bbsMenu.handleFilesCommand);

@@ -13,6 +13,7 @@ import GameOverScreen from './components/GameOverScreen';
 import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
 import GoldED from './components/TUI/GoldED';
+import RadioMarket from './components/TUI/RadioMarket';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
 import QuestJournal from './features/quests/QuestJournal';
@@ -79,6 +80,13 @@ const WINDOW_DEFINITIONS = {
         component: 'golded-reader',
         position: { x: 150, y: 100 },
         size: { width: 800, height: 600 },
+    },
+    'radio-market': {
+        id: 'radio-market',
+        title: 'Радиорынок - Мир Электроники',
+        component: 'radio-market',
+        position: { x: 100, y: 50 },
+        size: { width: 600, height: 500 },
     },
     'quest-journal': {
         id: 'quest-journal',
@@ -260,6 +268,11 @@ function App() {
                     <GoldED />
                 );
 
+            case 'radio-market':
+                return (
+                    <RadioMarket />
+                );
+
             case 'quest-journal':
                 return (
                     <QuestJournal />
@@ -335,6 +348,12 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('quest-journal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: '#0000AA', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFF00', fontSize: '14px', fontWeight: 'bold' }}>Q</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Квесты</span>
+                    </div>
+
+                    {/* Radio Market */}
+                    <div onDoubleClick={() => handleOpenWindow('radio-market')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
+                        <div style={{ width: '32px', height: '32px', background: 'maroon', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: 'bold' }}>$</div>
+                        <span style={{ background: '#008080', padding: '2px' }}>Рынок</span>
                     </div>
                 </div>
 

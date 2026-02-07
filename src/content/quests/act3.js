@@ -84,7 +84,7 @@ export const ACT3_QUESTS = [
             { type: 'skill', key: 'typing', delta: 2 },
             { type: 'stat', key: 'fido_fame', delta: 1 },
         ],
-        nextQuest: null, // End of Act 3 (for now)
+        nextQuest: 'hardware_upgrade',
         completesAct: 3,
     },
 ];

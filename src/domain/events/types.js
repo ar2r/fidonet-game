@@ -50,6 +50,9 @@ export const MESSAGE_POSTED = 'message.posted';
 // Random events
 export const MOM_PICKUP = 'event.random.mom_pickup';
 
+// Economy events
+export const ITEM_BOUGHT = 'economy.item.bought';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *

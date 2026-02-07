@@ -4,6 +4,7 @@ import {
     MAIL_TOSSING_COMPLETED, 
     MESSAGE_READ, 
     MESSAGE_POSTED,
+    ITEM_BOUGHT,
     FILE_SAVED,
     DOWNLOAD_COMPLETED,
     BBS_CONNECTED,
@@ -66,6 +67,13 @@ export function setupQuestListeners(dispatch, actions, getState) {
                  completeQuestAndProgress('reply_welcome', dispatch, actions);
              }
         }
+
+        if (eventType === ITEM_BOUGHT && activeQuestId === 'hardware_upgrade') {
+            const { item } = payload;
+            if (item === 'modem_28800') {
+                completeQuestAndProgress('hardware_upgrade', dispatch, actions);
+            }
+        }
     };
 
     // Subscribe to all relevant events
@@ -73,6 +81,7 @@ export function setupQuestListeners(dispatch, actions, getState) {
         MAIL_TOSSING_COMPLETED,
         MESSAGE_READ,
         MESSAGE_POSTED,
+        ITEM_BOUGHT,
         // Add others if we move logic from commandParser
     ];
 
