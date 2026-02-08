@@ -132,6 +132,22 @@ function GoldED() {
         return `${dayStr} ${monthStr} ${yearStr}`;
     };
 
+    const handleReply = () => {
+        if (!currentMsg) return;
+        
+        // Simple quoting logic
+        const quote = currentMsg.body.split('\n')
+            .map(line => `> ${line}`)
+            .join('\n') + '\n\n';
+        
+        setComposeData({
+            to: currentMsg.from,
+            subj: currentMsg.subj.startsWith('Re:') ? currentMsg.subj : `Re: ${currentMsg.subj}`,
+            body: quote
+        });
+        setView('composer');
+    };
+
     const handleKeyDown = (e) => {
         if (view === 'areas') {
             if (e.key === 'ArrowDown') {
@@ -169,6 +185,8 @@ function GoldED() {
         } else if (view === 'msgview') {
             if (e.key === 'Escape') {
                 setView('msglist');
+            } else if (e.key === 'Insert' || e.key === 'r') {
+                handleReply();
             }
         } else if (view === 'composer') {
              if (e.key === 'Escape') {
@@ -310,8 +328,8 @@ function GoldED() {
             </ContentArea>
             <Footer>
                 {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
-                {view === 'msglist' && <span>Enter:Read  Ins:New  Esc:Exit</span>}
-                {view === 'msgview' && <span>Esc:Exit  Ins:Reply</span>}
+                {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
+                {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
                 {view === 'composer' && <span>^Enter:Send  Esc:Cancel</span>}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
