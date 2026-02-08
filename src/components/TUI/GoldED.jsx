@@ -232,8 +232,11 @@ function GoldED() {
                         key={msg.id} 
                         selected={idx === selectedMsgIndex}
                         onClick={() => { setSelectedMsgIndex(idx); setCurrentMsg(msg); setView('msgview'); }}
+                        style={{ display: 'flex', justifyContent: 'space-between' }}
                     >
-                        {msg.from.padEnd(12)} {msg.subj.slice(0, 25).padEnd(25)} {msg.date}
+                        <span style={{ width: '160px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{msg.from}</span>
+                        <span style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingRight: '10px' }}>{msg.subj}</span>
+                        <span style={{ whiteSpace: 'nowrap' }}>{msg.date}</span>
                     </ListItem>
                 ))}
             </>
