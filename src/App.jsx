@@ -198,6 +198,13 @@ function App() {
         }
     };
 
+    const handleResetGame = () => {
+        if (confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?')) {
+            window.history.replaceState(null, '', window.location.pathname);
+            window.location.reload();
+        }
+    };
+
     const handleMailTossingComplete = React.useCallback(() => {
         setMailTossingActive(false);
         eventBus.publish(MAIL_TOSSING_COMPLETED, {});
@@ -511,8 +518,8 @@ function App() {
                                             Терминал Fidonet
                                         </ListItem>
                                         <Divider />
-                                        <ListItem disabled>
-                                            Завершение работы...
+                                        <ListItem onClick={handleResetGame}>
+                                            Закончить игру
                                         </ListItem>
                                     </List>
                                 )}
