@@ -55,6 +55,8 @@ commandRegistry.register('IDLE', 'AIDSTEST', apps.handleAidstest);
 commandRegistry.register('IDLE', 'AIDSTEST.EXE', apps.handleAidstest);
 commandRegistry.register('IDLE', 'T-MAIL', apps.handleTMail);
 commandRegistry.register('IDLE', 'T-MAIL.EXE', apps.handleTMail);
+commandRegistry.register('IDLE', 'GOLDED', apps.handleGoldED);
+commandRegistry.register('IDLE', 'GOLDED.EXE', apps.handleGoldED);
 commandRegistry.register('IDLE', 'POLL', apps.handleTMail);
 commandRegistry.register('IDLE', 'WORK', apps.handleWork);
 commandRegistry.register('IDLE', 'ALLOWANCE', apps.handleAllowance);

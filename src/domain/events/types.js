@@ -43,6 +43,7 @@ export const MODEM_CONNECTED = 'modem.connected';
 
 // Mail/Tossing events
 export const UI_START_MAIL_TOSSING = 'ui.start.mail.tossing';
+export const UI_OPEN_WINDOW = 'ui.open.window';
 export const MAIL_TOSSING_COMPLETED = 'mail.tossed';
 export const MESSAGE_READ = 'message.read';
 export const MESSAGE_POSTED = 'message.posted';

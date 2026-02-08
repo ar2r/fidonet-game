@@ -3,7 +3,7 @@
  */
 
 import { eventBus } from '../../events/bus';
-import { UI_START_MAIL_TOSSING } from '../../events/types';
+import { UI_START_MAIL_TOSSING, UI_OPEN_WINDOW } from '../../events/types';
 
 export function handleDoom({ gameState, dispatch, actions, appendOutput }) {
     const hasDoom = gameState.player?.inventory?.includes('doom2');
@@ -129,6 +129,28 @@ export function handlePay({ gameState, dispatch, actions, appendOutput }) {
     
     dispatch(actions.payBill(debt));
     appendOutput(`Счет оплачен. Сумма: ${debt} руб. Спасибо!`);
+    
+    return { handled: true };
+}
+
+export function handleGoldED({ command, gameState, appendOutput }) {
+    const hasGoldED = gameState.player?.inventory?.includes('golded');
+    
+    if (!hasGoldED) {
+         appendOutput("Неверная команда или имя файла");
+         return { handled: true };
+    }
+
+    const args = command.trim().split(/\s+/).slice(1);
+    const arg = args[0]?.toUpperCase();
+
+    if (arg === 'SETUP' || arg === '-SETUP' || arg === '/SETUP') {
+        appendOutput("Запуск конфигуратора GoldED...");
+        eventBus.publish(UI_OPEN_WINDOW, { windowId: 'golded-config' });
+    } else {
+        appendOutput("Запуск GoldED 2.50+...");
+        eventBus.publish(UI_OPEN_WINDOW, { windowId: 'golded-reader' });
+    }
     
     return { handled: true };
 }

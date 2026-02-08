@@ -36,7 +36,7 @@ import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
-import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';
+import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
 import { loadGame, getSaveLink, shortenLink } from './engine/saveSystem';
@@ -136,9 +136,19 @@ function App() {
         const startTossing = () => setMailTossingActive(true);
         const unsubscribeTossing = eventBus.subscribe(UI_START_MAIL_TOSSING, startTossing);
 
+        const openWindowHandler = (payload) => {
+            const { windowId } = payload;
+            const definition = WINDOW_DEFINITIONS[windowId];
+            if (definition) {
+                dispatch(openWindow(definition));
+            }
+        };
+        const unsubscribeOpenWindow = eventBus.subscribe(UI_OPEN_WINDOW, openWindowHandler);
+
         return () => {
             cleanup();
             unsubscribeTossing();
+            unsubscribeOpenWindow();
         };
     }, [dispatch, quests]);
 

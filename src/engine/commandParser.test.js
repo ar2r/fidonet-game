@@ -110,6 +110,17 @@ describe('commandParser', () => {
             expect(output).toContain('MS-DOS Version 6.22');
         });
 
+        it('GOLDED launches GoldED if in inventory', () => {
+            baseState.player.inventory = ['golded'];
+            processCommand('GOLDED', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('GoldED 2.50+'))).toBe(true);
+        });
+
+        it('GOLDED shows error if not in inventory', () => {
+            processCommand('GOLDED', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('Неверная команда'))).toBe(true);
+        });
+
         it('unknown command shows error', () => {
             processCommand('FOOBAR', baseState, dispatch, actions, appendOutput);
             expect(output).toContain('Неверная команда или имя файла');
