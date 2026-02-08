@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { processCommand, getPrompt } from '../engine/commandParser';
 import fs from '../engine/fileSystemInstance';
 import { audioManager } from '../engine/audio/AudioManager';
+import { eventBus } from '../domain/events/bus';
+import { GAME_NOTIFICATION } from '../domain/events/types';
 import {
     connect as connectAction,
     disconnect as disconnectAction,
@@ -93,6 +95,16 @@ export function useTerminal(windowId = 'terminal') {
         dispatch(setTerminalProgramAction(false));
         dispatch(setTerminalModeAction('IDLE'));
     }, [dispatch]);
+
+    // Subscribe to game notifications (quest completions etc.)
+    useEffect(() => {
+        const unsubscribe = eventBus.subscribe(GAME_NOTIFICATION, (payload) => {
+            if (payload && payload.messages) {
+                setHistory(prev => [...prev, ...payload.messages]);
+            }
+        });
+        return unsubscribe;
+    }, []);
 
     useEffect(() => {
         let timer;

@@ -36,7 +36,7 @@ import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
-import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW } from './domain/events/types';
+import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, GAME_NOTIFICATION } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
 import { loadGame, getSaveLink, shortenLink, saveGame } from './engine/saveSystem';
@@ -163,10 +163,22 @@ function App() {
         };
         const unsubscribeOpenWindow = eventBus.subscribe(UI_OPEN_WINDOW, openWindowHandler);
 
+        const notificationHandler = (payload) => {
+            if (payload && payload.messages) {
+                const questMsg = payload.messages.find(m => m.includes('КВЕСТ ВЫПОЛНЕН'));
+                if (questMsg) {
+                    const titleLine = payload.messages.find(m => m.includes('"'));
+                    setSaveNotification({ message: `Квест выполнен!\n${titleLine || ''}` });
+                }
+            }
+        };
+        const unsubscribeNotification = eventBus.subscribe(GAME_NOTIFICATION, notificationHandler);
+
         return () => {
             cleanup();
             unsubscribeTossing();
             unsubscribeOpenWindow();
+            unsubscribeNotification();
         };
     }, [dispatch, quests]);
 

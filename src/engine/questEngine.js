@@ -1,5 +1,7 @@
 import { getQuestById } from '../content/quests';
 import { addItem, updateStat } from './store'; // Direct import from store slice exports if possible, or pass as arguments
+import { eventBus } from '../domain/events/bus';
+import { GAME_NOTIFICATION } from '../domain/events/types';
 
 // Guard against double-completion within the same synchronous call stack
 const recentlyCompleted = new Set();
@@ -73,6 +75,10 @@ export function completeQuestAndProgress(questId, dispatch, actions) {
         notifications.push(`═══════════════════════════════════════════`);
         notifications.push(`       Добро пожаловать в Акт ${nextAct}!`);
         notifications.push(`═══════════════════════════════════════════`);
+    }
+
+    if (notifications.length > 0) {
+        eventBus.publish(GAME_NOTIFICATION, { messages: notifications });
     }
 
     return notifications;

@@ -60,6 +60,9 @@ export const DIALOGUE_COMPLETED = 'dialogue.completed';
 // ZMH events
 export const ZMH_ACTIVITY_COMPLETED = 'zmh.activity.completed';
 
+// System events
+export const GAME_NOTIFICATION = 'game.notification';
+
 /**
  * Event payload interfaces (JSDoc for documentation)
  *
