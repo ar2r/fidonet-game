@@ -73,6 +73,8 @@ out/
 *.njsproj
 *.sln
 *.sw?
+server.pid
+.server.pid
 
 # Optional: Claude Code local data (uncomment if you don't want to track it)
 # .claude/
