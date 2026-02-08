@@ -6,21 +6,21 @@ export const ECHO_AREAS = [
     {
         id: 'netmail',
         name: 'NETMAIL',
-        description: 'Private Netmail',
+        description: 'Личная почта',
         msgs: 0,
         unread: 0,
     },
     {
         id: 'su_general',
         name: 'SU.GENERAL',
-        description: 'General discussion',
+        description: 'Общее общение',
         msgs: 15,
         unread: 3,
     },
     {
         id: 'su_flame',
         name: 'SU.FLAME',
-        description: 'Flame & quarrels',
+        description: 'Споры и флейм',
         msgs: 42,
         unread: 5,
     },
@@ -29,43 +29,115 @@ export const ECHO_AREAS = [
 export const MESSAGES = {
     'su_flame': [
         {
-            id: 'msg_001',
-            from: 'SysOp',
+            id: 'msg_f1',
+            from: 'Moderator',
             to: 'All',
-            subj: 'Rules (READ ME!)',
+            subj: 'Rules v1.0 (ЧИТАТЬ ВСЕМ!)',
             date: '07 Feb 1995',
-            body: `Welcome to SU.FLAME!
+            body: `ПРАВИЛА ЭХОКОНФЕРЕНЦИИ SU.FLAME
 
-RULES:
-1. No personal attacks (yeah right).
-2. No lamers allowed.
-3. Don't be boring.
+1. Запрещен мат (звездочки не спасают).
+2. Оверквотинг (цитирование всего письма) карается плюсометом.
+3. Никакой политики. Мы тут про технологии спорим.
+4. Запрещено обсуждение действий модератора.
 
-If you are new, introduce yourself properly or get out.
+Незнание правил не освобождает от ответственности.
+Нарушители будут отключены от эхи (read-only mode). 
+Dixi.
 `,
             read: false,
         },
         {
-            id: 'msg_002',
+            id: 'msg_f2',
+            from: 'Linuxoid',
+            to: 'All',
+            subj: 'Windows 95 MUST DIE',
+            date: '07 Feb 1995',
+            body: `Народ, вы видели эту "новую" систему от Мелкомягких?
+Это же тихий ужас! Глючит, падает, требует 8 МЕГАБАЙТ памяти (вы где столько видели?!).
+Реестр пухнет, DLL-hell процветает.
+Короче, OS/2 Warp или Linux — вот выбор настоящего джедая.
+Там хоть многозадачность вытесняющая, а не кооперативное недоразумение.
+`,
+            read: false,
+        },
+        {
+            id: 'msg_f3',
+            from: 'Gamer95',
+            to: 'Linuxoid',
+            subj: 'Re: Windows 95 MUST DIE',
+            date: '07 Feb 1995',
+            body: `> Короче, OS/2 Warp или Linux — вот выбор настоящего джедая.
+
+Ага, и красноглазить ночами, пересобирая ядро под новую звуковуху?
+Зато под виндой DOOM идет без бубна. И новый Warcraft обещают.
+А под полуось игр нет и не будет. Система для банкоматов.
+`,
+            read: false,
+        },
+        {
+            id: 'msg_f4',
             from: 'Troll.Master',
             to: 'All',
-            subj: 'You all suck',
+            subj: 'Re: Windows 95 MUST DIE',
             date: '07 Feb 1995',
-            body: `Especially the SysOp.
-This BBS is slow and the file area is empty.
-Doom 2 is old news. Quake is coming!
+            body: `Все фигня. AMIGA рулит.
+Писишки — отстой для бухгалтеров. У вас даже спрайтов аппаратных нет.
+Копите на нормальное железо, ламеры.
 `,
             read: false,
         },
     ],
     'su_general': [
         {
-            id: 'msg_101',
-            from: 'User1',
+            id: 'msg_g1',
+            from: 'Vasia Pupkin',
             to: 'All',
-            subj: 'Hello',
+            subj: 'Где взять DOOM2??',
             date: '06 Feb 1995',
-            body: 'Is anyone here?',
+            body: `Пацаны, слышал про вторую часть Дума, говорят чума!
+Двустволка решает! Где качнуть можно?
+Обзвонил все BBS в районе, везде только первая шароварная версия.
+`,
+            read: false,
+        },
+        {
+            id: 'msg_g2',
+            from: 'SysOp',
+            to: 'Vasia Pupkin',
+            subj: 'Re: Где взять DOOM2??',
+            date: '06 Feb 1995',
+            body: `Вася, во-первых, читай FAQ.
+Во-вторых, у нас в файловой области GAMES все лежит (DOOM2.WAD).
+Только учти, там архив на 5 дискет порезан, качать на 2400 будешь до утра.
+И рейтинг нужен, просто так не отдаст. Залей что-нибудь полезное сначала.
+`,
+            read: false,
+        },
+        {
+            id: 'msg_g3',
+            from: 'Alexey',
+            to: 'All',
+            subj: 'Проблема с модемом US Robotics',
+            date: '06 Feb 1995',
+            body: `Купил по случаю Courier V.Everything, а он коннектится только на 9600.
+Строка инициализации AT&F1. Линия вроде нормальная, шумов нет.
+Что я делаю не так? Может прошивка старая?
+`,
+            read: false,
+        },
+        {
+            id: 'msg_g4',
+            from: 'Guru',
+            to: 'Alexey',
+            subj: 'Re: Проблема с модемом US Robotics',
+            date: '06 Feb 1995',
+            body: `> Строка инициализации AT&F1.
+
+Попробуй S-регистры покрутить. S11=50 для начала (скорость набора).
+И проверь, не включено ли сжатие MNP5 на плохой линии, оно только тормозит.
+А вообще RTFM, там целая книга в коробке идет.
+`,
             read: false,
         }
     ]
