@@ -71,9 +71,9 @@ export const WINDOW_DEFINITIONS = {
     },
     'quest-journal': {
         id: 'quest-journal',
-        title: 'Журнал квестов',
+        title: 'Активный квест',
         component: 'quest-journal',
         position: { x: 150, y: 100 },
-        size: { width: 700, height: 500 },
+        size: { width: 700, height: 650 },
     },
 };
