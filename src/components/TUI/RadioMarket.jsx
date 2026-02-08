@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateStat, addItem } from '../../engine/store';
@@ -112,6 +112,11 @@ function RadioMarket() {
     const [mode, setMode] = useState('BUY'); // 'BUY' or 'SELL'
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [message, setMessage] = useState('');
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (containerRef.current) containerRef.current.focus();
+    }, []);
 
     // Filter inventory for sellable items
     const sellList = inventory
@@ -166,7 +171,7 @@ function RadioMarket() {
     };
 
     return (
-        <MarketContainer tabIndex="0" onKeyDown={(e) => {
+        <MarketContainer ref={containerRef} tabIndex="0" onKeyDown={(e) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 e.stopPropagation();
