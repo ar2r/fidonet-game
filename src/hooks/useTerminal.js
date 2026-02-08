@@ -72,11 +72,10 @@ export function useTerminal(windowId = 'terminal') {
         "MS-DOS Version 6.22",
         "(C)Copyright Microsoft Corp 1981-1994.",
         "",
-        "C:\\>",
-        "",
-        "Добро пожаловать в Fidonet!",
-        "Для подключения к BBS запустите TERMINAL.EXE",
-        "Введите HELP для получения справки.",
+        "Добро пожаловать в FidoNet Simulator!",
+        "Введите HELP для справки по командам.",
+        "Введите DIR для просмотра файлов.",
+        "Рекомендуется прочитать NOTE.TXT перед началом.",
         "",
     ]);
     const [inputBuffer, setInputBuffer] = useState("");
