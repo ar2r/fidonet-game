@@ -52,7 +52,7 @@ Outbound C:\\FIDO\\OUTBOUND
 
         appendOutput("");
         appendOutput(BBS_FILES);
-    });
+    }, 45);
     return { handled: true };
 }
 
@@ -88,7 +88,7 @@ Origin
 
         appendOutput("");
         appendOutput(BBS_FILES);
-    });
+    }, 78);
     return { handled: true };
 }
 
@@ -103,7 +103,7 @@ export function handleDownloadDoom({ dispatch, actions, appendOutput }) {
         appendOutput("DOOM2.WAD установлен в C:\\GAMES\\DOOM2.WAD");
         appendOutput("");
         appendOutput(BBS_FILES);
-    });
+    }, 800);
     return { handled: true };
 }
 
@@ -118,7 +118,7 @@ export function handleDownloadAidstest({ dispatch, actions, appendOutput }) {
         appendOutput("AIDSTEST установлен в C:\\UTILS\\AIDSTEST.EXE");
         appendOutput("");
         appendOutput(BBS_FILES);
-    });
+    }, 42);
     return { handled: true };
 }
 
@@ -152,7 +152,7 @@ BaudRate
 
         appendOutput("");
         appendOutput(BBS_FILES);
-    });
+    }, 200);
     return { handled: true };
 }
 
