@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { processCommand, getPrompt } from '../engine/commandParser';
+import fs from '../engine/fileSystemInstance';
 import { audioManager } from '../engine/audio/AudioManager';
 import {
     connect as connectAction,
@@ -82,6 +83,16 @@ export function useTerminal(windowId = 'terminal') {
     const terminalEndRef = useRef(null);
 
     const [connTime, setConnTime] = useState("00:00:00");
+
+    // Reset terminal state on mount (when window opens)
+    useEffect(() => {
+        // Reset current directory to C:\
+        fs.currentPath = ['C:'];
+        
+        // Reset terminal modes
+        dispatch(setTerminalProgramAction(false));
+        dispatch(setTerminalModeAction('IDLE'));
+    }, [dispatch]);
 
     useEffect(() => {
         let timer;

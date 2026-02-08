@@ -13,7 +13,7 @@ function DesktopWindow({ windowId, children }) {
     const window = useSelector(state => state.windowManager.windows[windowId]);
     const isActive = useSelector(state => state.windowManager.activeWindow === windowId);
 
-    if (!window || window.isMinimized) {
+    if (!window || !window.isOpen) {
         return null;
     }
 
@@ -62,7 +62,10 @@ function DesktopWindow({ windowId, children }) {
             minHeight={240}
             bounds="parent"
             dragHandleClassName="window-header"
-            style={{ zIndex: window.zIndex }}
+            style={{ 
+                zIndex: window.zIndex,
+                display: window.isMinimized ? 'none' : 'block'
+            }}
             onMouseDown={handleFocus}
         >
             <Window
