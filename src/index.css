@@ -7,23 +7,11 @@
   font-style: normal;
 }
 
-/* Alias DosVga to Courier for authentic but system-native look */
+/* Alias DosVga to Courier New for consistent Cyrillic support */
 @font-face {
   font-family: 'DosVga';
-  src: local('Courier'), local('Courier New');
-  /* No url() needed for system fonts in @font-face usually, but better to just use font-family stack in CSS */
-}
-
-/* 
-   However, defining @font-face for system font alias is tricky.
-   Better to just apply the stack where DosVga is used or alias it properly.
-   Actually, the cleanest way to "alias" in CSS is to just use the stack.
-   But our components use 'DosVga'.
-   So let's define DosVga to point to local Courier.
-*/
-@font-face {
-  font-family: 'DosVga';
-  src: local('Courier');
+  src: local('Courier New'), local('Courier'), local('monospace');
+  unicode-range: U+0000-00FF, U+0400-045F; /* Basic Latin + Cyrillic */
 }
 
 body {

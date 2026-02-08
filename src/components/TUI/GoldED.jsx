@@ -8,7 +8,7 @@ import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
 const TuiContainer = styled.div`
   background-color: #000000; /* Black Background */
   color: #AAAAAA; /* Light Grey Text */
-  font-family: 'DosVga', 'VT323', monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 20px;
   line-height: 1;
   height: 100%;
@@ -66,7 +66,7 @@ const Input = styled.input`
   border-bottom: 1px solid #AAAAAA;
   color: #FFFFFF;
   width: 100%;
-  font-family: 'DosVga', 'VT323', monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 20px;
   outline: none;
   padding: 0;
@@ -78,7 +78,7 @@ const TextArea = styled.textarea`
   color: #AAAAAA;
   width: 100%;
   height: 300px;
-  font-family: 'DosVga', 'VT323', monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 20px;
   line-height: 1.1;
   outline: none;
@@ -241,7 +241,7 @@ function GoldED() {
     };
 
     const renderMsgView = () => (
-        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'DosVga', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ whiteSpace: 'pre-wrap', fontFamily: "'Courier New', Courier, monospace", height: '100%', display: 'flex', flexDirection: 'column' }}>
             <div style={{ backgroundColor: '#000000', color: '#AAAAAA', borderBottom: '1px solid #0000AA', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
                     <span>Msg  : {selectedMsgIndex + 1} of {MESSAGES[currentAreaId]?.length || 0}</span>

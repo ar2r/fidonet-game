@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 const TerminalContainer = styled.div`
   background-color: #000;
   color: #00ff00;
-  font-family: 'DosVga', 'VT323', monospace;
+  font-family: 'Courier New', Courier, monospace;
   flex-grow: 1;
   width: 100%;
   box-sizing: border-box;
@@ -30,7 +30,7 @@ const TerminalContainer = styled.div`
 const TerminalStatusBar = styled.div`
   background-color: #008080; /* Teal background for status */
   color: #fff;
-  font-family: 'DosVga', 'VT323', monospace;
+  font-family: 'Courier New', Courier, monospace;
   padding: 2px 8px;
   display: flex;
   justify-content: space-between;
