@@ -14,11 +14,11 @@ describe('FidoNet Simulator UI', () => {
         const startButton = screen.getByText(/Пуск/);
         expect(startButton).toBeInTheDocument();
 
-        const fidoIcon = screen.getByText('Fido.bat');
-        expect(fidoIcon).toBeInTheDocument();
+        const dosPromptIcon = screen.getByText('MS-DOS Prompt');
+        expect(dosPromptIcon).toBeInTheDocument();
     });
 
-    it('opens terminal when Fido.bat is double-clicked', () => {
+    it('opens terminal when MS-DOS Prompt is double-clicked', () => {
         renderWithStore(<App />);
 
         // Terminal is open by default - check for the window header
@@ -29,8 +29,8 @@ describe('FidoNet Simulator UI', () => {
         fireEvent.click(closeButton);
 
         // After closing, terminal header should be gone (but may still be in history)
-        const fidoIcon = screen.getByText('Fido.bat');
-        fireEvent.doubleClick(fidoIcon);
+        const dosPromptIcon = screen.getByText('MS-DOS Prompt');
+        fireEvent.doubleClick(dosPromptIcon);
 
         // Terminal should be open again
         const terminalHeadersAfter = screen.getAllByText(/MS-DOS Prompt/i);
