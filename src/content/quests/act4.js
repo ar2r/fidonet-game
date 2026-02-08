@@ -10,12 +10,12 @@ export const ACT4_QUESTS = [
     {
         id: 'hardware_upgrade',
         act: 4,
-        title: 'Апгрейд Модема',
-        description: 'Для работы нодой нужен быстрый модем. Купите US Robotics Courier на радиорынке.',
+        title: 'Железный вопрос',
+        description: 'Для работы в качестве ноды текущего оборудования недостаточно. Найдите модем, достойный профессионала.',
         hints: [
-            'Нужно улучшить железо.',
-            'Купите модем на Радиорынке.',
-            'Зайдите в "Радиорынок" и купите US Robotics Courier.'
+            'Посетите Радиорынок.',
+            'Вам нужен быстрый модем (28800).',
+            'Легендарный US Robotics Courier — лучший выбор.'
         ],
         prerequisites: ['reply_welcome'],
         steps: [
@@ -23,7 +23,7 @@ export const ACT4_QUESTS = [
                 id: 'buy_modem',
                 type: StepType.EVENT,
                 event: ITEM_BOUGHT,
-                description: 'Купить US Robotics Courier 28.8k',
+                description: 'Приобрести скоростной модем',
                 metadata: {
                     item: 'modem_28800',
                 },
@@ -40,11 +40,11 @@ export const ACT4_QUESTS = [
         id: 'request_node',
         act: 4,
         title: 'Запрос Ноды',
-        description: 'Поговорите с Сисопом (Архитектором) о получении статуса Ноды.',
+        description: 'Вы готовы к ответственности. Свяжитесь с Сисопом (Архитектором) и подайте заявку на статус Ноды.',
         hints: [
-            'Нужно получить статус Ноды.',
-            'Поговорите с Сисопом в Чате.',
-            'Наберите "CHAT" в терминале и выберите вариант про ноду.'
+            'Свяжитесь с администрацией через чат.',
+            'Вам нужно убедить Архитектора.',
+            'Используйте команду CHAT.'
         ],
         prerequisites: ['hardware_upgrade'],
         steps: [
@@ -52,7 +52,7 @@ export const ACT4_QUESTS = [
                 id: 'talk_to_sysop',
                 type: StepType.EVENT,
                 event: DIALOGUE_COMPLETED,
-                description: 'Договориться с Сисопом о статусе ноды',
+                description: 'Получить одобрение на статус ноды',
                 metadata: {
                     dialogueId: 'request_node_status',
                     success: true,
@@ -69,12 +69,12 @@ export const ACT4_QUESTS = [
     {
         id: 'download_binkley',
         act: 4,
-        title: 'Скачать BinkleyTerm',
-        description: 'Сисоп сказал использовать "серьезный мейлер". Скачайте BinkleyTerm с BBS.',
+        title: 'Инструментарий',
+        description: 'Для управления нодой требуется профессиональное ПО. Найдите рекомендованный мейлер на BBS.',
         hints: [
-            'Нужен софт для ноды.',
-            'Скачайте BinkleyTerm с BBS.',
-            'В меню BBS (Files) скачайте файл #5.'
+            'Обычный терминал не подойдет для автоматической работы.',
+            'Ищите BinkleyTerm в файловой области.',
+            'Это файл номер 5.'
         ],
         prerequisites: ['request_node'],
         steps: [
@@ -97,12 +97,12 @@ export const ACT4_QUESTS = [
     {
         id: 'configure_binkley',
         act: 4,
-        title: 'Настройка Ноды',
-        description: 'Настройте BinkleyTerm для работы в режиме Ноды.',
+        title: 'Настройка станции',
+        description: 'Настройте BinkleyTerm для автономной работы. Учтите новые параметры порта и скорости.',
         hints: [
-            'Нужно настроить мейлер.',
-            'Отредактируйте BT.CFG.',
-            'Адрес: 2:5020/730, Baud: 19200, Port: COM2.'
+            'Отредактируйте конфигурационный файл BT.CFG.',
+            'Адрес ноды: 2:5020/730. Скорость порта: 19200.',
+            'Используйте COM2 для подключения.'
         ],
         prerequisites: ['download_binkley'],
         steps: [
@@ -110,7 +110,7 @@ export const ACT4_QUESTS = [
                 id: 'save_bt_cfg',
                 type: StepType.EVENT,
                 event: FILE_SAVED,
-                description: 'Сохранить конфиг BinkleyTerm',
+                description: 'Сохранить настройки BinkleyTerm',
                 metadata: {
                     path: 'C:\\FIDO\\BT.CFG',
                     validator: 'binkley.valid',
@@ -127,12 +127,12 @@ export const ACT4_QUESTS = [
     {
         id: 'nightly_uptime',
         act: 4,
-        title: 'Ночной Дозвон',
-        description: 'Оставьте BinkleyTerm запущенным на ночь (ZMH: 04:00 - 05:00), чтобы принять почту от босса.',
+        title: 'Звонкий час',
+        description: 'Проверьте надежность станции. Она должна быть доступна в Золотой Час Системного Оператора (ZMH).',
         hints: [
-            'Нужно проверить связь ночью.',
-            'Оставьте BinkleyTerm запущенным в ZMH (04:00-05:00).',
-            'Запустите BinkleyTerm и не закрывайте его до 5 утра.'
+            'Оставьте станцию включенной на ночь.',
+            'Время ZMH: с 04:00 до 05:00.',
+            'Программа должна работать в автоматическом режиме.'
         ],
         prerequisites: ['configure_binkley'],
         steps: [
@@ -140,7 +140,7 @@ export const ACT4_QUESTS = [
                 id: 'zmh_session',
                 type: StepType.EVENT,
                 event: ZMH_ACTIVITY_COMPLETED,
-                description: 'Успешная сессия в ZMH',
+                description: 'Отработать сессию в ZMH',
             },
         ],
         rewards: [

@@ -174,7 +174,7 @@ function QuestJournal({ onClose, windowId = 'quest-journal' }) {
     return (
         <TuiContainer>
                     <MenuBar>
-                        QUEST JOURNAL v1.0 — Текущие задания
+                        АКТИВНЫЙ КВЕСТ
                     </MenuBar>
 
                     <WorkArea>

@@ -11,24 +11,24 @@ export const ACT1_QUESTS = [
         id: 'init_modem',
         act: 1,
         title: 'Строка инициализации',
-        description: 'Запустите TERMINAL.EXE и инициализируйте модем.',
+        description: 'Для выхода в сеть необходимо подготовить оборудование. Запустите терминал и инициализируйте модем.',
         hints: [
-            'Нужно подготовить модем к работе.',
-            'Запустите терминал и введите команду сброса.',
-            'Наберите "TERMINAL", затем "ATZ".'
+            'Вам нужно попасть в командную строку терминала.',
+            'Модемы управляются специальными AT-командами.',
+            'Попробуйте команду сброса (обычно это Z).'
         ],
         prerequisites: [],
         steps: [
             {
                 id: 'run_terminal',
                 type: StepType.MANUAL,
-                description: 'Запустить TERMINAL.EXE',
+                description: 'Запустить терминальную программу',
             },
             {
                 id: 'init_modem',
                 type: StepType.EVENT,
                 event: MODEM_INITIALIZED,
-                description: 'Инициализировать модем командой ATZ',
+                description: 'Выполнить инициализацию модема',
             },
         ],
         rewards: [
@@ -41,11 +41,11 @@ export const ACT1_QUESTS = [
         id: 'first_connect',
         act: 1,
         title: 'Первый Контакт',
-        description: 'Подключитесь к BBS The Nexus (555-3389).',
+        description: 'Найден номер местной BBS "The Nexus" (555-3389). Попробуйте установить соединение.',
         hints: [
-            'Нужно позвонить на BBS.',
-            'Используйте команду DIAL и номер телефона.',
-            'Наберите "DIAL 555-3389" в терминале.'
+            'Используйте команду набора номера.',
+            'Не забудьте указать телефонный номер BBS.',
+            'Команда DIAL поможет вам дозвониться.'
         ],
         prerequisites: ['init_modem'],
         steps: [
@@ -53,7 +53,7 @@ export const ACT1_QUESTS = [
                 id: 'dial_bbs',
                 type: StepType.EVENT,
                 event: BBS_CONNECTED,
-                description: 'Позвонить на BBS The Nexus',
+                description: 'Установить соединение с BBS The Nexus',
                 metadata: {
                     bbs: 'The Nexus',
                 },
@@ -68,12 +68,12 @@ export const ACT1_QUESTS = [
     {
         id: 'download_software',
         act: 1,
-        title: 'Скачать софт',
-        description: 'Скачайте T-Mail и GoldED из файловой области BBS.',
+        title: 'Необходимый софт',
+        description: 'Для работы в сети FidoNet вам понадобятся почтовый мейлер и редактор сообщений. Найдите их на BBS.',
         hints: [
-            'Вам нужны программы для работы с почтой. Ищите их на BBS.',
-            'В главном меню нажмите F (Files), затем выберите нужные файлы.',
-            'Наберите "F", затем "1" для T-Mail и "2" для GoldED.'
+            'Изучите меню BBS. Обычно файлы находятся в разделе Files.',
+            'Вам нужны программы T-Mail и GoldED.',
+            'Скачайте архивы с этими программами.'
         ],
         prerequisites: ['first_connect'],
         steps: [
@@ -81,7 +81,7 @@ export const ACT1_QUESTS = [
                 id: 'download_tmail',
                 type: StepType.EVENT,
                 event: DOWNLOAD_COMPLETED,
-                description: 'Скачать T-Mail',
+                description: 'Скачать почтовый мейлер (T-Mail)',
                 metadata: {
                     item: 't-mail',
                 },
@@ -90,7 +90,7 @@ export const ACT1_QUESTS = [
                 id: 'download_golded',
                 type: StepType.EVENT,
                 event: DOWNLOAD_COMPLETED,
-                description: 'Скачать GoldED',
+                description: 'Скачать редактор сообщений (GoldED)',
                 metadata: {
                     item: 'golded',
                 },

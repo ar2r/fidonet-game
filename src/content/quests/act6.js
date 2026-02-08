@@ -11,11 +11,11 @@ export const ACT6_QUESTS = [
         id: 'meet_coordinator',
         act: 6,
         title: 'Вызов Координатора',
-        description: 'Вас вызывает Региональный Координатор (RC5020). Это ваш шанс войти в историю.',
+        description: 'Ваш статус привлек внимание. Региональный Координатор (RC5020) запрашивает личный канал связи.',
         hints: [
-            'Важный звонок.',
-            'Поговорите с координатором в чате.',
-            'Наберите "CHAT" в терминале и пройдите собеседование.'
+            'Это важный разговор.',
+            'Не заставляйте начальство ждать.',
+            'Примите вызов в режиме CHAT.'
         ],
         prerequisites: ['super_sysop'],
         steps: [
@@ -23,7 +23,7 @@ export const ACT6_QUESTS = [
                 id: 'final_dialogue',
                 type: StepType.EVENT,
                 event: DIALOGUE_COMPLETED,
-                description: 'Пройти финальное собеседование',
+                description: 'Пройти собеседование с Координатором',
                 metadata: { dialogueId: 'coordinator_finale', success: true }
             }
         ],
@@ -37,11 +37,11 @@ export const ACT6_QUESTS = [
         id: 'game_completed',
         act: 6,
         title: 'Конец Игры',
-        description: 'Поздравляем! Вы прошли FidoNet Simulator.',
+        description: 'Вы прошли долгий путь и оставили свой след в истории FidoNet.',
         hints: [
-            'Поздравляем!',
-            'Игра пройдена.',
-            'Спасибо за участие!'
+            'История завершена.',
+            'Но сеть продолжает жить.',
+            'Спасибо за игру!'
         ],
         prerequisites: ['meet_coordinator'],
         steps: [],

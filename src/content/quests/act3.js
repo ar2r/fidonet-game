@@ -11,11 +11,11 @@ export const ACT3_QUESTS = [
         id: 'poll_boss',
         act: 3,
         title: 'Первая Прозвонка',
-        description: 'Сделайте Poll (прозвонку) на босс-ноду, чтобы получить свежую почту.',
+        description: 'Все системы настроены. Необходимо инициировать сеанс связи с боссом для получения свежей почты.',
         hints: [
-            'Нужно проверить почту.',
-            'Запустите T-Mail Poll через терминал или найдите кнопку в меню.',
-            'Наберите "T-MAIL POLL" в терминале.'
+            'Для обмена почтой используется процедура Poll.',
+            'Это можно сделать из командной строки мейлера или через меню.',
+            'Команда POLL инициирует дозвон.'
         ],
         prerequisites: ['configure_golded'],
         steps: [
@@ -23,7 +23,7 @@ export const ACT3_QUESTS = [
                 id: 'run_poll',
                 type: StepType.EVENT,
                 event: MAIL_TOSSING_COMPLETED,
-                description: 'Выполнить обмен почтой (Tossing)',
+                description: 'Выполнить обмен почтой',
             },
         ],
         rewards: [
@@ -36,12 +36,12 @@ export const ACT3_QUESTS = [
     {
         id: 'read_rules',
         act: 3,
-        title: 'Чтение Правил',
-        description: 'Откройте GoldED и прочитайте правила эхоконференции SU.FLAME.',
+        title: 'Устав монастыря',
+        description: 'Прежде чем писать, изучите правила эхоконференции SU.FLAME.',
         hints: [
-            'Прочитайте важное сообщение в эхе.',
-            'Запустите GoldED, выберите область SU.FLAME.',
-            'Найдите сообщение с темой "Rules" и откройте его.'
+            'Запустите редактор сообщений (GoldED).',
+            'Вам пришла почта в область SU.FLAME.',
+            'Найдите письмо от модератора с правилами.'
         ],
         prerequisites: ['poll_boss'],
         steps: [
@@ -67,18 +67,18 @@ export const ACT3_QUESTS = [
         id: 'choose_strategy',
         act: 3,
         title: 'Выбор Стратегии',
-        description: 'В эхе SU.FLAME бушует тролль. Как вы поступите?',
+        description: 'В эхе SU.FLAME разгорается конфликт. Вам предстоит решить, какую сторону занять: дипломатии или силы.',
         hints: [
-            'Вам нужно принять решение.',
-            'Поговорите с Сисопом или решите сами.',
-            'Это сюжетный выбор, конкретных команд нет.'
+            'Это сюжетный выбор.',
+            'Вы можете попытаться договориться или использовать технические средства.',
+            'Решение за вами.'
         ],
         prerequisites: ['read_rules'],
         steps: [
             {
                 id: 'make_choice',
                 type: StepType.MANUAL,
-                description: 'Выбрать путь Дипломата или Технаря',
+                description: 'Выбрать путь',
             }
         ],
         rewards: [],
@@ -90,11 +90,11 @@ export const ACT3_QUESTS = [
         id: 'reply_welcome',
         act: 3,
         title: 'Глас Разума',
-        description: 'Напишите приветственное сообщение в SU.FLAME и попытайтесь успокоить тролля.',
+        description: 'Попробуйте успокоить участников конференции вежливым приветствием.',
         hints: [
-            'Напишите письмо в эху.',
-            'В GoldED напишите письмо в SU.FLAME.',
-            'Нажмите "Insert" или "N", выберите Area SU.FLAME, напишите текст.'
+            'Напишите письмо в эху SU.FLAME.',
+            'В редакторе создайте новое сообщение.',
+            'Будьте вежливы и конструктивны.'
         ],
         prerequisites: ['choose_strategy'],
         steps: [
@@ -122,11 +122,11 @@ export const ACT3_QUESTS = [
         id: 'trace_troll',
         act: 3,
         title: 'Охота на Тролля',
-        description: 'Вычислите адрес тролля через служебные заголовки (Kludge) и сообщите Сисопу.',
+        description: 'Тролль скрывается за поддельными адресами. Вычислите его настоящий узел.',
         hints: [
-            'Нужно найти адрес нарушителя.',
-            'Используйте команду TRACE <имя> в терминале.',
-            'Наберите "TRACE TROLL.MASTER".'
+            'Вам понадобятся сетевые утилиты.',
+            'Команда трассировки (TRACE) поможет найти источник.',
+            'Цель: TROLL.MASTER.'
         ],
         prerequisites: ['choose_strategy'],
         steps: [
@@ -134,7 +134,7 @@ export const ACT3_QUESTS = [
                 id: 'exec_trace',
                 type: StepType.EVENT,
                 event: COMMAND_EXECUTED, // Need to implement TRACE command
-                description: 'Выполнить TRACE Troll.Master',
+                description: 'Вычислить узел Troll.Master',
                 metadata: {
                     command: 'TRACE',
                     args: 'TROLL.MASTER'

@@ -10,19 +10,19 @@ export const ACT5_QUESTS = [
     {
         id: 'crisis_choice',
         act: 5,
-        title: 'Выбор Пути',
-        description: 'В сети назревает кризис. Помехи на линии мешают работе, а в эхах идет война. Выберите свой способ решения.',
+        title: 'Время решений',
+        description: 'В сети неспокойно. Технические сбои накладываются на социальные конфликты. Вам предстоит выбрать метод решения проблемы.',
         hints: [
-            'Сеть в опасности. Нужно действовать.',
-            'Поговорите с Сисопом или проверьте оборудование.',
-            'Наберите "CHAT" в терминале или купите "Набор для пайки".'
+            'Вы можете подойти к проблеме как инженер или как дипломат.',
+            'Ищите решение на Радиорынке или в общении с людьми.',
+            'Выбор определит дальнейшие действия.'
         ],
         prerequisites: ['nightly_uptime'], // From Act 4
         steps: [
             {
                 id: 'choose_path',
                 type: StepType.MANUAL, // Triggered via dialogue choice
-                description: 'Выбрать путь Технаря или Дипломата',
+                description: 'Определиться со стратегией',
             },
         ],
         rewards: [],
@@ -34,11 +34,11 @@ export const ACT5_QUESTS = [
         id: 'fix_hardware',
         act: 5,
         title: 'Шумоподавление',
-        description: 'Соберите фильтр для линии, чтобы устранить помехи.',
+        description: 'Канал связи нестабилен из-за физических помех. Соберите фильтр для очистки сигнала.',
         hints: [
-            'Нужен ремонт линии.',
-            'Купите "Набор для пайки" на радиорынке.',
-            'Зайдите в Радиорынок и купите набор.'
+            'Посетите Радиорынок.',
+            'Вам понадобятся инструменты для работы с железом.',
+            'Ищите "Набор для пайки".'
         ],
         prerequisites: ['crisis_choice'],
         steps: [
@@ -46,7 +46,7 @@ export const ACT5_QUESTS = [
                 id: 'buy_solder_kit',
                 type: StepType.EVENT,
                 event: ITEM_BOUGHT,
-                description: 'Купить Набор для пайки',
+                description: 'Купить инструменты',
                 metadata: { item: 'solder_kit' }
             }
         ],
@@ -59,11 +59,11 @@ export const ACT5_QUESTS = [
         id: 'negotiate_peace',
         act: 5,
         title: 'Миротворец',
-        description: 'Успокойте троллей в эхоконференции SU.FLAME.',
+        description: 'Конфликт в SU.FLAME вышел из-под контроля. Вмешайтесь и восстановите мир в эхе.',
         hints: [
-            'Нужно успокоить троллей.',
-            'Используйте GoldED для общения.',
-            'Найдите тред "War" в SU.FLAME и напишите правильный ответ.'
+            'Изучите переписку в эхоконференции.',
+            'Найдите ключевой тред с конфликтом ("War").',
+            'Ваши аргументы должны быть убедительны.'
         ],
         prerequisites: ['crisis_choice'],
         steps: [
@@ -71,7 +71,7 @@ export const ACT5_QUESTS = [
                 id: 'win_flame_war',
                 type: StepType.EVENT,
                 event: DIALOGUE_COMPLETED,
-                description: 'Выиграть спор в эхе',
+                description: 'Урегулировать конфликт',
                 metadata: { dialogueId: 'flame_war_peace', success: true }
             }
         ],
@@ -83,11 +83,11 @@ export const ACT5_QUESTS = [
         id: 'super_sysop',
         act: 5,
         title: 'Super SysOp',
-        description: 'Вы стали легендой района. Игра пройдена (пока что).',
+        description: 'Ваш авторитет непререкаем. Вы стали легендой локальной сети.',
         hints: [
-            'Вы достигли вершины.',
-            'Наслаждайтесь статусом.',
-            'Ждите вызова координатора.'
+            'Вы достигли вершины мастерства.',
+            'Проверяйте статус и ожидайте новостей.',
+            'Возможно, с вами свяжутся.'
         ],
         prerequisites: ['fix_hardware', 'negotiate_peace'], // OR logic handled in engine? No, usually AND. Logic needs dynamic branching.
         steps: [],

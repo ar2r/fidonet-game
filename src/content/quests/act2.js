@@ -10,25 +10,25 @@ export const ACT2_QUESTS = [
     {
         id: 'configure_tmail',
         act: 2,
-        title: 'Настройка T-Mail',
-        description: 'Настройте T-Mail: заполните адрес, пароль, босс-ноду.',
+        title: 'Настройка почты',
+        description: 'Почтовый мейлер требует настройки перед использованием. Введите сетевые параметры вашей станции и босса.',
         hints: [
-            'Для работы почты нужно настроить программу T-Mail.',
-            'Запустите T-Mail Setup.exe с рабочего стола.',
-            'Адрес: 2:5020/730.15, Босс: 2:5020/730, Телефон: 555-3389, Пароль: secret.'
+            'Для настройки используйте специальную утилиту (Setup).',
+            'Ваш адрес пойнта: 2:5020/730.15. Адрес босс-ноды: 2:5020/730.',
+            'Телефон босса: 555-3389. Пароль на сессию: secret.'
         ],
         prerequisites: ['download_software'],
         steps: [
             {
                 id: 'open_tmail_setup',
                 type: StepType.MANUAL,
-                description: 'Открыть T-Mail Setup',
+                description: 'Запустить конфигуратор T-Mail',
             },
             {
                 id: 'save_valid_config',
                 type: StepType.EVENT,
                 event: FILE_SAVED,
-                description: 'Сохранить корректную конфигурацию T-Mail',
+                description: 'Сохранить корректную конфигурацию',
                 metadata: {
                     path: 'C:\\FIDO\\T-MAIL.CTL',
                     validator: 'tmail.valid',
@@ -45,25 +45,25 @@ export const ACT2_QUESTS = [
     {
         id: 'configure_golded',
         act: 2,
-        title: 'Настройка GoldED',
-        description: 'Настройте GoldED: укажите имя, адрес и Origin.',
+        title: 'Личность в сети',
+        description: 'Настройте редактор сообщений. Сеть должна знать ваше имя и адрес для правильной подписи писем.',
         hints: [
-            'Нужно настроить редактор сообщений.',
-            'Запустите GoldED Setup с рабочего стола.',
-            'Используйте адрес 2:5020/730.15 и укажите ваше имя и Origin.'
+            'Запустите настройку редактора GoldED.',
+            'Укажите тот же адрес, что и в мейлере (2:5020/730.15).',
+            'Не забудьте заполнить поле Origin — это ваша визитная карточка.'
         ],
         prerequisites: ['configure_tmail'],
         steps: [
             {
                 id: 'open_golded',
                 type: StepType.MANUAL,
-                description: 'Открыть GoldED',
+                description: 'Запустить редактор сообщений',
             },
             {
                 id: 'save_golded_config',
                 type: StepType.EVENT,
                 event: FILE_SAVED,
-                description: 'Сохранить конфигурацию GoldED',
+                description: 'Сохранить настройки редактора',
                 metadata: {
                     path: 'C:\\FIDO\\GOLDED.CFG',
                     validator: 'golded.valid',
