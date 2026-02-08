@@ -5,12 +5,16 @@ import { useSelector } from 'react-redux';
 const TuiContainer = styled.div`
   background-color: #0000AA; /* DOS Blue */
   color: #FFFFFF;
-  font-family: 'Terminus', 'Courier New', monospace;
+  font-family: 'DosVga', 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
 `;
 
 const MenuBar = styled.div`
@@ -44,8 +48,8 @@ const InputField = styled.input`
   color: ${props => props.focused ? '#000000' : '#333333'};
   border: 2px solid ${props => props.focused ? '#FFFF00' : '#888888'};
   padding: 4px 8px;
-  font-family: 'Terminus', 'Courier New', monospace;
-  font-size: 14px;
+  font-family: 'DosVga', 'VT323', monospace;
+  font-size: 18px;
   width: 350px;
   outline: none;
 

@@ -13,27 +13,29 @@ const Wrapper = styled.div`
 const TerminalContainer = styled.div`
   background-color: #000;
   color: #00ff00;
-  font-family: 'DosVga', monospace;
+  font-family: 'DosVga', 'VT323', monospace;
   flex-grow: 1;
   width: 100%;
   box-sizing: border-box;
   padding: 10px;
   overflow-y: auto;
   white-space: pre-wrap;
-  font-size: 16px;
-  line-height: 1.2;
+  font-size: 20px;
+  line-height: 1.1;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
 `;
 
 const TerminalStatusBar = styled.div`
   background-color: #008080; /* Teal background for status */
   color: #fff;
-  font-family: 'DosVga', monospace;
+  font-family: 'DosVga', 'VT323', monospace;
   padding: 2px 8px;
   display: flex;
   justify-content: space-between;
   border-top: 2px solid #fff;
-  font-size: 14px;
+  font-size: 16px;
 `;
 
 const Cursor = styled.span`

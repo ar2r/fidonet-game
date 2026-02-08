@@ -8,12 +8,17 @@ import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
 const TuiContainer = styled.div`
   background-color: #0000AA;
   color: #FFFFFF;
-  font-family: 'DosVga', monospace;
+  font-family: 'DosVga', 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   outline: none;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
 `;
 
 const Header = styled.div`
@@ -22,13 +27,14 @@ const Header = styled.div`
   padding: 2px 10px;
   display: flex;
   justify-content: space-between;
+  font-weight: bold;
 `;
 
 const ContentArea = styled.div`
   flex-grow: 1;
-  padding: 5px;
+  padding: 0;
   overflow-y: auto;
-  border: 1px double #FFFFFF;
+  border: 4px double #FFFFFF;
   margin: 5px;
   background-color: #0000AA;
 `;
@@ -39,13 +45,15 @@ const Footer = styled.div`
   padding: 2px 10px;
   display: flex;
   gap: 20px;
+  font-weight: bold;
 `;
 
 const ListItem = styled.div`
-  padding: 2px 5px;
+  padding: 1px 10px;
   background-color: ${props => props.selected ? '#00AAAA' : 'transparent'};
   color: ${props => props.selected ? '#FFFFFF' : '#AAAAAA'};
   cursor: pointer;
+  white-space: pre;
   
   &:hover {
     background-color: ${props => props.selected ? '#00AAAA' : '#000088'};
@@ -57,9 +65,10 @@ const Input = styled.input`
   border: none;
   color: white;
   width: 100%;
-  font-family: inherit;
-  font-size: inherit;
+  font-family: 'DosVga', 'VT323', monospace;
+  font-size: 20px;
   outline: none;
+  padding: 0 5px;
 `;
 
 const TextArea = styled.textarea`
@@ -68,10 +77,12 @@ const TextArea = styled.textarea`
   color: white;
   width: 100%;
   height: 300px;
-  font-family: inherit;
-  font-size: inherit;
+  font-family: 'DosVga', 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1.1;
   outline: none;
   resize: none;
+  padding: 5px;
 `;
 
 function GoldED() {
