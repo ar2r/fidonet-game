@@ -168,6 +168,11 @@ function App() {
         }
     };
 
+    const handleMailTossingComplete = React.useCallback(() => {
+        setMailTossingActive(false);
+        eventBus.publish(MAIL_TOSSING_COMPLETED, {});
+    }, []);
+
     const handleConfigSave = (config) => {
         const actions = {
             completeQuest: completeQuestAction,
@@ -347,10 +352,7 @@ function App() {
                 {/* Mail Tossing Animation overlay */}
                 {mailTossingActive && (
                     <MailTossingAnimation
-                        onComplete={() => {
-                            setMailTossingActive(false);
-                            eventBus.publish(MAIL_TOSSING_COMPLETED, {});
-                        }}
+                        onComplete={handleMailTossingComplete}
                     />
                 )}
 
