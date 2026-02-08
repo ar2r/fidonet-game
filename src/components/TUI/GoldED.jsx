@@ -6,7 +6,7 @@ import { eventBus } from '../../domain/events/bus';
 import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
 
 const TuiContainer = styled.div`
-  background-color: #0000AA; /* Standard DOS Blue */
+  background-color: #000000; /* Black Background */
   color: #AAAAAA; /* Light Grey Text */
   font-family: 'DosVga', 'VT323', monospace;
   font-size: 20px;
@@ -22,9 +22,9 @@ const TuiContainer = styled.div`
 `;
 
 const Header = styled.div`
-  background-color: #AAAAAA; /* Grey Top Bar */
-  color: #000000; /* Black Text */
-  padding: 2px 10px;
+  background-color: #0000AA; /* Blue Header */
+  color: #FFFF55; /* Yellow Text */
+  padding: 0 10px;
   display: flex;
   justify-content: space-between;
   font-weight: bold;
@@ -36,44 +36,45 @@ const ContentArea = styled.div`
   overflow-y: auto;
   border: none; 
   margin: 0;
-  background-color: #0000AA;
+  background-color: #000000;
 `;
 
 const Footer = styled.div`
-  background-color: #AAAAAA; /* Grey Bottom Bar */
-  color: #000000;
-  padding: 2px 10px;
+  background-color: #0000AA; /* Blue Footer */
+  color: #FFFFFF;
+  padding: 0 10px;
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
   font-weight: bold;
 `;
 
 const ListItem = styled.div`
-  padding: 1px 10px;
-  background-color: ${props => props.selected ? '#00AAAA' : 'transparent'}; /* Cyan Selection */
-  color: ${props => props.selected ? '#000000' : '#AAAAAA'}; /* Black on Cyan */
+  padding: 0 10px;
+  background-color: ${props => props.selected ? '#0000AA' : 'transparent'}; /* Blue Selection */
+  color: ${props => props.selected ? '#FFFFFF' : '#AAAAAA'}; /* White on Blue */
   cursor: pointer;
   white-space: pre;
   
   &:hover {
-    background-color: ${props => props.selected ? '#00AAAA' : '#000088'};
+    background-color: ${props => props.selected ? '#0000AA' : '#333333'};
   }
 `;
 
 const Input = styled.input`
-  background: #000088;
-  border: 1px solid #AAAAAA;
+  background: #000000;
+  border: none;
+  border-bottom: 1px solid #AAAAAA;
   color: #FFFFFF;
   width: 100%;
   font-family: 'DosVga', 'VT323', monospace;
   font-size: 20px;
   outline: none;
-  padding: 0 5px;
+  padding: 0;
 `;
 
 const TextArea = styled.textarea`
-  background: #0000AA;
-  border: 1px solid #AAAAAA;
+  background: #000000;
+  border: none;
   color: #AAAAAA;
   width: 100%;
   height: 300px;
@@ -172,6 +173,8 @@ function GoldED() {
         } else if (view === 'composer') {
              if (e.key === 'Escape') {
                  setView('msglist');
+             } else if (e.key === 'Enter' && e.ctrlKey) {
+                 handleSend();
              }
         }
     };
@@ -203,14 +206,16 @@ function GoldED() {
 
     const renderAreas = () => (
         <>
-            <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Echo Areas ({ECHO_AREAS.length})</div>
+            <div style={{ padding: '0 10px', color: '#FFFF55', borderBottom: '1px solid #0000AA' }}>
+                {' #'.padEnd(4)} {'Описание'.padEnd(35)} {'Сообщ'.padEnd(8)} {'Новых'.padEnd(8)} {'Эха'}
+            </div>
             {ECHO_AREAS.map((area, idx) => (
                 <ListItem 
                     key={area.id} 
                     selected={idx === selectedAreaIndex}
                     onClick={() => { setSelectedAreaIndex(idx); setCurrentAreaId(area.id); setView('msglist'); }}
                 >
-                    {area.name.padEnd(15)} {String(area.msgs).padStart(4)} msgs  {area.description}
+                    {String(idx + 1).padStart(2).padEnd(4)} {area.description.padEnd(35)} {String(area.msgs).padStart(5).padEnd(8)} {String(area.unread).padStart(5).padEnd(8)} {area.name}
                 </ListItem>
             ))}
         </>
@@ -236,31 +241,49 @@ function GoldED() {
     };
 
     const renderMsgView = () => (
-        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'DosVga', padding: '10px' }}>
-            <div style={{ borderBottom: '1px solid #AAAAAA', paddingBottom: '5px', marginBottom: '10px', color: '#FFFFFF' }}>
-                <div><span style={{color: '#55FFFF'}}>From:</span> {currentMsg.from}</div>
-                <div><span style={{color: '#55FFFF'}}>To  :</span> {currentMsg.to}</div>
-                <div><span style={{color: '#55FFFF'}}>Subj:</span> {currentMsg.subj}</div>
-                <div><span style={{color: '#55FFFF'}}>Date:</span> {currentMsg.date}</div>
+        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'DosVga', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ backgroundColor: '#000000', color: '#AAAAAA', borderBottom: '1px solid #0000AA', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
+                    <span>Msg  : {selectedMsgIndex + 1} of {MESSAGES[currentAreaId]?.length || 0}</span>
+                    <span>Loc</span>
+                </div>
+                <div style={{ display: 'flex', padding: '0 10px' }}>
+                    <span style={{ width: '80px' }}>From :</span> 
+                    <span style={{ width: '300px', color: '#FFFFFF', fontWeight: 'bold' }}>{currentMsg.from}</span>
+                    <span style={{ flex: 1 }}>2:5020/123.45</span>
+                    <span>{currentMsg.date}</span>
+                </div>
+                <div style={{ display: 'flex', padding: '0 10px' }}>
+                    <span style={{ width: '80px' }}>To   :</span> 
+                    <span style={{ width: '300px', color: '#FFFFFF', fontWeight: 'bold' }}>{currentMsg.to}</span>
+                    <span style={{ flex: 1 }}></span>
+                    <span>{currentMsg.date}</span>
+                </div>
+                <div style={{ display: 'flex', padding: '0 10px' }}>
+                    <span style={{ width: '80px' }}>Subj :</span> 
+                    <span style={{ color: '#55FFFF', fontWeight: 'bold' }}>{currentMsg.subj}</span>
+                </div>
             </div>
-            <MessageBody text={currentMsg.body} />
-            <div style={{ marginTop: '20px', color: '#00AAAA' }}>--- GoldED 2.50+</div>
-            <div style={{ color: '#FF55FF' }}> * Origin: The Nexus BBS (2:5020/123)</div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 10px' }}>
+                <MessageBody text={currentMsg.body} />
+                <div style={{ marginTop: '20px', color: '#00AAAA' }}>--- GoldED 2.50+</div>
+                <div style={{ color: '#FF55FF' }}> * Origin: The Nexus BBS (2:5020/123)</div>
+            </div>
         </div>
     );
 
     const renderComposer = () => (
-        <div>
-            <div style={{ marginBottom: '10px' }}>New Message to {currentAreaId.toUpperCase()}</div>
+        <div style={{ padding: '10px' }}>
+            <div style={{ marginBottom: '10px', color: '#FFFF55' }}>New Message to {currentAreaId.toUpperCase()}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <div>To: <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} /></div>
-                <div>Subj: <Input value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} /></div>
+                <div style={{ display: 'flex' }}><span style={{width: '60px'}}>To:</span> <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} /></div>
+                <div style={{ display: 'flex' }}><span style={{width: '60px'}}>Subj:</span> <Input value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} /></div>
                 <TextArea 
                     value={composeData.body} 
                     onChange={e => setComposeData({...composeData, body: e.target.value})}
                     placeholder="Type your message here..."
                 />
-                <button onClick={handleSend} style={{ alignSelf: 'flex-start', padding: '5px 20px', cursor: 'pointer' }}>Send (Ctrl+Enter)</button>
+                <div style={{ marginTop: '10px', color: '#AAAAAA' }}>Press Ctrl+Enter to Send</div>
             </div>
         </div>
     );
@@ -272,7 +295,8 @@ function GoldED() {
             onKeyDown={handleKeyDown}
         >
             <Header>
-                <span>GoldED 2.50+</span>
+                <span>GoldEd (2:5020/123.45)</span>
+                <span>{currentAreaId ? currentAreaId.toUpperCase() : 'AREA LIST'}</span>
                 <span>{time}</span>
             </Header>
             <ContentArea>
@@ -282,10 +306,11 @@ function GoldED() {
                 {view === 'composer' && renderComposer()}
             </ContentArea>
             <Footer>
-                {view === 'areas' && <span>Enter: Select Area | F10: Exit</span>}
-                {view === 'msglist' && <span>Enter: Read | Ins: New Msg | Esc: Back</span>}
-                {view === 'msgview' && <span>Esc: Back</span>}
-                {view === 'composer' && <span>Ctrl+Enter: Send | Esc: Cancel</span>}
+                {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
+                {view === 'msglist' && <span>Enter:Read  Ins:New  Esc:Exit</span>}
+                {view === 'msgview' && <span>Esc:Exit  Ins:Reply</span>}
+                {view === 'composer' && <span>^Enter:Send  Esc:Cancel</span>}
+                <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>
     );
