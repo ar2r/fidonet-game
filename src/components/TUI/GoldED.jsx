@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 import { ECHO_AREAS, MESSAGES } from '../../content/messages/data';
 import { eventBus } from '../../domain/events/bus';
 import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
@@ -81,11 +82,22 @@ function GoldED() {
     const [currentMsg, setCurrentMsg] = useState(null);
     const [composeData, setComposeData] = useState({ to: 'All', subj: '', body: '' });
 
+    const { time, day } = useSelector(state => state.gameState);
     const containerRef = useRef(null);
 
     useEffect(() => {
         if (containerRef.current) containerRef.current.focus();
     }, [view]);
+
+    const getGameDate = () => {
+        const date = new Date(1995, 1, 6); // Feb 6, 1995
+        date.setDate(date.getDate() + (day - 1));
+        // Format: 06 Feb 1995
+        const dayStr = String(date.getDate()).padStart(2, '0');
+        const monthStr = date.toLocaleString('en-US', { month: 'short' });
+        const yearStr = date.getFullYear();
+        return `${dayStr} ${monthStr} ${yearStr}`;
+    };
 
     const handleKeyDown = (e) => {
         if (view === 'areas') {
@@ -143,7 +155,7 @@ function GoldED() {
             from: 'SysOp', // Player
             to: composeData.to,
             subj: composeData.subj,
-            date: new Date().toDateString(),
+            date: getGameDate(),
             body: composeData.body,
             read: true,
         };
@@ -233,7 +245,7 @@ function GoldED() {
         >
             <Header>
                 <span>GoldED 2.50+</span>
-                <span>{new Date().toLocaleTimeString()}</span>
+                <span>{time}</span>
             </Header>
             <ContentArea>
                 {view === 'areas' && renderAreas()}
