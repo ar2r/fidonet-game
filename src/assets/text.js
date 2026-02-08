@@ -40,7 +40,7 @@ export const TERMINAL_MANUAL = `
 COMMANDS:
 - ATZ           : Initialize Modem (Reset).
 - AT&F          : Factory Reset (same as ATZ).
-- DIAL <number> : Dial a phone number (e.g. DIAL 5553389).
+- DIAL <number> : Dial a phone number (e.g. DIAL 555-3389).
                   Alternative: ATDT <number> or ATDP <number>.
 - HELP          : Show this help.
 - EXIT / QUIT   : Exit to DOS.
@@ -81,7 +81,7 @@ T-Mail — это тоссер, программа для обработки в�
   * Boss Node Address — адрес вашей босс-ноды (формат: Z:NNNN/NNN)
     Это нода, к которой вы подключаетесь.
 
-  * Boss Node Phone — телефон босс-ноды (например: 5553389)
+  * Boss Node Phone — телефон босс-ноды (например: 555-3389)
 
   * Inbound Directory — куда складывать входящие пакеты
     Рекомендуется: C:\\FIDO\\INBOUND
