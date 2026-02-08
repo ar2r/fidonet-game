@@ -56,4 +56,4 @@ jobs:
         cache-to: type=gha,mode=max
     - name: Trigger Deployment Webhook
       if: success()
-      run: curl -X POST http://151.243.3.88:3000/api/deploy/_igpKEOADm0r4_08NUaCp
+      run: curl -X POST https://dev.hasanov.ru/api/deploy/OpNpuRKBAwTDvd-or3-am
