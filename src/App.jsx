@@ -515,10 +515,12 @@ function App() {
                                 {startMenuOpen && (
                                     <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
                                         <ListItem onClick={() => { handleOpenWindow('terminal'); setStartMenuOpen(false); }}>
+                                            <span role="img" aria-label="terminal" style={{ marginRight: '8px' }}>💻</span>
                                             Терминал Fidonet
                                         </ListItem>
                                         <Divider />
                                         <ListItem onClick={handleResetGame}>
+                                            <span role="img" aria-label="shutdown" style={{ marginRight: '8px' }}>🔌</span>
                                             Закончить игру
                                         </ListItem>
                                     </List>
