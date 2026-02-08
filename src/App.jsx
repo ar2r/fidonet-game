@@ -48,7 +48,7 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-const ENABLE_ONBOARDING = false;
+const ENABLE_ONBOARDING = true;
 
 const BuildInfo = styled.div`
   position: absolute;
