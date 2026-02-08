@@ -454,7 +454,7 @@ function App() {
                                 {startMenuOpen && (
                                     <List style={{ position: 'absolute', left: '0', bottom: '100%', zIndex: 9999 }}>
                                         <ListItem onClick={() => { handleOpenWindow('terminal'); setStartMenuOpen(false); }}>
-                                            Терминал Фидонет
+                                            Терминал Fidonet
                                         </ListItem>
                                         <Divider />
                                         <ListItem disabled>

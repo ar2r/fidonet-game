@@ -122,7 +122,7 @@ function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
         "",
         "C:\\>",
         "",
-        "Добро пожаловать в Фидонет!",
+        "Добро пожаловать в Fidonet!",
         "Для подключения к BBS запустите TERMINAL.EXE",
         "Введите HELP для получения справки.",
         "",

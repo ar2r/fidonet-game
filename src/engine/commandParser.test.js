@@ -73,7 +73,7 @@ describe('commandParser', () => {
         it('HELP shows manual', () => {
             processCommand('HELP', baseState, dispatch, actions, appendOutput);
             expect(output.length).toBeGreaterThan(0);
-            expect(output[0]).toContain('СИМУЛЯТОР ФИДОНЕТ');
+            expect(output[0]).toContain('СИМУЛЯТОР FIDONET');
         });
 
         it('DIAL requires TERMINAL.EXE to be running', () => {
