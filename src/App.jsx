@@ -424,7 +424,7 @@ function App() {
                 </div>
 
                 {/* Render all open windows */}
-                {Object.values(windows).map(window => (
+                {Object.values(windows).filter(w => w.isOpen && !w.isMinimized).map(window => (
                     <DesktopWindow key={window.id} windowId={window.id}>
                         {renderWindowContent(window.id, window.component)}
                     </DesktopWindow>
@@ -465,8 +465,8 @@ function App() {
                             </div>
 
                             {/* Window buttons */}
-                            {Object.keys(windows).map(windowId => (
-                                <TaskbarButton key={windowId} windowId={windowId} />
+                            {Object.values(windows).filter(w => w.isOpen).map(window => (
+                                <TaskbarButton key={window.id} windowId={window.id} />
                             ))}
                         </div>
 

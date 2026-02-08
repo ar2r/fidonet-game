@@ -19,7 +19,7 @@ const windowManagerSlice = createSlice({
             const { id, title, component, position, size } = action.payload;
 
             if (!state.windows[id]) {
-                // Новое окно
+                // Новое окно - создать с дефолтными позицией и размером
                 state.windows[id] = {
                     id,
                     title,
@@ -30,6 +30,13 @@ const windowManagerSlice = createSlice({
                     size: size || { width: 640, height: 480 },
                     zIndex: state.nextZIndex,
                 };
+                state.nextZIndex += 1;
+                state.activeWindow = id;
+            } else if (!state.windows[id].isOpen) {
+                // Окно было закрыто - восстановить с сохраненными позицией и размером
+                state.windows[id].isOpen = true;
+                state.windows[id].isMinimized = false;
+                state.windows[id].zIndex = state.nextZIndex;
                 state.nextZIndex += 1;
                 state.activeWindow = id;
             } else if (state.windows[id].isMinimized) {
@@ -49,10 +56,13 @@ const windowManagerSlice = createSlice({
         closeWindow(state, action) {
             const id = action.payload;
             if (state.windows[id]) {
-                delete state.windows[id];
+                // Не удаляем окно, а только закрываем (сохраняем позицию и размер)
+                state.windows[id].isOpen = false;
+                state.windows[id].isMinimized = false;
+
                 if (state.activeWindow === id) {
-                    // Найти окно с максимальным z-index
-                    const openWindows = Object.values(state.windows).filter(w => !w.isMinimized);
+                    // Найти окно с максимальным z-index среди открытых
+                    const openWindows = Object.values(state.windows).filter(w => w.isOpen && !w.isMinimized);
                     if (openWindows.length > 0) {
                         const topWindow = openWindows.reduce((max, w) => w.zIndex > max.zIndex ? w : max);
                         state.activeWindow = topWindow.id;
