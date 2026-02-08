@@ -11,8 +11,9 @@
 
 @font-face {
   font-family: 'DosVga';
-  src: local('VT323-Regular'), url('https://fonts.gstatic.com/s/vt323/v17/pxiLyp0EtFeat7JVXOfD.woff2') format('woff2');
-  /* Map DosVga to VT323 which is already loaded */
+  src: url('./assets/fonts/PxPlus_IBM_VGA_9x16.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
