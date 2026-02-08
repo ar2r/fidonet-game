@@ -6,8 +6,8 @@ import { eventBus } from '../../domain/events/bus';
 import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
 
 const TuiContainer = styled.div`
-  background-color: #0000AA;
-  color: #FFFFFF;
+  background-color: #0000AA; /* Standard DOS Blue */
+  color: #AAAAAA; /* Light Grey Text */
   font-family: 'DosVga', 'VT323', monospace;
   font-size: 20px;
   line-height: 1;
@@ -22,8 +22,8 @@ const TuiContainer = styled.div`
 `;
 
 const Header = styled.div`
-  background-color: #AAAAAA;
-  color: #000;
+  background-color: #AAAAAA; /* Grey Top Bar */
+  color: #000000; /* Black Text */
   padding: 2px 10px;
   display: flex;
   justify-content: space-between;
@@ -34,14 +34,14 @@ const ContentArea = styled.div`
   flex-grow: 1;
   padding: 0;
   overflow-y: auto;
-  border: 4px double #FFFFFF;
-  margin: 5px;
+  border: none; 
+  margin: 0;
   background-color: #0000AA;
 `;
 
 const Footer = styled.div`
-  background-color: #AAAAAA;
-  color: #000;
+  background-color: #AAAAAA; /* Grey Bottom Bar */
+  color: #000000;
   padding: 2px 10px;
   display: flex;
   gap: 20px;
@@ -50,8 +50,8 @@ const Footer = styled.div`
 
 const ListItem = styled.div`
   padding: 1px 10px;
-  background-color: ${props => props.selected ? '#00AAAA' : 'transparent'};
-  color: ${props => props.selected ? '#FFFFFF' : '#AAAAAA'};
+  background-color: ${props => props.selected ? '#00AAAA' : 'transparent'}; /* Cyan Selection */
+  color: ${props => props.selected ? '#000000' : '#AAAAAA'}; /* Black on Cyan */
   cursor: pointer;
   white-space: pre;
   
@@ -62,8 +62,8 @@ const ListItem = styled.div`
 
 const Input = styled.input`
   background: #000088;
-  border: none;
-  color: white;
+  border: 1px solid #AAAAAA;
+  color: #FFFFFF;
   width: 100%;
   font-family: 'DosVga', 'VT323', monospace;
   font-size: 20px;
@@ -72,9 +72,9 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-  background: #000088;
-  border: none;
-  color: white;
+  background: #0000AA;
+  border: 1px solid #AAAAAA;
+  color: #AAAAAA;
   width: 100%;
   height: 300px;
   font-family: 'DosVga', 'VT323', monospace;
@@ -84,6 +84,22 @@ const TextArea = styled.textarea`
   resize: none;
   padding: 5px;
 `;
+
+// Helper for message body rendering
+const MessageBody = ({ text }) => {
+    return (
+        <div>
+            {text.split('\n').map((line, i) => {
+                let color = '#AAAAAA'; // Default Grey
+                if (line.trim().startsWith('>')) color = '#55FF55'; // Quotes Green
+                if (line.trim().startsWith('---')) color = '#00AAAA'; // Tearline Cyan
+                if (line.trim().startsWith(' * Origin:')) color = '#FF55FF'; // Origin Magenta (or Cyan)
+                
+                return <div key={i} style={{ color }}>{line}</div>
+            })}
+        </div>
+    );
+};
 
 function GoldED() {
     const [view, setView] = useState('areas'); // areas, msglist, msgview, composer
@@ -96,14 +112,19 @@ function GoldED() {
     const { time, day } = useSelector(state => state.gameState);
     const containerRef = useRef(null);
 
+    // Focus management
     useEffect(() => {
-        if (containerRef.current) containerRef.current.focus();
+        const timer = setTimeout(() => {
+            if (containerRef.current) {
+                containerRef.current.focus();
+            }
+        }, 10);
+        return () => clearTimeout(timer);
     }, [view]);
 
     const getGameDate = () => {
         const date = new Date(1995, 1, 6); // Feb 6, 1995
         date.setDate(date.getDate() + (day - 1));
-        // Format: 06 Feb 1995
         const dayStr = String(date.getDate()).padStart(2, '0');
         const monthStr = date.toLocaleString('en-US', { month: 'short' });
         const yearStr = date.getFullYear();
@@ -132,7 +153,6 @@ function GoldED() {
                     const msg = msgs[selectedMsgIndex];
                     setCurrentMsg(msg);
                     setView('msgview');
-                    // Publish event
                     eventBus.publish(MESSAGE_READ, {
                         area: currentAreaId,
                         subj_contains: msg.subj,
@@ -153,17 +173,15 @@ function GoldED() {
              if (e.key === 'Escape') {
                  setView('msglist');
              }
-             // Send on Ctrl+Enter handled in render
         }
     };
 
     const handleSend = () => {
         if (!composeData.body.trim()) return;
 
-        // Add to messages (mock)
         const newMsg = {
             id: `msg_${Date.now()}`,
-            from: 'SysOp', // Player
+            from: 'SysOp',
             to: composeData.to,
             subj: composeData.subj,
             date: getGameDate(),
@@ -174,7 +192,6 @@ function GoldED() {
         if (!MESSAGES[currentAreaId]) MESSAGES[currentAreaId] = [];
         MESSAGES[currentAreaId].push(newMsg);
 
-        // Publish event
         eventBus.publish(MESSAGE_POSTED, {
             area: currentAreaId,
             to: composeData.to,
@@ -186,7 +203,7 @@ function GoldED() {
 
     const renderAreas = () => (
         <>
-            <div style={{ marginBottom: '10px' }}>Echo Areas ({ECHO_AREAS.length})</div>
+            <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Echo Areas ({ECHO_AREAS.length})</div>
             {ECHO_AREAS.map((area, idx) => (
                 <ListItem 
                     key={area.id} 
@@ -203,7 +220,7 @@ function GoldED() {
         const msgs = MESSAGES[currentAreaId] || [];
         return (
             <>
-                <div style={{ marginBottom: '10px' }}>Messages in {currentAreaId.toUpperCase()} ({msgs.length})</div>
+                <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Messages in {currentAreaId.toUpperCase()} ({msgs.length})</div>
                 {msgs.length === 0 && <div>No messages. Press Ins to write.</div>}
                 {msgs.map((msg, idx) => (
                     <ListItem 
@@ -219,16 +236,16 @@ function GoldED() {
     };
 
     const renderMsgView = () => (
-        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'DosVga' }}>
-            <div style={{ borderBottom: '1px solid #777', paddingBottom: '5px', marginBottom: '10px' }}>
-                <div>From: {currentMsg.from}</div>
-                <div>To  : {currentMsg.to}</div>
-                <div>Subj: {currentMsg.subj}</div>
-                <div>Date: {currentMsg.date}</div>
+        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'DosVga', padding: '10px' }}>
+            <div style={{ borderBottom: '1px solid #AAAAAA', paddingBottom: '5px', marginBottom: '10px', color: '#FFFFFF' }}>
+                <div><span style={{color: '#55FFFF'}}>From:</span> {currentMsg.from}</div>
+                <div><span style={{color: '#55FFFF'}}>To  :</span> {currentMsg.to}</div>
+                <div><span style={{color: '#55FFFF'}}>Subj:</span> {currentMsg.subj}</div>
+                <div><span style={{color: '#55FFFF'}}>Date:</span> {currentMsg.date}</div>
             </div>
-            <div>{currentMsg.body}</div>
-            <div style={{ marginTop: '20px', color: '#555' }}>--- GoldED 2.50+</div>
-            <div style={{ color: '#555' }}> * Origin: The Nexus BBS (2:5020/123)</div>
+            <MessageBody text={currentMsg.body} />
+            <div style={{ marginTop: '20px', color: '#00AAAA' }}>--- GoldED 2.50+</div>
+            <div style={{ color: '#FF55FF' }}> * Origin: The Nexus BBS (2:5020/123)</div>
         </div>
     );
 
