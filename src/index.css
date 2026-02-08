@@ -11,7 +11,7 @@
 
 @font-face {
   font-family: 'DosVga';
-  src: url('./assets/fonts/PxPlus_IBM_VGA_9x16.ttf') format('truetype');
+  src: url('./assets/fonts/IBM_VGA_9x16.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
