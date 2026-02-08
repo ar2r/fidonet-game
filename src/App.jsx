@@ -16,6 +16,7 @@ import GoldED from './components/TUI/GoldED';
 import RadioMarket from './components/TUI/RadioMarket';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
+import SaveNotification from './components/SaveNotification';
 import QuestJournal from './features/quests/QuestJournal';
 import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
@@ -66,6 +67,7 @@ const BuildInfo = styled.div`
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
+    const [saveNotification, setSaveNotification] = useState(null); // { message: string } | null
 
     // eslint-disable-next-line no-undef
     const buildHash = __COMMIT_HASH__;
@@ -108,13 +110,13 @@ function App() {
         try {
             const shortLink = await shortenLink(longLink);
             navigator.clipboard.writeText(shortLink).then(() => {
-                alert(`Ссылка скопирована!\n${shortLink}`);
+                setSaveNotification({ message: `Ссылка скопирована!\n${shortLink}` });
             }).catch(() => {
-                prompt('Скопируйте ссылку:', shortLink);
+                setSaveNotification({ message: `Скопируйте ссылку:\n${shortLink}` });
             });
         } catch {
             // Fallback to long link
-            prompt('Не удалось сократить ссылку. Скопируйте длинную версию:', longLink);
+            setSaveNotification({ message: `Не удалось сократить ссылку.\nСкопируйте длинную версию:\n${longLink}` });
         }
     };
 
@@ -337,6 +339,14 @@ function App() {
                             setMailTossingActive(false);
                             eventBus.publish(MAIL_TOSSING_COMPLETED, {});
                         }}
+                    />
+                )}
+
+                {/* Save Notification overlay */}
+                {saveNotification && (
+                    <SaveNotification
+                        message={saveNotification.message}
+                        onClose={() => setSaveNotification(null)}
                     />
                 )}
 
