@@ -267,7 +267,7 @@ function GoldED() {
             <div style={{ flex: 1, overflowY: 'auto', padding: '0 10px' }}>
                 <MessageBody text={currentMsg.body} />
                 <div style={{ marginTop: '20px', color: '#00AAAA' }}>--- GoldED 2.50+</div>
-                <div style={{ color: '#FF55FF' }}> * Origin: The Nexus BBS (2:5020/123)</div>
+                <div style={{ color: '#FF55FF' }}> * Origin: {currentMsg.origin || 'The Nexus BBS (2:5020/123)'}</div>
             </div>
         </div>
     );
