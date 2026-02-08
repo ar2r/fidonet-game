@@ -77,14 +77,32 @@ describe('commandParser', () => {
         });
 
         it('DIAL requires TERMINAL.EXE to be running', () => {
-            processCommand('DIAL 555-3389', baseState, dispatch, actions, appendOutput);
+            processCommand('DIAL 5553389', baseState, dispatch, actions, appendOutput);
             expect(output.some(l => l.includes('TERMINAL.EXE'))).toBe(true);
         });
 
         it('DIAL without modem init shows error when in TERMINAL', () => {
             baseState.network.terminalProgramRunning = true;
-            processCommand('DIAL 555-3389', baseState, dispatch, actions, appendOutput);
+            processCommand('DIAL 5553389', baseState, dispatch, actions, appendOutput);
             expect(output.some(l => l.includes('не инициализирован'))).toBe(true);
+        });
+
+        it('DIAL with hyphens or spaces shows error', () => {
+            baseState.network.terminalProgramRunning = true;
+            processCommand('DIAL 555-3389', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('только из цифр'))).toBe(true);
+            
+            output = [];
+            processCommand('DIAL 555 3389', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('только из цифр'))).toBe(true);
+
+            output = [];
+            processCommand('ATDT 555-3389', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('только из цифр'))).toBe(true);
+
+            output = [];
+            processCommand('ATDP 55533 89', baseState, dispatch, actions, appendOutput);
+            expect(output.some(l => l.includes('только из цифр'))).toBe(true);
         });
 
         it('VER shows DOS version', () => {

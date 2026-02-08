@@ -25,7 +25,7 @@ describe('Quest Service', () => {
             address: '2:5020/123.45',
             password: 'NEXUS95',
             bossAddress: '2:5020/123',
-            bossPhone: '555-3389',
+            bossPhone: '5553389',
             inbound: 'C:\\FIDO\\INBOUND',
             outbound: 'C:\\FIDO\\OUTBOUND',
         };

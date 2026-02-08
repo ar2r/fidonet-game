@@ -72,7 +72,7 @@ const Cursor = styled.span`
 const TOSSING_STEPS = [
   { time: 0, message: 'Запуск T-Mail v2605...', progress: 0 },
   { time: 1000, message: 'Инициализация модема...', progress: 10 },
-  { time: 2000, message: 'Набор номера 555-3389...', progress: 20 },
+  { time: 2000, message: 'Набор номера 5553389...', progress: 20 },
   { time: 3500, message: 'CONNECT 14400/ARQ/V42BIS', progress: 30, highlight: true },
   { time: 4500, message: 'Авторизация на босс-ноде 2:5020/123...', progress: 40 },
   { time: 5500, message: 'Обмен почтой...', progress: 50 },

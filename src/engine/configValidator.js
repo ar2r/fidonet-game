@@ -8,7 +8,7 @@ const CORRECT_VALUES = {
   address: '2:5020/123.45',
   bossAddress: '2:5020/123',
   password: 'NEXUS95',
-  bossPhone: '555-3389',
+  bossPhone: '5553389',
 };
 
 /**
@@ -66,7 +66,11 @@ export function validatePhone(phone) {
 
   const trimmed = phone.trim();
 
-  // Accept various phone formats
+  // Accept only digits
+  if (/[^\d]/.test(trimmed)) {
+    return { valid: false, error: 'Телефон должен состоять только из цифр' };
+  }
+
   if (trimmed.length < 7) {
     return { valid: false, error: 'Телефон слишком короткий' };
   }

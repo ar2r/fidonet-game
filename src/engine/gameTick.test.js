@@ -15,7 +15,7 @@ describe('gameTick', () => {
         });
 
         it('returns 5 for DIAL', () => {
-            expect(getTimeCost('DIAL 555-3389')).toBe(5);
+            expect(getTimeCost('DIAL 5553389')).toBe(5);
         });
 
         it('returns 1 for DIR', () => {

@@ -120,7 +120,7 @@ eventBus.subscribe('*', (event) => {
     type: 'bbs.connected',
     timestamp: 1706789012345,
     bbs: 'The Nexus',
-    phone: '555-3389',
+    phone: '5553389',
 }
 ```
 

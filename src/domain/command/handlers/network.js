@@ -66,15 +66,24 @@ export function handleDial({ command, gameState, dispatch, actions, appendOutput
         return { handled: true };
     }
 
-    const parts = command.split(/\s+/);
     let number = '';
     if (command.startsWith('DIAL')) {
-        number = parts.length > 1 ? parts[1] : '';
+        number = command.substring(4).trim();
     } else {
         // ATDT or ATDP
         const prefix = command.startsWith('ATDT') ? 'ATDT' : 'ATDP';
-        const afterPrefix = command.substring(prefix.length).trim();
-        number = afterPrefix || (parts.length > 1 ? parts[1] : '');
+        number = command.substring(prefix.length).trim();
+    }
+
+    if (!number) {
+        appendOutput("ОШИБКА: Не указан номер.");
+        return { handled: true };
+    }
+
+    if (/[^\d]/.test(number)) {
+        appendOutput("ОШИБКА: Номер должен состоять только из цифр.");
+        appendOutput("Лишние пробелы и минусы недопустимы.");
+        return { handled: true };
     }
 
     if (!gameState.network?.modemInitialized) {
@@ -83,7 +92,7 @@ export function handleDial({ command, gameState, dispatch, actions, appendOutput
         return { handled: true };
     }
 
-    if (number === '555-3389') {
+    if (number === '5553389') {
         appendOutput(`НАБОР НОМЕРА ${number}...`);
         setTimeout(() => {
             appendOutput("СОЕДИНЕНИЕ 14400");
@@ -110,11 +119,9 @@ export function handleDial({ command, gameState, dispatch, actions, appendOutput
                 appendOutput(BBS_MENU);
             }, 1500);
         }, 1000);
-    } else if (number) {
+    } else {
         appendOutput(`НАБОР НОМЕРА ${number}...`);
         setTimeout(() => appendOutput("НЕТ НЕСУЩЕЙ"), 2000);
-    } else {
-        appendOutput("ОШИБКА: Не указан номер.");
     }
 
     return { handled: true };

@@ -49,15 +49,15 @@ describe('configValidator', () => {
 
     describe('validatePhone', () => {
         it('validates correct phone number', () => {
-            const result = validatePhone('555-3389');
+            const result = validatePhone('5553389');
             expect(result.valid).toBe(true);
-            expect(result.formatted).toBe('555-3389');
+            expect(result.formatted).toBe('5553389');
         });
 
-        it('validates various formats', () => {
-            expect(validatePhone('1234567').valid).toBe(true);
-            expect(validatePhone('123-456-7890').valid).toBe(true);
-            expect(validatePhone('(555) 3389').valid).toBe(true);
+        it('rejects hyphens or spaces', () => {
+            expect(validatePhone('555-3389').valid).toBe(false);
+            expect(validatePhone('555 3389').valid).toBe(false);
+            expect(validatePhone('(555)3389').valid).toBe(false);
         });
 
         it('rejects empty phone', () => {
@@ -126,7 +126,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
                 inbound: 'C:\\FIDO\\INBOUND',
                 outbound: 'C:\\FIDO\\OUTBOUND',
@@ -140,7 +140,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123.1', // Boss cannot be point
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
                 inbound: 'C:\\FIDO\\INBOUND',
                 outbound: 'C:\\FIDO\\OUTBOUND',
@@ -156,7 +156,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: '',
                 inbound: 'C:\\FIDO\\INBOUND',
                 outbound: 'C:\\FIDO\\OUTBOUND',
@@ -188,7 +188,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
             };
 
@@ -200,7 +200,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/999.99',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
             };
 
@@ -214,7 +214,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'WRONG',
             };
 
@@ -227,7 +227,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/999',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
             };
 
@@ -255,7 +255,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
                 inbound: 'C:\\FIDO\\INBOUND',
                 outbound: 'C:\\FIDO\\OUTBOUND',
@@ -266,7 +266,7 @@ describe('configValidator', () => {
             expect(content).toContain('Address 2:5020/123.45');
             expect(content).toContain('Password NEXUS95');
             expect(content).toContain('BossAddress 2:5020/123');
-            expect(content).toContain('BossPhone 555-3389');
+            expect(content).toContain('BossPhone 5553389');
             expect(content).toContain('Inbound C:\\FIDO\\INBOUND');
             expect(content).toContain('Outbound C:\\FIDO\\OUTBOUND');
         });
@@ -275,7 +275,7 @@ describe('configValidator', () => {
             const config = {
                 address: '2:5020/123.45',
                 bossAddress: '2:5020/123',
-                bossPhone: '555-3389',
+                bossPhone: '5553389',
                 password: 'NEXUS95',
                 inbound: 'C:\\FIDO\\INBOUND',
                 outbound: 'C:\\FIDO\\OUTBOUND',
