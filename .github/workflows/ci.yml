@@ -56,4 +56,4 @@ jobs:
         cache-to: type=gha,mode=max
     - name: Trigger Deployment Webhook
       if: success()
-      run: curl -X POST https://dev.hasanov.ru/api/deploy/OpNpuRKBAwTDvd-or3-am
+      run: curl -X POST ${{ vars.DEPLOY_WEBHOOK_URL }}
