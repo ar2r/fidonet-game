@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
@@ -108,6 +108,16 @@ function GoldEDConfig({ onClose, onSave, initialConfig = {}, tmailAddress = '', 
   const [validationError, setValidationError] = useState(null);
   const [saved, setSaved] = useState(false);
 
+  // Refs для полей ввода
+  const inputRefs = useRef([]);
+
+  // Устанавливаем фокус на активное поле при изменении focusedIndex
+  useEffect(() => {
+    if (inputRefs.current[focusedIndex] && !saved) {
+      inputRefs.current[focusedIndex].focus();
+    }
+  }, [focusedIndex, saved]);
+
   const handleSave = useCallback(() => {
     // Basic validation
     if (!config.username.trim()) {
@@ -189,6 +199,7 @@ function GoldEDConfig({ onClose, onSave, initialConfig = {}, tmailAddress = '', 
                   {field.label}
                 </Label>
                 <InputField
+                  ref={el => inputRefs.current[index] = el}
                   type="text"
                   value={config[field.key]}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
