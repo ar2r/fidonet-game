@@ -11,7 +11,7 @@ export const WINDOW_DEFINITIONS = {
         title: 'Notepad - HISTORY.TXT',
         component: 'history-log',
         position: { x: 300, y: 100 },
-        size: { width: 450, height: 400 },
+        size: { width: 650, height: 500 },
     },
     'winamp': {
         id: 'winamp',
