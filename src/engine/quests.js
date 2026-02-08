@@ -33,7 +33,7 @@ export const QUESTS = {
         id: 'configure_tmail',
         title: 'Настройка T-Mail',
         description: 'Настройте T-Mail: заполните адрес, пароль, босс-ноду.',
-        hint: 'Запустите T-Mail Setup.exe с рабочего стола. Информацию можно получить у Сисопа BBS (команда C в меню) и прочитать README.1ST (команда TYPE C:\\FIDO\\README.1ST).',
+        hint: 'Запустите T-Mail Setup.exe с рабочего стола. Информацию можно получить у Сисопа BBS (команда C в меню).',
         act: 2,
         reward: { skills: { software: 2, typing: 1 } },
         nextQuest: 'configure_golded',

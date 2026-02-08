@@ -125,8 +125,9 @@ const NoQuestMessage = styled.div`
   font-size: 14px;
 `;
 
-function QuestJournal({ onClose }) {
+function QuestJournal({ onClose, windowId = 'quest-journal' }) {
     const quests = useSelector(state => state.quests);
+    const activeWindow = useSelector(state => state.windowManager.activeWindow);
     const activeQuestId = quests.active;
     const hintLevel = quests.hintLevel || 0;
     const quest = activeQuestId ? getQuestById(activeQuestId) : null;
@@ -135,11 +136,14 @@ function QuestJournal({ onClose }) {
     const completedSteps = new Set(); // Placeholder for step tracking
 
     const handleKeyDown = useCallback((e) => {
+        // Проверяем, что это окно активно
+        if (activeWindow !== windowId) return;
+
         if (e.key === 'Escape') {
             e.preventDefault();
             onClose();
         }
-    }, [onClose]);
+    }, [onClose, activeWindow, windowId]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);

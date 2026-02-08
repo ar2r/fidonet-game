@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 const TuiContainer = styled.div`
   background-color: #0000AA; /* DOS Blue */
@@ -95,7 +96,9 @@ const FIELDS = [
   { key: 'outbound', label: 'Outbound Directory:', placeholder: 'C:\\FIDO\\OUTBOUND' },
 ];
 
-function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
+function ConfigEditor({ onClose, onSave, initialConfig = {}, windowId = 'tmail-config' }) {
+  const activeWindow = useSelector(state => state.windowManager.activeWindow);
+
   const [config, setConfig] = useState({
     address: initialConfig.address || '',
     password: initialConfig.password || '',
@@ -147,6 +150,9 @@ function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
   }, [config, onSave, onClose]);
 
   const handleKeyDown = useCallback((e) => {
+    // Проверяем, что это окно активно
+    if (activeWindow !== windowId) return;
+
     if (e.key === 'Tab') {
       e.preventDefault();
       setFocusedIndex(prev => (prev + 1) % FIELDS.length);
@@ -164,7 +170,7 @@ function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
       e.preventDefault();
       onClose();
     }
-  }, [handleSave, onClose]);
+  }, [handleSave, onClose, activeWindow, windowId]);
 
   const handleFieldChange = (key, value) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -210,8 +216,7 @@ function ConfigEditor({ onClose, onSave, initialConfig = {} }) {
             )}
 
             <HintText>
-              Подсказка: Узнайте ваш адрес и пароль у Сисопа BBS.<br/>
-              Прочитайте файл README.1ST для дополнительной информации.
+              Подсказка: Узнайте ваш адрес и пароль у Сисопа BBS.
             </HintText>
           </WorkArea>
           <StatusBar>

@@ -6,13 +6,6 @@ export const WINDOW_DEFINITIONS = {
         position: { x: 100, y: 100 },
         size: { width: 640, height: 480 },
     },
-    readme: {
-        id: 'readme',
-        title: 'Notepad - Readme.txt',
-        component: 'readme',
-        position: { x: 150, y: 150 },
-        size: { width: 400, height: 300 },
-    },
     'history-log': {
         id: 'history-log',
         title: 'Notepad - HISTORY.TXT',

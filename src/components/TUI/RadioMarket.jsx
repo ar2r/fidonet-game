@@ -167,10 +167,24 @@ function RadioMarket() {
 
     return (
         <MarketContainer tabIndex="0" onKeyDown={(e) => {
-            if (e.key === 'ArrowDown') setSelectedIndex(p => Math.min(p + 1, currentList.length - 1));
-            if (e.key === 'ArrowUp') setSelectedIndex(p => Math.max(p - 1, 0));
-            if (e.key === 'Enter') handleAction();
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedIndex(p => Math.min(p + 1, currentList.length - 1));
+            }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedIndex(p => Math.max(p - 1, 0));
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAction();
+            }
             if (e.key === 'Tab') {
+                e.preventDefault();
+                e.stopPropagation();
                 setMode(m => m === 'BUY' ? 'SELL' : 'BUY');
                 setSelectedIndex(0);
                 setMessage('');

@@ -104,12 +104,13 @@ const ACTIONS = {
     setLastBillDay: setLastBillDayAction,
 };
 
-function TerminalWindow({ onClose, embedded = false }) {
+function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
     const dispatch = useDispatch();
     const gameState = useSelector(state => state.gameState);
     const network = useSelector(state => state.network);
     const player = useSelector(state => state.player);
     const quests = useSelector(state => state.quests);
+    const activeWindow = useSelector(state => state.windowManager.activeWindow);
 
     const fullContext = useMemo(() => ({ gameState, network, player, quests }), [gameState, network, player, quests]);
 
@@ -150,8 +151,11 @@ function TerminalWindow({ onClose, embedded = false }) {
     }, [network.connected]);
 
     const handleKeyDown = useCallback((e) => {
+        // Проверяем, что это окно активно
+        if (activeWindow !== windowId) return;
+
         if (gameState.gameOver) return;
-        
+
         audioManager.playClick(); 
 
         if (e.key === 'Enter') {
@@ -181,7 +185,7 @@ function TerminalWindow({ onClose, embedded = false }) {
         } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
             setInputBuffer(prev => prev + e.key);
         }
-    }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver]);
+    }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver, activeWindow, windowId]);
 
     useEffect(() => {
         terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });

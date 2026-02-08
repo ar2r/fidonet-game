@@ -37,7 +37,7 @@ import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
-import { loadGame, getSaveLink } from './engine/saveSystem';
+import { loadGame, getSaveLink, shortenLink } from './engine/saveSystem';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -93,14 +93,28 @@ function App() {
         }
     }, []);
 
-    const handleSaveGame = () => {
-        const link = getSaveLink();
-        if (link) {
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Ссылка на сохранение скопирована в буфер обмена!');
+    const handleSaveGame = async () => {
+        const longLink = getSaveLink();
+        if (!longLink) return;
+
+        // Optimistic UI: Copy long link first (fastest)
+        // navigator.clipboard.writeText(longLink);
+        
+        // Try to shorten
+        // Show some feedback? For now, we just wait.
+        // Or prompt user?
+        // Let's try to shorten immediately.
+        
+        try {
+            const shortLink = await shortenLink(longLink);
+            navigator.clipboard.writeText(shortLink).then(() => {
+                alert(`Ссылка скопирована!\n${shortLink}`);
             }).catch(() => {
-                prompt('Скопируйте ссылку для сохранения:', link);
+                prompt('Скопируйте ссылку:', shortLink);
             });
+        } catch {
+            // Fallback to long link
+            prompt('Не удалось сократить ссылку. Скопируйте длинную версию:', longLink);
         }
     };
 
@@ -236,25 +250,7 @@ function App() {
     const renderWindowContent = (windowId, component) => {
         switch (component) {
             case 'terminal':
-                return <TerminalWindow embedded />;
-
-            case 'readme':
-                return (
-                    <div style={{ fontFamily: 'ms_sans_serif', lineHeight: '1.5', padding: '10px' }}>
-                        <p>Привет, странник!</p>
-                        <br />
-                        <p>Если ты читаешь это, значит ты готов погрузиться в мир Фидонета.</p>
-                        <p>Для начала тебе нужно подключиться к нашей локальной BBS.</p>
-                        <br />
-                        <p>1. Открой <b>Fido.bat</b></p>
-                        <p>2. Набери <b>ATZ</b> для инициализации модема</p>
-                        <p>3. Набери <b>DIAL 555-3389</b> для подключения</p>
-                        <p>4. Зайди в файловую область и скачай софт</p>
-                        <br />
-                        <p>Удачи в Сети!</p>
-                        <p><i>-- SysOp</i></p>
-                    </div>
-                );
+                return <TerminalWindow embedded windowId={windowId} />;
 
             case 'history-log':
                 return <HistoryLogFile />;
@@ -269,6 +265,7 @@ function App() {
                 return (
                     <ConfigEditor
                         onSave={handleConfigSave}
+                        windowId={windowId}
                     />
                 );
 
@@ -277,6 +274,7 @@ function App() {
                     <GoldEDConfig
                         onSave={handleGoldEDSave}
                         tmailAddress={getTMailAddress()}
+                        windowId={windowId}
                     />
                 );
 
@@ -294,6 +292,7 @@ function App() {
                 return (
                     <BinkleyConfig
                         onSave={handleBinkleySave}
+                        windowId={windowId}
                     />
                 );
 
@@ -304,7 +303,7 @@ function App() {
 
             case 'quest-journal':
                 return (
-                    <QuestJournal />
+                    <QuestJournal windowId={windowId} />
                 );
 
             default:
@@ -347,12 +346,6 @@ function App() {
                     <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Fido.bat</span>
-                    </div>
-
-                    {/* Readme.txt */}
-                    <div onDoubleClick={() => handleOpenWindow('readme')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>TXT</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Readme.txt</span>
                     </div>
 
                     {/* History.txt */}

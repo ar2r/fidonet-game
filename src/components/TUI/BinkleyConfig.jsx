@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 const TuiContainer = styled.div`
   background-color: #0000AA;
@@ -95,7 +96,9 @@ const FIELDS = [
   { key: 'outbound', label: 'Outbound Dir:', placeholder: 'C:\\\\FIDO\\\\OUTBOUND' },
 ];
 
-function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
+function BinkleyConfig({ onClose, onSave, initialConfig = {}, windowId = 'binkley-config' }) {
+  const activeWindow = useSelector(state => state.windowManager.activeWindow);
+
   const [config, setConfig] = useState({
     sysopName: initialConfig.sysopName || '',
     address: initialConfig.address || '',
@@ -145,6 +148,9 @@ function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
   }, [config, onSave, onClose]);
 
   const handleKeyDown = useCallback((e) => {
+    // Проверяем, что это окно активно
+    if (activeWindow !== windowId) return;
+
     if (e.key === 'Tab' || e.key === 'ArrowDown') {
       e.preventDefault();
       setFocusedIndex(prev => (prev + 1) % FIELDS.length);
@@ -164,7 +170,7 @@ function BinkleyConfig({ onClose, onSave, initialConfig = {} }) {
       e.preventDefault();
       if (onClose) onClose();
     }
-  }, [handleSave, onClose]);
+  }, [handleSave, onClose, activeWindow, windowId]);
 
   const handleFieldChange = (key, value) => {
     setConfig(prev => ({ ...prev, [key]: value }));

@@ -34,11 +34,9 @@ BossPhone
 Inbound C:\\FIDO\\INBOUND
 Outbound C:\\FIDO\\OUTBOUND
 `);
-        fs.createFile('C:\\FIDO\\README.1ST', README_FIDO);
         appendOutput("");
         appendOutput("T-Mail установлен в C:\\FIDO\\T-MAIL.EXE");
         appendOutput("Конфиг: C:\\FIDO\\T-MAIL.CTL");
-        appendOutput("Документация: C:\\FIDO\\README.1ST");
 
         // Publish domain event
         eventBus.publish(DOWNLOAD_COMPLETED, {
