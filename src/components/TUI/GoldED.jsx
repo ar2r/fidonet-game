@@ -330,7 +330,7 @@ function GoldED() {
                 {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
                 {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
                 {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
-                {view === 'composer' && <span>^Enter:Send  Esc:Cancel</span>}
+                {view === 'composer' && <span>Ctrl+Enter:Send  Esc:Cancel</span>}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>
