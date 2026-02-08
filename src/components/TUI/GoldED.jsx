@@ -233,7 +233,7 @@ function GoldED() {
                         selected={idx === selectedMsgIndex}
                         onClick={() => { setSelectedMsgIndex(idx); setCurrentMsg(msg); setView('msgview'); }}
                     >
-                        {msg.from.padEnd(12)} {msg.subj.padEnd(25)} {msg.date}
+                        {msg.from.padEnd(12)} {msg.subj.slice(0, 25).padEnd(25)} {msg.date}
                     </ListItem>
                 ))}
             </>
