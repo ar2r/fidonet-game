@@ -1,7 +1,15 @@
 import { getQuestById } from '../content/quests';
 import { addItem, updateStat } from './store'; // Direct import from store slice exports if possible, or pass as arguments
 
+// Guard against double-completion within the same synchronous call stack
+const recentlyCompleted = new Set();
+
 export function completeQuestAndProgress(questId, dispatch, actions) {
+    if (recentlyCompleted.has(questId)) return null;
+    recentlyCompleted.add(questId);
+    // Clear after microtask to allow future completions (e.g. debug skip)
+    Promise.resolve().then(() => recentlyCompleted.delete(questId));
+
     const quest = getQuestById(questId);
     if (!quest) return null;
 

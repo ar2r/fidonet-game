@@ -132,8 +132,8 @@ function QuestJournal({ onClose, windowId = 'quest-journal' }) {
     const hintLevel = quests.hintLevel || 0;
     const quest = activeQuestId ? getQuestById(activeQuestId) : null;
 
-    // TODO: Track step progress (будет в следующих фазах)
-    const completedSteps = new Set(); // Placeholder for step tracking
+    const stepProgress = useSelector(state => state.quests.stepProgress);
+    const completedSteps = new Set(stepProgress[activeQuestId] || []);
 
     const handleKeyDown = useCallback((e) => {
         // Проверяем, что это окно активно
@@ -204,7 +204,8 @@ function QuestJournal({ onClose, windowId = 'quest-journal' }) {
                                         <StepsTitle>Шаги выполнения:</StepsTitle>
                                         {quest.steps.map((step, index) => {
                                             const isCompleted = completedSteps.has(step.id);
-                                            const isActive = !isCompleted && index === 0; // Упрощенная логика
+                                            const firstIncomplete = quest.steps.findIndex(s => !completedSteps.has(s.id));
+                                            const isActive = !isCompleted && index === firstIncomplete;
 
                                             return (
                                                 <StepItem key={step.id} active={isActive}>

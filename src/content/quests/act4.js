@@ -4,7 +4,7 @@
  */
 
 import { StepType } from '../../domain/quests/schema';
-import { ITEM_BOUGHT } from '../../domain/events/types';
+import { ITEM_BOUGHT, DIALOGUE_COMPLETED, DOWNLOAD_COMPLETED, FILE_SAVED, ZMH_ACTIVITY_COMPLETED } from '../../domain/events/types';
 
 export const ACT4_QUESTS = [
     {
@@ -51,7 +51,7 @@ export const ACT4_QUESTS = [
             {
                 id: 'talk_to_sysop',
                 type: StepType.EVENT,
-                event: 'dialogue.completed',
+                event: DIALOGUE_COMPLETED,
                 description: 'Договориться с Сисопом о статусе ноды',
                 metadata: {
                     dialogueId: 'request_node_status',
@@ -81,7 +81,7 @@ export const ACT4_QUESTS = [
             {
                 id: 'dl_bt',
                 type: StepType.EVENT,
-                event: 'download.completed',
+                event: DOWNLOAD_COMPLETED,
                 description: 'Скачать BinkleyTerm',
                 metadata: {
                     item: 'binkley',
@@ -109,7 +109,7 @@ export const ACT4_QUESTS = [
             {
                 id: 'save_bt_cfg',
                 type: StepType.EVENT,
-                event: 'file.saved',
+                event: FILE_SAVED,
                 description: 'Сохранить конфиг BinkleyTerm',
                 metadata: {
                     path: 'C:\\FIDO\\BT.CFG',
@@ -139,7 +139,7 @@ export const ACT4_QUESTS = [
             {
                 id: 'zmh_session',
                 type: StepType.EVENT,
-                event: 'zmh.activity.completed',
+                event: ZMH_ACTIVITY_COMPLETED,
                 description: 'Успешная сессия в ZMH',
             },
         ],

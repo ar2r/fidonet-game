@@ -1,157 +1,103 @@
 import { eventBus } from '../events/bus';
 import { completeQuestAndProgress } from '../../engine/questEngine';
-import { 
-    MAIL_TOSSING_COMPLETED, 
-    MESSAGE_READ, 
-    MESSAGE_POSTED,
-    ITEM_BOUGHT,
-    DIALOGUE_COMPLETED,
-    ZMH_ACTIVITY_COMPLETED,
-    FILE_SAVED,
-    DOWNLOAD_COMPLETED,
-    BBS_CONNECTED,
-    MODEM_INITIALIZED,
-    COMMAND_EXECUTED
-} from '../events/types';
+import { getQuestById } from '../../content/quests';
+import { StepType } from './schema';
 
 /**
- * Setup global quest event listeners
+ * Check if a step's metadata matches the event payload.
+ * Steps with no metadata auto-match on event type alone.
+ *
+ * @param {Object} metadata - Step metadata from quest definition
+ * @param {Object} payload - Event payload
+ * @returns {boolean}
+ */
+export function matchesMetadata(metadata, payload) {
+    if (!metadata || Object.keys(metadata).length === 0) {
+        return true;
+    }
+
+    for (const [key, expected] of Object.entries(metadata)) {
+        // Skip non-matching keys (e.g. 'validator' is for config validation, not event matching)
+        if (key === 'validator') continue;
+
+        if (key === 'subj_contains') {
+            // Special: check if payload value contains the expected substring
+            const payloadValue = payload[key] || payload.subject || '';
+            if (!payloadValue.includes(expected)) return false;
+        } else {
+            // Exact match for all other keys
+            if (payload[key] !== expected) return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Setup global quest event listeners.
+ * Uses a generic algorithm that reads quest definitions from content/quests
+ * instead of hardcoding quest IDs.
+ *
  * @param {Function} dispatch - Redux dispatch
- * @param {Object} actions - Redux actions
+ * @param {Object} actions - Redux actions (completeQuest, setActiveQuest, updateSkill, setAct, completeStep)
  * @param {Function} getState - Redux getState
  * @returns {Function} cleanup function
  */
 export function setupQuestListeners(dispatch, actions, getState) {
-    const handlers = [];
-
-    /**
-     * Generic handler for event-based quests
-     * @param {string} eventType 
-     * @param {Object} payload 
-     */
-    const handleEvent = (eventType, payload) => {
+    // Wildcard subscribers receive a single event object: { type, timestamp, ...payload }
+    const unsubscribe = eventBus.subscribe('*', (event) => {
+        const eventType = event.type;
         const state = getState();
         const activeQuestId = state.quests?.active;
         if (!activeQuestId) return;
 
-        // Pass event to quest engine
-        // Note: completeQuestAndProgress handles step verification internally
-        // But currently it only takes questId, dispatch, actions.
-        // It doesn't take event payload! 
-        // We need to update completeQuestAndProgress or pass the check logic here.
-        
-        // Wait, completeQuestAndProgress marks the WHOLE quest as complete?
-        // Or does it check steps?
-        // The current implementation of completeQuestAndProgress (in questEngine.js)
-        // just completes the quest without checking steps!
-        // The checking logic was inside `commandParser` manually calling it.
-        
-        // Refactor: We need a `processEvent(event, payload)` function in questEngine
-        // that checks if the event satisfies the current step of the active quest.
-        
-        // For now, let's implement the specific logic for new events here
-        // until we refactor questEngine fully.
-        
-        if (eventType === MAIL_TOSSING_COMPLETED && activeQuestId === 'poll_boss') {
-            completeQuestAndProgress('poll_boss', dispatch, actions);
-        }
-        
-        if (eventType === MESSAGE_READ && activeQuestId === 'read_rules') {
-            const { area, subj_contains } = payload;
-            // Check metadata matches
-            if (area === 'su_flame' && subj_contains && subj_contains.includes('Rules')) {
-                completeQuestAndProgress('read_rules', dispatch, actions);
+        const quest = getQuestById(activeQuestId);
+        if (!quest || !quest.steps || quest.steps.length === 0) return;
+
+        // Find EVENT steps matching this event type
+        const eventSteps = quest.steps.filter(
+            step => step.type === StepType.EVENT && step.event === eventType
+        );
+
+        if (eventSteps.length === 0) return;
+
+        const completedStepIds = state.quests?.stepProgress?.[activeQuestId] || [];
+
+        let newStepCompleted = false;
+
+        for (const step of eventSteps) {
+            // Skip already-completed steps
+            if (completedStepIds.includes(step.id)) continue;
+
+            if (matchesMetadata(step.metadata, event)) {
+                dispatch(actions.completeStep({ questId: activeQuestId, stepId: step.id }));
+                newStepCompleted = true;
             }
         }
 
-        if (eventType === MESSAGE_POSTED && activeQuestId === 'reply_welcome') {
-             const { area } = payload;
-             if (area === 'su_flame') {
-                 completeQuestAndProgress('reply_welcome', dispatch, actions);
-             }
-        }
+        if (!newStepCompleted) return;
 
-        if (eventType === ITEM_BOUGHT && activeQuestId === 'hardware_upgrade') {
-            const { item } = payload;
-            if (item === 'modem_28800') {
-                completeQuestAndProgress('hardware_upgrade', dispatch, actions);
+        // Check if ALL event-type steps are now completed
+        const allEventSteps = quest.steps.filter(step => step.type === StepType.EVENT);
+        const updatedCompleted = [...completedStepIds];
+        // Include steps we just dispatched (they haven't reached Redux yet)
+        for (const step of eventSteps) {
+            if (matchesMetadata(step.metadata, event) && !updatedCompleted.includes(step.id)) {
+                updatedCompleted.push(step.id);
             }
         }
 
-        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'request_node') {
-            const { dialogueId, success } = payload;
-            if (dialogueId === 'request_node_status' && success) {
-                completeQuestAndProgress('request_node', dispatch, actions);
+        const allDone = allEventSteps.every(step => updatedCompleted.includes(step.id));
+
+        if (allDone) {
+            // Re-check state to avoid double-completion when command handlers
+            // also call completeQuestAndProgress in the same synchronous flow
+            const freshState = getState();
+            if (freshState.quests?.active === activeQuestId) {
+                completeQuestAndProgress(activeQuestId, dispatch, actions);
             }
         }
-
-        if (eventType === DOWNLOAD_COMPLETED && activeQuestId === 'download_binkley') {
-            const { item } = payload;
-            if (item === 'binkley') {
-                completeQuestAndProgress('download_binkley', dispatch, actions);
-            }
-        }
-
-        if (eventType === FILE_SAVED && activeQuestId === 'configure_binkley') {
-            const { path } = payload;
-            if (path === 'C:\\FIDO\\BT.CFG') {
-                completeQuestAndProgress('configure_binkley', dispatch, actions);
-            }
-        }
-
-        if (eventType === ITEM_BOUGHT && activeQuestId === 'fix_hardware') {
-            const { item } = payload;
-            if (item === 'solder_kit') {
-                completeQuestAndProgress('fix_hardware', dispatch, actions);
-            }
-        }
-
-        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'negotiate_peace') {
-            const { dialogueId, success } = payload;
-            if (dialogueId === 'flame_war_peace' && success) {
-                completeQuestAndProgress('negotiate_peace', dispatch, actions);
-            }
-        }
-
-        if (eventType === COMMAND_EXECUTED && activeQuestId === 'trace_troll') {
-            const { command, args, success } = payload;
-            if (command === 'TRACE' && args === 'TROLL.MASTER' && success) {
-                completeQuestAndProgress('trace_troll', dispatch, actions);
-            }
-        }
-
-        if (eventType === DIALOGUE_COMPLETED && activeQuestId === 'meet_coordinator') {
-            const { dialogueId, success } = payload;
-            if (dialogueId === 'coordinator_finale' && success) {
-                completeQuestAndProgress('meet_coordinator', dispatch, actions);
-            }
-        }
-
-        if (eventType === ZMH_ACTIVITY_COMPLETED && activeQuestId === 'nightly_uptime') {
-            completeQuestAndProgress('nightly_uptime', dispatch, actions);
-        }
-    };
-
-    // Subscribe to all relevant events
-    const events = [
-        MAIL_TOSSING_COMPLETED,
-        MESSAGE_READ,
-        MESSAGE_POSTED,
-        ITEM_BOUGHT,
-        DIALOGUE_COMPLETED,
-        ZMH_ACTIVITY_COMPLETED,
-        COMMAND_EXECUTED
-        // Add others if we move logic from commandParser
-    ];
-
-    events.forEach(event => {
-        const handler = (payload) => handleEvent(event, payload);
-        const unsubscribe = eventBus.subscribe(event, handler);
-        handlers.push(unsubscribe);
     });
 
-    // Return cleanup
-    return () => {
-        handlers.forEach(unsubscribe => unsubscribe());
-    };
+    return unsubscribe;
 }

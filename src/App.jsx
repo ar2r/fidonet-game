@@ -23,11 +23,12 @@ import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
 import Onboarding from './components/Onboarding';
 import { HintSystem } from './components/HintSystem';
-import { 
-    completeQuest as completeQuestAction, 
-    setActiveQuest as setActiveQuestAction, 
-    updateSkill as updateSkillAction, 
-    setAct as setActAction
+import {
+    completeQuest as completeQuestAction,
+    setActiveQuest as setActiveQuestAction,
+    updateSkill as updateSkillAction,
+    setAct as setActAction,
+    completeStep as completeStepAction
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -127,6 +128,7 @@ function App() {
             setActiveQuest: setActiveQuestAction,
             updateSkill: updateSkillAction,
             setAct: setActAction,
+            completeStep: completeStepAction,
         };
         const cleanup = setupQuestListeners(dispatch, actions, () => ({ quests: quests })); 
         
