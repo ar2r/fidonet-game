@@ -231,7 +231,7 @@ function GoldED() {
         } else if (view === 'composer') {
              if (e.key === 'Escape') {
                  setView('msglist');
-             } else if (e.key === 'Enter' && e.ctrlKey) {
+             } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                  handleSend();
              }
         }
@@ -352,9 +352,11 @@ function GoldED() {
     const handleComposerKeyDown = (e) => {
         if (e.key === 'Escape') {
             e.preventDefault();
+            e.stopPropagation();
             setView('msglist');
-        } else if (e.key === 'Enter' && e.ctrlKey) {
+        } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
+            e.stopPropagation();
             handleSend();
         }
     };
@@ -408,7 +410,7 @@ function GoldED() {
                 {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
                 {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
                 {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
-                {view === 'composer' && <span>Ctrl+Enter:Отправить  Esc:Отмена</span>}
+                {view === 'composer' && <span>Ctrl/Cmd+Enter:Отправить  Esc:Отмена</span>}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>
