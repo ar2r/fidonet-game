@@ -567,6 +567,7 @@ function App() {
                     <SpeedButton active={!gameState.timeSpeed || gameState.timeSpeed === 1} onClick={() => dispatch(setTimeSpeedAction(1))}>x1</SpeedButton>
                     <SpeedButton active={gameState.timeSpeed === 5} onClick={() => dispatch(setTimeSpeedAction(5))}>x5</SpeedButton>
                     <SpeedButton active={gameState.timeSpeed === 10} onClick={() => dispatch(setTimeSpeedAction(10))}>x10</SpeedButton>
+                    <SpeedButton active={gameState.timeSpeed === 50} onClick={() => dispatch(setTimeSpeedAction(50))}>x50</SpeedButton>
                 </TimeControls>
 
                 <BuildInfo>
