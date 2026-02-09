@@ -9,7 +9,7 @@ import {
     updateSkill as updateSkillAction, 
     setAct as setActAction 
 } from '../engine/store';
-import AlertModal from './AlertModal';
+
 
 const Container = styled.div`
   background-color: #c0c0c0;
@@ -79,21 +79,9 @@ function ArtMoney() {
     const dispatch = useDispatch();
     const quests = useSelector(state => state.quests);
     const [selectedIdx, setSelectedIdx] = useState(0);
-    const [alertData, setAlertData] = useState(null);
-
-    const showAlert = (message, title = "Error") => {
-        setAlertData({ message, title });
-    };
-
-    const closeAlert = () => {
-        setAlertData(null);
-    };
 
     const handleSkipQuest = () => {
-        if (!quests.active) {
-            showAlert('Нет активного квеста', 'Info');
-            return;
-        }
+        if (!quests.active) return;
 
         const actions = {
             completeQuest: completeQuestAction,
@@ -103,17 +91,10 @@ function ArtMoney() {
         };
 
         completeQuestAndProgress(quests.active, dispatch, actions);
-        showAlert(`Memory Address 004F0000 patched!\nQuest "${quests.active}" skipped.`, 'Success');
     };
 
     return (
         <Container>
-            <AlertModal 
-                message={alertData?.message} 
-                title={alertData?.title} 
-                onClose={closeAlert} 
-            />
-            
             <div style={{ marginBottom: 4 }}>Process: FidoNet.exe (PID: 1337)</div>
             <Toolbar>
                 <Button size="sm">Search</Button>
@@ -138,8 +119,8 @@ function ArtMoney() {
             </MemoryList>
 
             <Footer>
-                <Button onClick={() => showAlert("Error: Access Violation at 0xDEADBEEF")} disabled={selectedIdx !== 0 && selectedIdx !== 1}>Set Value</Button>
-                <Button onClick={() => showAlert("Nothing found.", "Search Result")}>Freeze</Button>
+                <Button disabled>Set Value</Button>
+                <Button disabled>Freeze</Button>
                 {/* The magic button is context-sensitive or just explicit */}
                 <Button 
                     style={{ fontWeight: 'bold', color: 'red' }} 

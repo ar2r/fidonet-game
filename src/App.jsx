@@ -168,7 +168,8 @@ function App() {
                 const questMsg = payload.messages.find(m => m.includes('КВЕСТ ВЫПОЛНЕН'));
                 if (questMsg) {
                     const titleLine = payload.messages.find(m => m.includes('"'));
-                    setSaveNotification({ message: `Квест выполнен!\n${titleLine || ''}` });
+                    const questTitle = titleLine ? titleLine.replace(/[║"]/g, '').trim() : '';
+                    setSaveNotification({ message: `Квест выполнен!\n${questTitle}`, title: 'Прогресс' });
                 }
             }
         };
@@ -397,6 +398,7 @@ function App() {
                 {saveNotification && (
                     <SaveNotification
                         message={saveNotification.message}
+                        title={saveNotification.title}
                         onClose={() => setSaveNotification(null)}
                     />
                 )}

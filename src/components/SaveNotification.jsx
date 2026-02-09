@@ -78,7 +78,7 @@ const ButtonContainer = styled.div`
  * SaveNotification - уведомление в стиле Windows 95
  * Автоматически закрывается через 5 секунд
  */
-function SaveNotification({ message, onClose }) {
+function SaveNotification({ message, title, onClose }) {
   const [progress, setProgress] = React.useState(100);
   const duration = 5000; // 5 секунд
   const intervalTime = 100; // обновление каждые 100мс
@@ -104,7 +104,7 @@ function SaveNotification({ message, onClose }) {
     <Overlay onClick={onClose}>
       <NotificationWindow onClick={(e) => e.stopPropagation()}>
         <WindowHeader>
-          <span>💾 Сохранение игры</span>
+          <span>{title || '💾 Сохранение игры'}</span>
         </WindowHeader>
         <NotificationContent>
           <IconArea>
