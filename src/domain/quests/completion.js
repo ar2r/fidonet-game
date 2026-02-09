@@ -56,9 +56,11 @@ export function completeQuestAndProgress(questId, dispatch, actions, options = {
     notifications.push(`╚═══════════════════════════════╝`);
 
     // Set next quest
-    if (quest.nextQuest) {
-        dispatch(setActiveQuest(quest.nextQuest));
-        const nextQ = getQuestById(quest.nextQuest);
+    const nextQuestId = quest.nextQuest
+        || (quest.branches && quest.branches.length > 0 ? quest.branches[0].nextQuest : null);
+    if (nextQuestId) {
+        dispatch(setActiveQuest(nextQuestId));
+        const nextQ = getQuestById(nextQuestId);
         if (nextQ) {
             notifications.push('');
             notifications.push(`НОВЫЙ КВЕСТ: ${nextQ.title}`);
