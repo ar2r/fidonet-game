@@ -13,6 +13,8 @@ import GameOverScreen from './components/GameOverScreen';
 import ConfigEditor from './components/TUI/ConfigEditor';
 import GoldEDConfig from './components/TUI/GoldEDConfig';
 import GoldED from './components/TUI/GoldED';
+import BinkleyConfig from './components/TUI/BinkleyConfig';
+import BinkleyTerm from './components/TUI/BinkleyTerm';
 import RadioMarket from './components/TUI/RadioMarket';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
