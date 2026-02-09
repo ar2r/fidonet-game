@@ -55,6 +55,47 @@ export function setupQuestListeners(dispatch, actions, getState) {
         const quest = getQuestById(activeQuestId);
         if (!quest || !quest.steps || quest.steps.length === 0) return;
 
+        // Handle branching quests (e.g. choose_strategy)
+        // When a quest has `branches`, the player's action determines the next quest
+        if (quest.branches && quest.branches.length > 0) {
+            for (const branch of quest.branches) {
+                if (branch.event === eventType && matchesMetadata(branch.metadata, event)) {
+                    // Complete the branching quest
+                    completeQuestAndProgress(activeQuestId, dispatch, actions);
+                    // Route to the chosen branch (nextQuest was null)
+                    dispatch(actions.setActiveQuest(branch.nextQuest));
+
+                    // The branch target quest may also match this same event
+                    // (e.g. reply_welcome listens for MESSAGE_POSTED with area: su_flame)
+                    // Complete it immediately if all its EVENT steps match
+                    const branchQuest = getQuestById(branch.nextQuest);
+                    if (branchQuest) {
+                        const branchEventSteps = (branchQuest.steps || []).filter(
+                            s => s.type === StepType.EVENT && s.event === eventType
+                        );
+                        const allMatch = branchEventSteps.length > 0 &&
+                            branchEventSteps.every(s => matchesMetadata(s.metadata, event));
+                        const allStepsAreEvents = (branchQuest.steps || []).every(
+                            s => s.type === StepType.EVENT
+                        );
+                        if (allMatch && allStepsAreEvents) {
+                            branchEventSteps.forEach(s => {
+                                dispatch(actions.completeStep({ questId: branch.nextQuest, stepId: s.id }));
+                                eventBus.publish(QUEST_STEP_COMPLETED, {
+                                    questId: branch.nextQuest,
+                                    stepId: s.id,
+                                    stepDescription: s.description,
+                                });
+                            });
+                            completeQuestAndProgress(branch.nextQuest, dispatch, actions);
+                        }
+                    }
+                    return;
+                }
+            }
+            return; // Branching quest only responds to branch events
+        }
+
         // Find EVENT steps matching this event type
         const eventSteps = quest.steps.filter(
             step => step.type === StepType.EVENT && step.event === eventType

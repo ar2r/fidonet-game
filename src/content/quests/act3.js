@@ -82,7 +82,11 @@ export const ACT3_QUESTS = [
             }
         ],
         rewards: [],
-        nextQuest: null, // Dynamic: 'reply_welcome' or 'trace_troll'
+        nextQuest: null,
+        branches: [
+            { event: MESSAGE_POSTED, metadata: { area: 'su_flame' }, nextQuest: 'reply_welcome' },
+            { event: COMMAND_EXECUTED, metadata: { command: 'TRACE', args: 'TROLL.MASTER.SU' }, nextQuest: 'trace_troll' },
+        ],
     },
 
     // Diplomat Path
