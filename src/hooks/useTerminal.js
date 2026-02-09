@@ -28,6 +28,7 @@ import {
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
     setOptions as setOptionsAction,
+    setDialogue as setDialogueAction,
 } from '../engine/store';
 
 const ACTIONS = {
@@ -53,6 +54,7 @@ const ACTIONS = {
     payBill: payBillAction,
     setLastBillDay: setLastBillDayAction,
     setOptions: setOptionsAction,
+    setDialogue: setDialogueAction,
 };
 
 function getPromptForMode(network) {
