@@ -31,10 +31,16 @@ import {
     setAct as setActAction,
     completeStep as completeStepAction,
     advanceTime as advanceTimeAction,
+    setTimeMinutes as setTimeMinutesAction,
+    setPhase as setPhaseAction,
+    setZMH as setZMHAction,
+    advanceDay as advanceDayAction,
+    updateStat as updateStatAction,
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
 import fs from './engine/fileSystemInstance';
+import { computeTickEffects } from './engine/gameTick';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
@@ -122,12 +128,34 @@ function App() {
         const clockInterval = setInterval(() => {
             // Only advance time if not game over
             if (!gameState.gameOver) {
-                dispatch(advanceTimeAction(1));
+                // Calculate next tick
+                const { newMinutes, newTimeString, newPhase, newZMH, daysAdvanced, atmosphereDelta } = 
+                    computeTickEffects(gameState.timeMinutes, 1, network.connected);
+
+                // Dispatch updates
+                dispatch(setTimeMinutesAction(newMinutes));
+                dispatch(advanceTimeAction(newTimeString));
+                
+                if (gameState.phase !== newPhase) {
+                    dispatch(setPhaseAction(newPhase));
+                }
+                
+                if (gameState.zmh !== newZMH) {
+                    dispatch(setZMHAction(newZMH));
+                }
+
+                if (daysAdvanced > 0) {
+                    dispatch(advanceDayAction(daysAdvanced));
+                }
+                
+                if (atmosphereDelta !== 0) {
+                    dispatch(updateStatAction({ stat: 'atmosphere', value: atmosphereDelta }));
+                }
             }
         }, 1000);
 
         return () => clearInterval(clockInterval);
-    }, [dispatch, gameState.gameOver]);
+    }, [dispatch, gameState.gameOver, gameState.timeMinutes, gameState.phase, gameState.zmh, network.connected]);
 
     const handleSaveGame = async () => {
         const longLink = getSaveLink();
