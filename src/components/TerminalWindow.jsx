@@ -52,7 +52,7 @@ const Cursor = styled.span`
 `;
 
 function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
-    const { history, inputBuffer, currentPrompt, connTime, terminalEndRef, network } = useTerminal(windowId);
+    const { history, inputBuffer, currentPrompt, connTime, terminalEndRef, network, modemSpeed } = useTerminal(windowId);
 
     const terminalContent = (
         <Wrapper>
@@ -70,7 +70,7 @@ function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
             {network.terminalProgramRunning && (
                 <TerminalStatusBar>
                     <span>Alt-Z Help | Alt-X Exit</span>
-                    <span>ANSI  14400 8-N-1</span>
+                    <span>ANSI  {modemSpeed} 8-N-1</span>
                     <span>{network.connected ? 'ONLINE' : 'OFFLINE'} {connTime}</span>
                 </TerminalStatusBar>
             )}

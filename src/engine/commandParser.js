@@ -45,6 +45,7 @@ commandRegistry.register('IDLE', 'AT&F', network.handleAtz);
 commandRegistry.register('IDLE', /^ATDT.*$/, network.handleDial);
 commandRegistry.register('IDLE', /^ATDP.*$/, network.handleDial);
 commandRegistry.register('IDLE', /^DIAL.*$/, network.handleDial);
+commandRegistry.register('IDLE', /^BBS[1-3]$/, network.handleFastDial);
 
 // Apps (IDLE mode)
 commandRegistry.register('IDLE', 'DOOM2', apps.handleDoom);
@@ -65,7 +66,7 @@ commandRegistry.register('IDLE', 'TRACE', techTools.handleTrace);
 commandRegistry.register('BBS_MENU', 'F', bbsMenu.handleFilesCommand);
 commandRegistry.register('BBS_MENU', 'M', bbsMenu.handleMessageCommand);
 commandRegistry.register('BBS_MENU', 'C', bbsMenu.handleChatCommand);
-commandRegistry.register('BBS_MENU', 'G', bbsMenu.handleGoodbyeCommand);
+commandRegistry.register('BBS_MENU', 'Q', bbsMenu.handleGoodbyeCommand);
 commandRegistry.register('BBS_MENU', /.*/, bbsMenu.handleUnknownBBSCommand); // Catch-all
 
 // BBS_FILES Mode

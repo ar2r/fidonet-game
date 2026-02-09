@@ -55,7 +55,7 @@ export function handleChatCommand({ dispatch, actions, appendOutput, gameState }
 }
 
 /**
- * Handle 'G' - Goodbye (disconnect)
+ * Handle 'Q' - Quit (disconnect)
  */
 export function handleGoodbyeCommand({ dispatch, actions, appendOutput }) {
     dispatch(actions.disconnect());
@@ -71,7 +71,7 @@ export function handleGoodbyeCommand({ dispatch, actions, appendOutput }) {
  * Handle unknown command in BBS menu
  */
 export function handleUnknownBBSCommand({ appendOutput }) {
-    appendOutput("Неверный выбор. Используйте F, M, C или G.");
+    appendOutput("Неверный выбор. Используйте F, M, C или Q.");
     appendOutput("");
     appendOutput(BBS_MENU);
     return { handled: true };

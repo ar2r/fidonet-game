@@ -92,10 +92,19 @@ export function handleDial({ command, gameState, dispatch, actions, appendOutput
         return { handled: true };
     }
 
+    // Determine connection speed based on inventory
+    const inventory = gameState.player?.inventory || [];
+    let speed = 2400; // Default fallback if somehow initialized but no item (shouldn't happen)
+    
+    if (inventory.includes('modem_28800')) speed = 28800;
+    else if (inventory.includes('modem_14400')) speed = 14400;
+    else if (inventory.includes('modem_2400')) speed = 2400;
+    else speed = 14400; // Default for now if items not implemented yet
+
     if (number === '5553389') {
         appendOutput(`НАБОР НОМЕРА ${number}...`);
         setTimeout(() => {
-            appendOutput("СОЕДИНЕНИЕ 14400");
+            appendOutput(`СОЕДИНЕНИЕ ${speed}`);
             setTimeout(() => {
                 appendOutput("REL 1.0");
                 appendOutput("");
@@ -121,10 +130,32 @@ export function handleDial({ command, gameState, dispatch, actions, appendOutput
         }, 1000);
     } else {
         appendOutput(`НАБОР НОМЕРА ${number}...`);
-        setTimeout(() => appendOutput("НЕТ НЕСУЩЕЙ"), 2000);
+        setTimeout(() => appendOutput("NO CARRIER"), 2000);
     }
 
     return { handled: true };
+}
+
+export function handleFastDial({ command, gameState, dispatch, actions, appendOutput }) {
+    const shortcuts = {
+        'BBS1': '5553389',
+        'BBS2': '5551234',
+        'BBS3': '5559876'
+    };
+    
+    const key = command.toUpperCase();
+    if (shortcuts[key]) {
+        // Delegate to handleDial
+        return handleDial({ 
+            command: `DIAL ${shortcuts[key]}`, 
+            gameState, 
+            dispatch, 
+            actions, 
+            appendOutput 
+        });
+    }
+    
+    return { handled: false };
 }
 
 export function handleExit({ gameState, dispatch, actions, appendOutput }) {

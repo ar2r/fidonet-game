@@ -36,12 +36,7 @@ const ItemRow = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 5px;
-  cursor: pointer;
   background-color: ${props => props.selected ? '#00AAAA' : 'transparent'};
-  
-  &:hover {
-    background-color: ${props => props.selected ? '#00AAAA' : '#000088'};
-  }
 `;
 
 const Description = styled.div`
@@ -216,7 +211,6 @@ function RadioMarket() {
                     <ItemRow 
                         key={item.id} 
                         selected={idx === selectedIndex}
-                        onClick={() => setSelectedIndex(idx)}
                     >
                         <span>{item.name}</span>
                         <span>{item.price} руб.</span>

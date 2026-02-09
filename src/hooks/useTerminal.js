@@ -90,6 +90,15 @@ export function useTerminal(windowId = 'terminal') {
 
     const [connTime, setConnTime] = useState("00:00:00");
 
+    // Calculate modem speed based on inventory
+    const modemSpeed = useMemo(() => {
+        const inv = player.inventory || [];
+        if (inv.includes('modem_28800')) return 28800;
+        if (inv.includes('modem_14400')) return 14400;
+        if (inv.includes('modem_2400')) return 2400;
+        return 14400; // Default visualization
+    }, [player.inventory]);
+
     // Reset terminal state on mount (when window opens)
     useEffect(() => {
         // Reset current directory to C:\
@@ -182,5 +191,6 @@ export function useTerminal(windowId = 'terminal') {
         terminalEndRef,
         network,
         sendCommand,
+        modemSpeed,
     };
 }
