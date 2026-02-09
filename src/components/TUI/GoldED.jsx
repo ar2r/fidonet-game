@@ -241,8 +241,10 @@ function GoldED() {
     };
 
     const getGoldEDConfig = () => {
-        const file = fs.cat('C:\\FIDO\\GOLDED.CFG');
-        if (!file) return {};
+        const fileRes = fs.cat('C:\\FIDO\\GOLDED.CFG');
+        if (!fileRes.ok || !fileRes.content) return {};
+        
+        const file = fileRes.content;
         const originMatch = file.match(/^ORIGIN\s+(.+)$/m);
         const usernameMatch = file.match(/^USERNAME\s+(.+)$/m);
         return {
