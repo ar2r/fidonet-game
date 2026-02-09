@@ -77,10 +77,6 @@ const ListItem = styled.div`
   color: ${props => props.selected ? '#FFFFFF' : '#AAAAAA'}; /* White on Blue */
   cursor: pointer;
   white-space: pre;
-  
-  &:hover {
-    background-color: ${props => props.selected ? '#0000AA' : '#333333'};
-  }
 `;
 
 const Input = styled.input`
