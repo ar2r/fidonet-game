@@ -97,14 +97,32 @@ const SpeedButton = styled(Button)`
 const DesktopContainer = styled.div`
   padding: 10px;
   display: grid;
-  grid-template-rows: repeat(auto-fill, 90px);
+  grid-template-rows: repeat(auto-fill, 100px);
   grid-auto-flow: column;
-  grid-auto-columns: 80px;
+  grid-auto-columns: 85px;
   gap: 8px;
   height: calc(100vh - 50px);
   align-content: start;
   justify-items: center;
   align-items: start;
+`;
+
+const DesktopIcon = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  color: white;
+  text-align: center;
+
+  & span {
+    background: #008080;
+    padding: 2px;
+    white-space: nowrap;
+    font-size: 12px;
+    margin-top: 4px;
+  }
 `;
 
 function App() {
@@ -489,84 +507,84 @@ function App() {
                 {/* Desktop Icons Area */}
                 <DesktopContainer>
                     {/* MS-DOS Prompt (Terminal) */}
-                    <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>MS-DOS</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('terminal')}>
+                        <div style={{ width: '32px', height: '32px', background: 'black', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
+                        <span>MS-DOS</span>
+                    </DesktopIcon>
 
                     {/* History.txt */}
-                    <div onDoubleClick={() => handleOpenWindow('history-log')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'white', margin: '0 auto', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>LOG</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>History.txt</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('history-log')}>
+                        <div style={{ width: '32px', height: '32px', background: 'white', border: '1px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '20px' }}>LOG</div>
+                        <span>History.txt</span>
+                    </DesktopIcon>
 
                     {/* Winamp */}
-                    <div onDoubleClick={() => handleOpenWindow('winamp')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'orange', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '10px', fontWeight: 'bold' }}>AMP</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Winamp</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('winamp')}>
+                        <div style={{ width: '32px', height: '32px', background: 'orange', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '10px', fontWeight: 'bold' }}>AMP</div>
+                        <span>Winamp</span>
+                    </DesktopIcon>
 
                     {/* ArtMoney */}
-                    <div onDoubleClick={() => handleOpenWindow('artmoney')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'silver', margin: '0 auto', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>ArtMoney</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('artmoney')}>
+                        <div style={{ width: '32px', height: '32px', background: 'silver', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
+                        <span>ArtMoney</span>
+                    </DesktopIcon>
 
                     {/* Save Game */}
-                    <div onDoubleClick={handleSaveGame} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'blue', margin: '0 auto', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px' }}>💾</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>SAVE.EXE</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={handleSaveGame}>
+                        <div style={{ width: '32px', height: '32px', background: 'blue', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px' }}>💾</div>
+                        <span>SAVE.EXE</span>
+                    </DesktopIcon>
 
                     {/* T-Mail Setup */}
                     {hasSoftware('t-mail') && (
-                        <div onDoubleClick={() => handleOpenWindow('tmail-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                            <div style={{ width: '32px', height: '32px', background: 'navy', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'cyan', fontSize: '14px', fontWeight: 'bold' }}>TM</div>
-                            <span style={{ background: '#008080', padding: '2px' }}>Setup.exe</span>
-                        </div>
+                        <DesktopIcon onDoubleClick={() => handleOpenWindow('tmail-config')}>
+                            <div style={{ width: '32px', height: '32px', background: 'navy', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'cyan', fontSize: '14px', fontWeight: 'bold' }}>TM</div>
+                            <span>Setup.exe</span>
+                        </DesktopIcon>
                     )}
 
                     {/* GoldED */}
                     {hasSoftware('golded') && (
                         quests.completed.includes('configure_golded') ? (
-                            <div onDoubleClick={() => handleOpenWindow('golded-reader')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                                <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
-                                <span style={{ background: '#008080', padding: '2px' }}>GoldED</span>
-                            </div>
+                            <DesktopIcon onDoubleClick={() => handleOpenWindow('golded-reader')}>
+                                <div style={{ width: '32px', height: '32px', background: 'gold', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
+                                <span>GoldED</span>
+                            </DesktopIcon>
                         ) : (
-                            <div onDoubleClick={() => handleOpenWindow('golded-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                                <div style={{ width: '32px', height: '32px', background: 'gold', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
-                                <span style={{ background: '#008080', padding: '2px' }}>Setup</span>
-                            </div>
+                            <DesktopIcon onDoubleClick={() => handleOpenWindow('golded-config')}>
+                                <div style={{ width: '32px', height: '32px', background: 'gold', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'black', fontSize: '14px', fontWeight: 'bold' }}>GED</div>
+                                <span>Setup</span>
+                            </DesktopIcon>
                         )
                     )}
 
                     {/* BinkleyTerm */}
                     {hasSoftware('binkley') && (
                         quests.completed.includes('configure_binkley') ? (
-                            <div onDoubleClick={() => handleOpenWindow('binkley-term')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                                <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
-                                <span style={{ background: '#008080', padding: '2px' }}>Binkley</span>
-                            </div>
+                            <DesktopIcon onDoubleClick={() => handleOpenWindow('binkley-term')}>
+                                <div style={{ width: '32px', height: '32px', background: 'black', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
+                                <span>Binkley</span>
+                            </DesktopIcon>
                         ) : (
-                            <div onDoubleClick={() => handleOpenWindow('binkley-config')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                                <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
-                                <span style={{ background: '#008080', padding: '2px' }}>Setup.exe</span>
-                            </div>
+                            <DesktopIcon onDoubleClick={() => handleOpenWindow('binkley-config')}>
+                                <div style={{ width: '32px', height: '32px', background: 'black', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'lime', fontSize: '14px', fontWeight: 'bold' }}>BT</div>
+                                <span>Setup.exe</span>
+                            </DesktopIcon>
                         )
                     )}
 
                     {/* Quest Journal */}
-                    <div onDoubleClick={() => handleOpenWindow('quest-journal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: '#0000AA', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFF00', fontSize: '14px', fontWeight: 'bold' }}>Q</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Квесты</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('quest-journal')}>
+                        <div style={{ width: '32px', height: '32px', background: '#0000AA', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFF00', fontSize: '14px', fontWeight: 'bold' }}>Q</div>
+                        <span>Квесты</span>
+                    </DesktopIcon>
 
                     {/* Radio Market */}
-                    <div onDoubleClick={() => handleOpenWindow('radio-market')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
-                        <div style={{ width: '32px', height: '32px', background: 'maroon', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: 'bold' }}>$</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>Рынок</span>
-                    </div>
+                    <DesktopIcon onDoubleClick={() => handleOpenWindow('radio-market')}>
+                        <div style={{ width: '32px', height: '32px', background: 'maroon', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: 'bold' }}>$</div>
+                        <span>Рынок</span>
+                    </DesktopIcon>
                 </DesktopContainer>
 
                 {/* Render all open windows */}
