@@ -47,6 +47,20 @@ describe('bbsChat Handler', () => {
             }));
             expect(output.some(l => l.includes('Архитектор: Привет'))).toBe(true);
         });
+
+        it('fast-forwards if command matches first step option', () => {
+            gameState.quests.active = 'request_node';
+            
+            // "хочу подать" matches option 1 in step 0
+            handleChatInput({ command: 'хочу подать', gameState, dispatch, actions, appendOutput });
+
+            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ 
+                type: 'network/setDialogue', 
+                payload: { id: 'request_node_status', step: 1 } 
+            }));
+            // Should show Step 1 text, not Step 0
+            expect(output.some(l => l.includes('Нода — это большая ответственность'))).toBe(true);
+        });
     });
 
     describe('Option Selection', () => {
@@ -76,12 +90,13 @@ describe('bbsChat Handler', () => {
             }));
         });
 
-        it('accepts text input case insensitive', () => {
+        it('accepts text input case insensitive and exits', () => {
             handleChatInput({ command: 'ПРОСТО ЗАШЕЛ', gameState, dispatch, actions, appendOutput });
 
+            // Should exit immediately
             expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ 
                 type: 'network/setDialogue',
-                payload: { id: null, step: 0 } // exit triggers setDialogue(null) + setTerminalMode
+                payload: { id: null, step: 0 } 
             }));
             expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({
                 type: 'network/setTerminalMode',

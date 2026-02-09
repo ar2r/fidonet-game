@@ -185,9 +185,14 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     const network = gameState.network;
     const quests = gameState.quests;
 
+    let dialogueId = network.activeDialogue;
+    let stepIdx = network.dialogueStep;
+    let isInitializing = false;
+
     // Initialize dialogue if not active
-    if (!network.activeDialogue) {
-        let dialogueId = 'default';
+    if (!dialogueId) {
+        isInitializing = true;
+        dialogueId = 'default';
         
         // Context-aware dialogue selection
         if (quests.active === 'request_node') {
@@ -215,50 +220,61 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
             appendOutput(BBS_MENU);
             return { handled: true };
         }
-
-        dispatch(actions.setDialogue({ id: dialogueId, step: 0 }));
-        renderStep(DIALOGUES[dialogueId].steps[0], appendOutput);
-        return { handled: true };
+        
+        stepIdx = 0;
     }
 
-    // Handle option selection
-    const dialogue = DIALOGUES[network.activeDialogue];
-    const currentStep = dialogue.steps[network.dialogueStep];
+    // Try to match command against current step options
+    const dialogue = DIALOGUES[dialogueId];
+    const currentStep = dialogue.steps[stepIdx];
     
     let option = null;
     const choice = parseInt(command);
+    const normalizedCmd = command.trim().toLowerCase();
     
-    if (!isNaN(choice)) {
-        option = currentStep.options.find(o => o.id === choice);
-    } else {
-        // Try fuzzy text matching
-        const normalizedCmd = command.toLowerCase();
-        option = currentStep.options.find(o => o.text.toLowerCase().includes(normalizedCmd));
-    }
-
-    if (!option) {
-        appendOutput(`Непонятно. Выберите вариант (${currentStep.options.map(o => o.id).join(', ')}) или напишите ключевое слово.`);
-        return { handled: true };
-    }
-
-    if (option.nextStep === 'exit') {
-        dispatch(actions.setDialogue({ id: null, step: 0 }));
-        dispatch(actions.setTerminalMode('BBS_MENU'));
-        appendOutput("");
-        appendOutput("Архитектор: Бывай.");
-        appendOutput("");
-        appendOutput(BBS_MENU);
-    } else {
-        const nextStepIdx = option.nextStep;
-        const nextStep = dialogue.steps[nextStepIdx];
-        
-        dispatch(actions.setDialogue({ id: network.activeDialogue, step: nextStepIdx }));
-        
-        if (nextStep.onEnter) {
-            nextStep.onEnter(dispatch, actions);
+    if (normalizedCmd) {
+        if (!isNaN(choice)) {
+            option = currentStep.options.find(o => o.id === choice);
+        } else {
+            // Try fuzzy text matching
+            option = currentStep.options.find(o => o.text.toLowerCase().includes(normalizedCmd));
         }
-        
-        renderStep(nextStep, appendOutput);
+    }
+
+    // If we found a valid option, execute it
+    if (option) {
+        if (option.nextStep === 'exit') {
+            dispatch(actions.setDialogue({ id: null, step: 0 }));
+            dispatch(actions.setTerminalMode('BBS_MENU'));
+            appendOutput("");
+            appendOutput("Архитектор: Бывай.");
+            appendOutput("");
+            appendOutput(BBS_MENU);
+            return { handled: true };
+        } else {
+            const nextStepIdx = option.nextStep;
+            const nextStep = dialogue.steps[nextStepIdx];
+            
+            dispatch(actions.setDialogue({ id: dialogueId, step: nextStepIdx }));
+            
+            if (nextStep.onEnter) {
+                nextStep.onEnter(dispatch, actions);
+            }
+            
+            renderStep(nextStep, appendOutput);
+            return { handled: true };
+        }
+    }
+
+    // If no option matched...
+    
+    if (isInitializing) {
+        // Just started, show the first step
+        dispatch(actions.setDialogue({ id: dialogueId, step: 0 }));
+        renderStep(currentStep, appendOutput);
+    } else {
+        // Was already active, but input was invalid
+        appendOutput(`Непонятно. Выберите вариант (${currentStep.options.map(o => o.id).join(', ')}) или напишите ключевое слово.`);
     }
 
     return { handled: true };
