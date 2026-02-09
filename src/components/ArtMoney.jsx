@@ -90,7 +90,7 @@ function ArtMoney() {
             setAct: setActAction,
         };
 
-        completeQuestAndProgress(quests.active, dispatch, actions);
+        completeQuestAndProgress(quests.active, dispatch, actions, { silent: true });
     };
 
     return (

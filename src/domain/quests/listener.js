@@ -2,6 +2,7 @@ import { eventBus } from '../events/bus';
 import { completeQuestAndProgress } from './completion';
 import { getQuestById } from '../../content/quests';
 import { StepType } from './schema';
+import { QUEST_STEP_COMPLETED } from '../events/types';
 
 /**
  * Check if a step's metadata matches the event payload.
@@ -71,6 +72,11 @@ export function setupQuestListeners(dispatch, actions, getState) {
 
             if (matchesMetadata(step.metadata, event)) {
                 dispatch(actions.completeStep({ questId: activeQuestId, stepId: step.id }));
+                eventBus.publish(QUEST_STEP_COMPLETED, {
+                    questId: activeQuestId,
+                    stepId: step.id,
+                    stepDescription: step.description,
+                });
                 newStepCompleted = true;
             }
         }

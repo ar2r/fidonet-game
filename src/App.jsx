@@ -21,6 +21,7 @@ import QuestJournal from './features/quests/QuestJournal';
 import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
 import ArtMoney from './components/ArtMoney';
+import QuestToast from './components/QuestToast';
 import Onboarding from './components/Onboarding';
 import { HintSystem } from './components/HintSystem';
 import {
@@ -36,7 +37,7 @@ import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
-import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, GAME_NOTIFICATION } from './domain/events/types';
+import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, GAME_NOTIFICATION, QUEST_STEP_COMPLETED } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
 import { loadGame, getSaveLink, shortenLink, saveGame } from './engine/saveSystem';
@@ -69,6 +70,7 @@ function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
     const [saveNotification, setSaveNotification] = useState(null); // { message: string } | null
+    const [questToasts, setQuestToasts] = useState([]);
 
     // eslint-disable-next-line no-undef
     const buildHash = __COMMIT_HASH__;
@@ -175,11 +177,22 @@ function App() {
         };
         const unsubscribeNotification = eventBus.subscribe(GAME_NOTIFICATION, notificationHandler);
 
+        const stepHandler = (payload) => {
+            if (payload && payload.stepDescription) {
+                setQuestToasts(prev => [...prev, {
+                    id: Date.now(),
+                    message: payload.stepDescription,
+                }]);
+            }
+        };
+        const unsubscribeStep = eventBus.subscribe(QUEST_STEP_COMPLETED, stepHandler);
+
         return () => {
             cleanup();
             unsubscribeTossing();
             unsubscribeOpenWindow();
             unsubscribeNotification();
+            unsubscribeStep();
         };
     }, [dispatch, quests]);
 
@@ -402,6 +415,12 @@ function App() {
                         onClose={() => setSaveNotification(null)}
                     />
                 )}
+
+                {/* Quest Step Toasts */}
+                <QuestToast
+                    toasts={questToasts}
+                    onDismiss={(id) => setQuestToasts(prev => prev.filter(t => t.id !== id))}
+                />
 
                 {/* Desktop Icons Area */}
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>

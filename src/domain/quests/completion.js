@@ -6,7 +6,7 @@ import { GAME_NOTIFICATION } from '../events/types';
 // Guard against double-completion within the same synchronous call stack
 const recentlyCompleted = new Set();
 
-export function completeQuestAndProgress(questId, dispatch, actions) {
+export function completeQuestAndProgress(questId, dispatch, actions, options = {}) {
     if (recentlyCompleted.has(questId)) return null;
     recentlyCompleted.add(questId);
     // Clear after microtask to allow future completions (e.g. debug skip)
@@ -16,6 +16,7 @@ export function completeQuestAndProgress(questId, dispatch, actions) {
     if (!quest) return null;
 
     const { completeQuest, setActiveQuest, updateSkill, setAct } = actions;
+    const silent = options.silent || false;
 
     // Mark quest completed
     dispatch(completeQuest(questId));
@@ -77,7 +78,7 @@ export function completeQuestAndProgress(questId, dispatch, actions) {
         notifications.push(`═══════════════════════════════════════════`);
     }
 
-    if (notifications.length > 0) {
+    if (!silent && notifications.length > 0) {
         eventBus.publish(GAME_NOTIFICATION, { messages: notifications });
     }
 
