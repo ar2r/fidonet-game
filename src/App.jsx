@@ -423,7 +423,7 @@ function App() {
                 />
 
                 {/* Desktop Icons Area */}
-                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-start', alignContent: 'flex-start', maxHeight: 'calc(100vh - 70px)', overflow: 'hidden' }}>
                     {/* MS-DOS Prompt (Terminal) */}
                     <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
