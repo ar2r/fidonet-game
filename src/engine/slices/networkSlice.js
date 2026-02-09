@@ -13,7 +13,6 @@ const networkSlice = createSlice({
         modemInitialized: false,
         activeDialogue: null,
         dialogueStep: 0,
-        currentOptions: [],
     },
     reducers: {
         connect: (state, action) => {
@@ -28,16 +27,12 @@ const networkSlice = createSlice({
             state.terminalMode = 'IDLE';
             state.activeDialogue = null;
             state.dialogueStep = 0;
-            state.currentOptions = [];
         },
         setStatus: (state, action) => {
             state.connectionStatus = action.payload;
         },
         setTerminalMode: (state, action) => {
             state.terminalMode = action.payload;
-        },
-        setOptions: (state, action) => {
-            state.currentOptions = action.payload || [];
         },
         addLog: (state, action) => {
             state.logs.push(action.payload);
@@ -72,7 +67,7 @@ const networkSlice = createSlice({
 });
 
 export const {
-    connect, disconnect, setStatus, setTerminalMode, setOptions,
+    connect, disconnect, setStatus, setTerminalMode,
     addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork,
     loadState: loadNetworkState
 } = networkSlice.actions;

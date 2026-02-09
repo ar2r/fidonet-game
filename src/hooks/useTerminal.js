@@ -27,7 +27,6 @@ import {
     setGameOver as setGameOverAction,
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
-    setOptions as setOptionsAction,
     setDialogue as setDialogueAction,
 } from '../engine/store';
 
@@ -53,7 +52,6 @@ const ACTIONS = {
     advanceDay: advanceDayAction,
     payBill: payBillAction,
     setLastBillDay: setLastBillDayAction,
-    setOptions: setOptionsAction,
     setDialogue: setDialogueAction,
 };
 
@@ -129,24 +127,6 @@ export function useTerminal(windowId = 'terminal') {
         return () => clearInterval(timer);
     }, [network.connected]);
 
-    const handleKeyDown = useCallback((e) => {
-        if (activeWindow !== windowId) return;
-
-        if (gameState.gameOver) return;
-
-        audioManager.playClick();
-
-        if (e.key === 'Enter') {
-            sendCommand(inputBuffer);
-            setInputBuffer("");
-        } else if (e.key === 'Backspace') {
-            e.preventDefault();
-            setInputBuffer(prev => prev.slice(0, -1));
-        } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
-            setInputBuffer(prev => prev + e.key);
-        }
-    }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver, activeWindow, windowId]);
-
     const sendCommand = useCallback((cmd) => {
         // Echo command to history
         setHistory(prev => [...prev, `${currentPrompt}${cmd}`]);
@@ -166,6 +146,24 @@ export function useTerminal(windowId = 'terminal') {
             }, 50);
         }
     }, [currentPrompt, fullContext, dispatch]);
+
+    const handleKeyDown = useCallback((e) => {
+        if (activeWindow !== windowId) return;
+
+        if (gameState.gameOver) return;
+
+        audioManager.playClick();
+
+        if (e.key === 'Enter') {
+            sendCommand(inputBuffer);
+            setInputBuffer("");
+        } else if (e.key === 'Backspace') {
+            e.preventDefault();
+            setInputBuffer(prev => prev.slice(0, -1));
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            setInputBuffer(prev => prev + e.key);
+        }
+    }, [inputBuffer, sendCommand, gameState.gameOver, activeWindow, windowId]);
 
     useEffect(() => {
         terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });

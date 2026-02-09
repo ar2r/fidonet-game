@@ -283,7 +283,6 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
         if (option.nextStep === 'exit') {
             dispatch(actions.setDialogue({ id: null, step: 0 }));
             dispatch(actions.setTerminalMode('BBS_MENU'));
-            if (actions.setOptions) dispatch(actions.setOptions([]));
             appendOutput("");
             appendOutput("Архитектор: Бывай.");
             appendOutput("");
@@ -299,7 +298,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
                 nextStep.onEnter(dispatch, actions);
             }
             
-            renderStep(nextStep, appendOutput, dispatch, actions);
+            renderStep(nextStep, appendOutput);
             return { handled: true };
         }
     }
@@ -309,7 +308,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     if (isInitializing) {
         // Just started, show the first step
         dispatch(actions.setDialogue({ id: dialogueId, step: 0 }));
-        renderStep(currentStep, appendOutput, dispatch, actions);
+        renderStep(currentStep, appendOutput);
     } else {
         // Was already active, but input was invalid
         appendOutput(`Непонятно. Выберите вариант (${currentStep.options.map(o => o.id).join(', ')}) или напишите ключевое слово.`);
@@ -322,7 +321,6 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
  * Start chat dialogue immediately (used by BBS menu)
  */
 export function startChat({ gameState, dispatch, actions, appendOutput }) {
-    const network = gameState.network;
     const quests = gameState.quests;
 
     let dialogueId = 'default';
@@ -344,7 +342,6 @@ export function startChat({ gameState, dispatch, actions, appendOutput }) {
         // Check for specific quest hints or fallback to generic chat
         if (quests.active === 'hardware_upgrade') {
             dispatch(actions.setTerminalMode('BBS_MENU'));
-            if (actions.setOptions) dispatch(actions.setOptions([]));
             appendOutput("");
             appendOutput("Архитектор сейчас занят. Заходите позже.");
             appendOutput("(Подсказка: Сначала выполните квест 'Железный вопрос' - купите модем)");
@@ -363,14 +360,10 @@ export function startChat({ gameState, dispatch, actions, appendOutput }) {
     // Render first step
     const dialogue = DIALOGUES[dialogueId];
     const currentStep = dialogue.steps[0];
-    renderStep(currentStep, appendOutput, dispatch, actions);
+    renderStep(currentStep, appendOutput);
 }
 
-function renderStep(step, appendOutput, dispatch, actions) {
-    if (dispatch && actions && actions.setOptions) {
-        dispatch(actions.setOptions(step.options));
-    }
-
+function renderStep(step, appendOutput) {
     appendOutput("");
     appendOutput(step.text);
     appendOutput("");

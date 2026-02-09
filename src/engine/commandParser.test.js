@@ -28,6 +28,7 @@ describe('commandParser', () => {
             setVirusActive: vi.fn((payload) => ({ type: 'gameState/setVirusActive', payload })),
             setVirusStage: vi.fn((payload) => ({ type: 'gameState/setVirusStage', payload })),
             disconnect: vi.fn(() => ({ type: 'network/disconnect' })),
+            setDialogue: vi.fn((payload) => ({ type: 'network/setDialogue', payload })),
         };
         baseState = {
             gameState: { day: 1, phase: 'night', time: '23:00', zmh: false, virusActive: false },
@@ -211,10 +212,13 @@ describe('commandParser', () => {
     });
 
     describe('BBS_CHAT mode', () => {
-        it('any input returns to menu', () => {
+        it('any input starts dialogue if not active', () => {
             baseState.network.terminalMode = 'BBS_CHAT';
             processCommand('hello', baseState, dispatch, actions, appendOutput);
-            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: 'network/setTerminalMode' }));
+            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ 
+                type: 'network/setDialogue',
+                payload: expect.objectContaining({ id: 'generic_chat' })
+            }));
         });
     });
 });
