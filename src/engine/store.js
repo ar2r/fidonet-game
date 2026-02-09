@@ -3,7 +3,7 @@ import windowManagerReducer from './windowManager';
 import gameStateSlice, {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen, loadGameState
+    setOnboardingSeen, setTimeSpeed, loadGameState
 } from './slices/gameStateSlice';
 import playerSlice, {
     updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment,
@@ -23,7 +23,7 @@ import questSlice, {
 export {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen, loadGameState,
+    setOnboardingSeen, loadGameState, setTimeSpeed,
 
     updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment,
     loadPlayerState,
