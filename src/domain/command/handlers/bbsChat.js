@@ -11,35 +11,52 @@ const DIALOGUES = {
     request_node_status: {
         steps: [
             {
-                text: "Архитектор: Привет. Что-то хотел или просто так зашел?",
+                text: "Архитектор: [CONNECT 14400] Приветствую. Я вижу твой IP... шутка. Что привело тебя в Нексус?",
                 options: [
-                    { id: 1, text: "Хочу подать заявку на статус ноды.", nextStep: 1 },
-                    { id: 2, text: "Просто зашел поздороваться.", nextStep: 'exit' },
+                    { id: 1, text: "Я готов стать частью сети. Хочу свою ноду.", nextStep: 2 },
+                    { id: 2, text: "Что это за место?", nextStep: 1 },
+                    { id: 3, text: "Просто мимо проходил.", nextStep: 'exit' },
                 ]
             },
             {
-                text: "Архитектор: Нода — это большая ответственность. Ты должен быть онлайн каждую ночь с 4 до 5 утра (ZMH).\nАрхитектор: У тебя есть US Robotics Courier?",
+                text: "Архитектор: Это центральный хаб нашего региона. Мы маршрутизируем почту, держим эхоконференции и не даем ламерам положить сеть. Работы много.",
                 options: [
-                    { id: 1, text: "Да, я как раз недавно купил отличный Courier 28.8k!", nextStep: 2 },
-                    { id: 2, text: "Нет пока, но планирую.", nextStep: 3 },
+                    { id: 1, text: "Звучит круто. Я хочу помочь (Стать нодой).", nextStep: 2 },
+                    { id: 2, text: "Понятно. Ну, удачи.", nextStep: 'exit' }
                 ]
             },
             {
-                text: "Архитектор: Отлично. Твой FidoNet адрес будет 2:5020/730. Поздравляю в сети!\nАрхитектор: Теперь тебе нужно настроить серьезный мейлер, например BinkleyTerm.",
+                text: "Архитектор: Похвальное рвение. Но нода — это не просто статус в подписи. Это аптайм, это ZMH с 4 до 5 утра, это ответственность.\nАрхитектор: Железо потянет? У тебя есть US Robotics Courier?",
+                options: [
+                    { id: 1, text: "Обижаешь! Новенький Courier V.Everything.", nextStep: 3 },
+                    { id: 2, text: "Ну... у меня есть модем на 2400 бод...", nextStep: 4 },
+                    { id: 3, text: "А зачем такой дорогой модем?", nextStep: 5 }
+                ]
+            },
+            {
+                text: "Архитектор: [Одобрительный писк модема] Добро пожаловать в семью. Твой адрес: 2:5020/730.\nАрхитектор: Теперь ищи софт. BinkleyTerm — твой выбор.",
                 onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'request_node_status', success: true });
                 },
                 options: [
-                    { id: 1, text: "Спасибо! Я не подведу.", nextStep: 'exit' },
+                    { id: 1, text: "Спасибо! Пойду настраивать.", nextStep: 'exit' },
+                    { id: 2, text: "Служу Фидонету!", nextStep: 'exit' }
                 ]
             },
             {
-                text: "Архитектор: С 'недо-модемами' даже не подходи ко мне. Настрой сначала железо.",
+                text: "Архитектор: На 2400 ты будешь качать почту до следующего тысячелетия. Не позорь регион. Купи нормальное железо.",
                 onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'request_node_status', success: false });
                 },
                 options: [
-                    { id: 1, text: "Понял, вернусь позже.", nextStep: 'exit' },
+                    { id: 1, text: "Ладно, ладно. Вернусь с Курьером.", nextStep: 'exit' },
+                ]
+            },
+            {
+                text: "Архитектор: Потому что на наших телефонных линиях только Courier может держать стабильный линк. Остальное — мусор. Не трать мое время.",
+                options: [
+                    { id: 1, text: "Понял. Будет Курьер.", nextStep: 4 },
+                    { id: 2, text: "Так он у меня уже есть!", nextStep: 2 }
                 ]
             }
         ]
@@ -175,6 +192,23 @@ const DIALOGUES = {
                 ]
             }
         ]
+    },
+    generic_chat: {
+        steps: [
+            {
+                text: "Архитектор: [BUSY] Я сейчас занят настройкой тоссера. Что-то срочное?",
+                options: [
+                    { id: 1, text: "Как дела в сети?", nextStep: 1 },
+                    { id: 2, text: "Нет, просто проверяю связь.", nextStep: 'exit' },
+                ]
+            },
+            {
+                text: "Архитектор: Трафик растет. Ламеры флеймят. Сисопы пьют пиво. Все как обычно. Не забивай линию, если нет дела.",
+                options: [
+                    { id: 1, text: "Понял. Отбой.", nextStep: 'exit' }
+                ]
+            }
+        ]
     }
 };
 
@@ -208,18 +242,20 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
         }
 
         if (dialogueId === 'default') {
-            dispatch(actions.setTerminalMode('BBS_MENU'));
-            if (actions.setOptions) dispatch(actions.setOptions([]));
-            appendOutput("");
-            appendOutput("Архитектор сейчас занят. Заходите позже.");
-            
+            // Check for specific quest hints or fallback to generic chat
             if (quests.active === 'hardware_upgrade') {
+                dispatch(actions.setTerminalMode('BBS_MENU'));
+                if (actions.setOptions) dispatch(actions.setOptions([]));
+                appendOutput("");
+                appendOutput("Архитектор сейчас занят. Заходите позже.");
                 appendOutput("(Подсказка: Сначала выполните квест 'Железный вопрос' - купите модем)");
+                appendOutput("");
+                appendOutput(BBS_MENU);
+                return { handled: true };
             }
-
-            appendOutput("");
-            appendOutput(BBS_MENU);
-            return { handled: true };
+            
+            // Use generic chat instead of immediate exit
+            dialogueId = 'generic_chat';
         }
         
         stepIdx = 0;
