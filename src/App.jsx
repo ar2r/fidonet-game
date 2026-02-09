@@ -37,7 +37,7 @@ import fs from './engine/fileSystemInstance';
 import { handleTMailConfigComplete, handleGoldEDConfigComplete, handleBinkleyConfigComplete } from './domain/quests/service';
 import { setupQuestListeners } from './domain/quests/listener';
 import { eventBus } from './domain/events/bus';
-import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, GAME_NOTIFICATION, QUEST_STEP_COMPLETED } from './domain/events/types';
+import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, QUEST_STEP_COMPLETED } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
 import { loadGame, getSaveLink, shortenLink, saveGame } from './engine/saveSystem';
@@ -165,18 +165,6 @@ function App() {
         };
         const unsubscribeOpenWindow = eventBus.subscribe(UI_OPEN_WINDOW, openWindowHandler);
 
-        const notificationHandler = (payload) => {
-            if (payload && payload.messages) {
-                const questMsg = payload.messages.find(m => m.includes('КВЕСТ ВЫПОЛНЕН'));
-                if (questMsg) {
-                    const titleLine = payload.messages.find(m => m.includes('"'));
-                    const questTitle = titleLine ? titleLine.replace(/[║"]/g, '').trim() : '';
-                    setSaveNotification({ message: `Квест выполнен!\n${questTitle}`, title: 'Прогресс' });
-                }
-            }
-        };
-        const unsubscribeNotification = eventBus.subscribe(GAME_NOTIFICATION, notificationHandler);
-
         const stepHandler = (payload) => {
             if (payload && payload.stepDescription) {
                 setQuestToasts(prev => [...prev, {
@@ -191,7 +179,6 @@ function App() {
             cleanup();
             unsubscribeTossing();
             unsubscribeOpenWindow();
-            unsubscribeNotification();
             unsubscribeStep();
         };
     }, [dispatch, quests]);
