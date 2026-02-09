@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { eventBus } from '../../events/bus';
+import { eventBus } from '../../domain/events/bus';
 import { TIME_ADVANCED, ZMH_ACTIVITY_COMPLETED } from '../../domain/events/types';
 
 const TerminalContainer = styled.div`
