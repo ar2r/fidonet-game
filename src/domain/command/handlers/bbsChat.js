@@ -209,6 +209,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
 
         if (dialogueId === 'default') {
             dispatch(actions.setTerminalMode('BBS_MENU'));
+            if (actions.setOptions) dispatch(actions.setOptions([]));
             appendOutput("");
             appendOutput("Архитектор сейчас занят. Заходите позже.");
             
@@ -246,6 +247,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
         if (option.nextStep === 'exit') {
             dispatch(actions.setDialogue({ id: null, step: 0 }));
             dispatch(actions.setTerminalMode('BBS_MENU'));
+            if (actions.setOptions) dispatch(actions.setOptions([]));
             appendOutput("");
             appendOutput("Архитектор: Бывай.");
             appendOutput("");
@@ -261,7 +263,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
                 nextStep.onEnter(dispatch, actions);
             }
             
-            renderStep(nextStep, appendOutput);
+            renderStep(nextStep, appendOutput, dispatch, actions);
             return { handled: true };
         }
     }
@@ -271,7 +273,7 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     if (isInitializing) {
         // Just started, show the first step
         dispatch(actions.setDialogue({ id: dialogueId, step: 0 }));
-        renderStep(currentStep, appendOutput);
+        renderStep(currentStep, appendOutput, dispatch, actions);
     } else {
         // Was already active, but input was invalid
         appendOutput(`Непонятно. Выберите вариант (${currentStep.options.map(o => o.id).join(', ')}) или напишите ключевое слово.`);
@@ -280,7 +282,11 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     return { handled: true };
 }
 
-function renderStep(step, appendOutput) {
+function renderStep(step, appendOutput, dispatch, actions) {
+    if (dispatch && actions && actions.setOptions) {
+        dispatch(actions.setOptions(step.options));
+    }
+
     appendOutput("");
     appendOutput(step.text);
     appendOutput("");

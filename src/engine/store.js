@@ -10,7 +10,7 @@ import playerSlice, {
     loadPlayerState
 } from './slices/playerSlice';
 import networkSlice, {
-    connect, disconnect, setStatus, setTerminalMode,
+    connect, disconnect, setStatus, setTerminalMode, setOptions,
     addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork,
     loadNetworkState
 } from './slices/networkSlice';
@@ -28,7 +28,7 @@ export {
     updateStat, updateSkill, addItem, setRank, resetPlayer, payBill, setLastBillDay, setEquipment,
     loadPlayerState,
 
-    connect, disconnect, setStatus, setTerminalMode,
+    connect, disconnect, setStatus, setTerminalMode, setOptions,
     addLog, initializeModem, setTerminalProgram, setDialogue, resetNetwork,
     loadNetworkState,
 

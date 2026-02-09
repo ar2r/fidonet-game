@@ -51,8 +51,37 @@ const Cursor = styled.span`
   }
 `;
 
+const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
+const OptionButton = styled.button`
+  background: transparent;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 18px;
+  text-align: left;
+  padding: 8px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: #00ff00;
+    color: #000;
+  }
+
+  &:focus {
+    background-color: #004400;
+  }
+`;
+
 function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
-    const { history, inputBuffer, currentPrompt, connTime, terminalEndRef, network } = useTerminal(windowId);
+    const { history, inputBuffer, currentPrompt, connTime, terminalEndRef, network, sendCommand } = useTerminal(windowId);
 
     const terminalContent = (
         <Wrapper>
@@ -60,9 +89,21 @@ function TerminalWindow({ onClose, embedded = false, windowId = 'terminal' }) {
                 {history.map((line, i) => (
                     <div key={i}>{line}</div>
                 ))}
-                <div>
-                    <span>{currentPrompt}{inputBuffer}</span><Cursor />
-                </div>
+                
+                {network.terminalMode === 'BBS_CHAT' && network.currentOptions && network.currentOptions.length > 0 ? (
+                    <OptionsContainer>
+                        {network.currentOptions.map(opt => (
+                            <OptionButton key={opt.id} onClick={() => sendCommand(opt.id.toString())}>
+                                {opt.id}. {opt.text}
+                            </OptionButton>
+                        ))}
+                    </OptionsContainer>
+                ) : (
+                    <div>
+                        <span>{currentPrompt}{inputBuffer}</span><Cursor />
+                    </div>
+                )}
+                
                 <div ref={terminalEndRef} />
             </TerminalContainer>
             {network.terminalProgramRunning && (

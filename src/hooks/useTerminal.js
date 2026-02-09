@@ -27,6 +27,7 @@ import {
     setGameOver as setGameOverAction,
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
+    setOptions as setOptionsAction,
 } from '../engine/store';
 
 const ACTIONS = {
@@ -51,6 +52,7 @@ const ACTIONS = {
     advanceDay: advanceDayAction,
     payBill: payBillAction,
     setLastBillDay: setLastBillDayAction,
+    setOptions: setOptionsAction,
 };
 
 function getPromptForMode(network) {
@@ -133,25 +135,7 @@ export function useTerminal(windowId = 'terminal') {
         audioManager.playClick();
 
         if (e.key === 'Enter') {
-            const cmd = inputBuffer;
-
-            setHistory(prev => [...prev, `${currentPrompt}${cmd}`]);
-
-            const result = processCommand(cmd, fullContext, dispatch, ACTIONS, (output) => {
-                if (output) {
-                    const lines = output.split('\n');
-                    setHistory(prev => [...prev, ...lines]);
-                }
-            });
-
-            if (result === 'CLEAR') {
-                setHistory([]);
-            } else {
-                setTimeout(() => {
-                    setHistory(prev => [...prev, ""]);
-                }, 50);
-            }
-
+            sendCommand(inputBuffer);
             setInputBuffer("");
         } else if (e.key === 'Backspace') {
             e.preventDefault();
@@ -160,6 +144,26 @@ export function useTerminal(windowId = 'terminal') {
             setInputBuffer(prev => prev + e.key);
         }
     }, [inputBuffer, currentPrompt, fullContext, dispatch, gameState.gameOver, activeWindow, windowId]);
+
+    const sendCommand = useCallback((cmd) => {
+        // Echo command to history
+        setHistory(prev => [...prev, `${currentPrompt}${cmd}`]);
+
+        const result = processCommand(cmd, fullContext, dispatch, ACTIONS, (output) => {
+            if (output) {
+                const lines = output.split('\n');
+                setHistory(prev => [...prev, ...lines]);
+            }
+        });
+
+        if (result === 'CLEAR') {
+            setHistory([]);
+        } else {
+            setTimeout(() => {
+                setHistory(prev => [...prev, ""]);
+            }, 50);
+        }
+    }, [currentPrompt, fullContext, dispatch]);
 
     useEffect(() => {
         terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -177,5 +181,6 @@ export function useTerminal(windowId = 'terminal') {
         connTime,
         terminalEndRef,
         network,
+        sendCommand,
     };
 }
