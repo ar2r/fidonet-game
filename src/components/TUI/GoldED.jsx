@@ -70,12 +70,18 @@ const Input = styled.input`
   font-size: 20px;
   outline: none;
   padding: 0;
+  caret-color: #FFFF55;
+  caret-shape: block;
+
+  &:focus {
+    border-bottom-color: #FFFF55;
+  }
 `;
 
 const TextArea = styled.textarea`
-  background: #000000;
-  border: none;
-  color: #AAAAAA;
+  background: #000088;
+  border: 1px solid #0000AA;
+  color: #FFFFFF;
   width: 100%;
   height: 300px;
   font-family: 'Courier New', Courier, monospace;
@@ -84,6 +90,25 @@ const TextArea = styled.textarea`
   outline: none;
   resize: none;
   padding: 5px;
+  caret-color: #FFFF55;
+  caret-shape: block;
+
+  &:focus {
+    border-color: #FFFF55;
+  }
+`;
+
+const ComposerHeader = styled.div`
+  background-color: #AA0000;
+  color: #FFFFFF;
+  padding: 0 10px;
+  font-weight: bold;
+  animation: editorBlink 1.5s ease-in-out infinite;
+
+  @keyframes editorBlink {
+    0%, 100% { background-color: #AA0000; }
+    50% { background-color: #AA0044; }
+  }
 `;
 
 // Helper for message body rendering
@@ -112,16 +137,25 @@ function GoldED() {
 
     const { time, day } = useSelector(state => state.gameState);
     const containerRef = useRef(null);
+    const subjInputRef = useRef(null);
+    const textAreaRef = useRef(null);
 
     // Focus management
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (containerRef.current) {
+            if (view === 'composer') {
+                // Focus subject input if empty, otherwise textarea
+                if (subjInputRef.current && !composeData.subj) {
+                    subjInputRef.current.focus();
+                } else if (textAreaRef.current) {
+                    textAreaRef.current.focus();
+                }
+            } else if (containerRef.current) {
                 containerRef.current.focus();
             }
         }, 10);
         return () => clearTimeout(timer);
-    }, [view]);
+    }, [view, composeData.subj]);
 
     const getGameDate = () => {
         const date = new Date(1995, 1, 6); // Feb 6, 1995
@@ -294,18 +328,28 @@ function GoldED() {
     );
 
     const renderComposer = () => (
-        <div style={{ padding: '10px' }}>
-            <div style={{ marginBottom: '10px', color: '#FFFF55' }}>New Message to {currentAreaId.toUpperCase()}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <div style={{ display: 'flex' }}><span style={{width: '60px'}}>To:</span> <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} /></div>
-                <div style={{ display: 'flex' }}><span style={{width: '60px'}}>Subj:</span> <Input value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} /></div>
-                <TextArea 
-                    value={composeData.body} 
-                    onChange={e => setComposeData({...composeData, body: e.target.value})}
-                    placeholder="Type your message here..."
-                />
-                <div style={{ marginTop: '10px', color: '#AAAAAA' }}>Press Ctrl+Enter to Send</div>
+        <div style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <ComposerHeader>
+                ■ РЕДАКТОР СООБЩЕНИЙ ■  Область: {currentAreaId?.toUpperCase() || '???'}
+            </ComposerHeader>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '5px 10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{width: '60px', color: '#AAAAAA'}}>To  :</span>
+                    <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{width: '60px', color: '#AAAAAA'}}>Subj:</span>
+                    <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} />
+                </div>
             </div>
+            <div style={{ borderTop: '1px solid #0000AA', margin: '2px 0' }} />
+            <TextArea
+                ref={textAreaRef}
+                value={composeData.body}
+                onChange={e => setComposeData({...composeData, body: e.target.value})}
+                placeholder="Введите текст сообщения..."
+                style={{ flex: 1 }}
+            />
         </div>
     );
 
@@ -330,7 +374,7 @@ function GoldED() {
                 {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
                 {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
                 {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
-                {view === 'composer' && <span>Ctrl+Enter:Send  Esc:Cancel</span>}
+                {view === 'composer' && <span>Ctrl+Enter:Отправить  Esc:Отмена</span>}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>
