@@ -14,7 +14,7 @@ describe('FidoNet Simulator UI', () => {
         const startButton = screen.getByText(/Пуск/);
         expect(startButton).toBeInTheDocument();
 
-        const dosPromptIcon = screen.getByText('MS-DOS Prompt');
+        const dosPromptIcon = screen.getByText('MS-DOS');
         expect(dosPromptIcon).toBeInTheDocument();
     });
 
@@ -22,18 +22,18 @@ describe('FidoNet Simulator UI', () => {
         renderWithStore(<App />);
 
         // Terminal is open by default - check for the window header
-        const terminalHeaders = screen.getAllByText(/MS-DOS Prompt/i);
+        const terminalHeaders = screen.getAllByText(/MS-DOS/i);
         expect(terminalHeaders.length).toBeGreaterThan(0);
 
         const closeButton = screen.getByText('×');
         fireEvent.click(closeButton);
 
         // After closing, terminal header should be gone (but may still be in history)
-        const dosPromptIcon = screen.getByText('MS-DOS Prompt');
+        const dosPromptIcon = screen.getByText('MS-DOS');
         fireEvent.doubleClick(dosPromptIcon);
 
         // Terminal should be open again
-        const terminalHeadersAfter = screen.getAllByText(/MS-DOS Prompt/i);
+        const terminalHeadersAfter = screen.getAllByText(/MS-DOS/i);
         expect(terminalHeadersAfter.length).toBeGreaterThan(0);
     });
 });

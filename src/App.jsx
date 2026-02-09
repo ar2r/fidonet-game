@@ -491,7 +491,7 @@ function App() {
                     {/* MS-DOS Prompt (Terminal) */}
                     <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
-                        <span style={{ background: '#008080', padding: '2px' }}>MS-DOS Prompt</span>
+                        <span style={{ background: '#008080', padding: '2px' }}>MS-DOS</span>
                     </div>
 
                     {/* History.txt */}
