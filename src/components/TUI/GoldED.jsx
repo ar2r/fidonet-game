@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ECHO_AREAS, MESSAGES } from '../../content/messages/data';
 import { eventBus } from '../../domain/events/bus';
 import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
 import fs from '../../engine/fileSystemInstance';
+import { closeWindow } from '../../engine/windowManager';
 
 const TuiContainer = styled.div`
   background-color: #000000; /* Black Background */
@@ -43,10 +44,31 @@ const ContentArea = styled.div`
 const Footer = styled.div`
   background-color: #0000AA; /* Blue Footer */
   color: #FFFFFF;
-  padding: 0 10px;
+  padding: 5px 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-weight: bold;
+`;
+
+const FooterButton = styled.span`
+  cursor: pointer;
+  background-color: #00AAAA; /* Cyan background */
+  color: #000000; /* Black text */
+  padding: 2px 8px;
+  margin-right: 10px;
+  box-shadow: 2px 2px 0px #000000;
+  user-select: none;
+  font-weight: bold;
+  
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px #000000;
+  }
+  
+  &:hover {
+    background-color: #55FFFF;
+  }
 `;
 
 const ListItem = styled.div`
@@ -130,7 +152,8 @@ const MessageBody = ({ text }) => {
 
 const formatAreaName = (id) => id ? id.toUpperCase().replace(/_/g, '.') : '';
 
-function GoldED() {
+function GoldED({ windowId }) {
+    const dispatch = useDispatch();
     const [view, setView] = useState('areas'); // areas, msglist, msgview, composer
     const [selectedAreaIndex, setSelectedAreaIndex] = useState(0);
     const [selectedMsgIndex, setSelectedMsgIndex] = useState(0);
@@ -187,6 +210,44 @@ function GoldED() {
         setView('composer');
     };
 
+    const handleExit = () => {
+        if (view === 'areas') {
+            if (windowId) dispatch(closeWindow(windowId));
+        } else if (view === 'msglist') {
+            setView('areas');
+        } else if (view === 'msgview') {
+            setView('msglist');
+        } else if (view === 'composer') {
+            setView('msglist');
+        }
+    };
+
+    const handleSelect = () => {
+        if (view === 'areas') {
+            setCurrentAreaId(ECHO_AREAS[selectedAreaIndex].id);
+            setView('msglist');
+            setSelectedMsgIndex(0);
+        } else if (view === 'msglist') {
+            const msgs = MESSAGES[currentAreaId] || [];
+            if (msgs.length > 0) {
+                const reversed = [...msgs].reverse();
+                const msg = reversed[selectedMsgIndex];
+                setCurrentMsg(msg);
+                setView('msgview');
+                eventBus.publish(MESSAGE_READ, {
+                    area: currentAreaId,
+                    subj_contains: msg.subj,
+                    from: msg.from,
+                });
+            }
+        }
+    };
+
+    const handleNew = () => {
+        setComposeData({ to: 'All', subj: '', body: '' });
+        setView('composer');
+    };
+
     const handleKeyDown = (e) => {
         // Stop propagation so the terminal's global window listener doesn't steal keys
         e.stopPropagation();
@@ -197,9 +258,9 @@ function GoldED() {
             } else if (e.key === 'ArrowUp') {
                 setSelectedAreaIndex(prev => Math.max(prev - 1, 0));
             } else if (e.key === 'Enter') {
-                setCurrentAreaId(ECHO_AREAS[selectedAreaIndex].id);
-                setView('msglist');
-                setSelectedMsgIndex(0);
+                handleSelect();
+            } else if (e.key === 'F10') {
+                handleExit();
             }
         } else if (view === 'msglist') {
             const msgs = MESSAGES[currentAreaId] || [];
@@ -208,32 +269,21 @@ function GoldED() {
             } else if (e.key === 'ArrowUp') {
                 setSelectedMsgIndex(prev => Math.max(prev - 1, 0));
             } else if (e.key === 'Enter') {
-                if (msgs.length > 0) {
-                    const reversed = [...msgs].reverse();
-                    const msg = reversed[selectedMsgIndex];
-                    setCurrentMsg(msg);
-                    setView('msgview');
-                    eventBus.publish(MESSAGE_READ, {
-                        area: currentAreaId,
-                        subj_contains: msg.subj,
-                        from: msg.from,
-                    });
-                }
+                handleSelect();
             } else if (e.key === 'Escape') {
-                setView('areas');
+                handleExit();
             } else if (e.key === 'Insert' || e.key === 'n') {
-                setComposeData({ to: 'All', subj: '', body: '' });
-                setView('composer');
+                handleNew();
             }
         } else if (view === 'msgview') {
             if (e.key === 'Escape') {
-                setView('msglist');
+                handleExit();
             } else if (e.key === 'Insert' || e.key === 'r') {
                 handleReply();
             }
         } else if (view === 'composer') {
              if (e.key === 'Escape') {
-                 setView('msglist');
+                 handleExit();
              } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                  handleSend();
              }
@@ -358,7 +408,7 @@ function GoldED() {
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
-            setView('msglist');
+            handleExit();
         } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
             e.stopPropagation();
@@ -414,10 +464,31 @@ function GoldED() {
                 {view === 'composer' && renderComposer()}
             </ContentArea>
             <Footer>
-                {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
-                {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
-                {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
-                {view === 'composer' && <span><span onClick={handleSend} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Ctrl+Enter:Отправить</span>  <span onClick={() => setView('msglist')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Esc:Отмена</span></span>}
+                {view === 'areas' && (
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                         <FooterButton onClick={handleSelect}>[ Select ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                    </div>
+                )}
+                {view === 'msglist' && (
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                         <FooterButton onClick={handleSelect}>[ Read ]</FooterButton>
+                         <FooterButton onClick={handleNew}>[ New ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                    </div>
+                )}
+                {view === 'msgview' && (
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                         <FooterButton onClick={handleReply}>[ Reply ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                    </div>
+                )}
+                {view === 'composer' && (
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                         <FooterButton onClick={handleSend}>[ Send ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Cancel ]</FooterButton>
+                    </div>
+                )}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>

@@ -98,4 +98,43 @@ USERNAME TestUser
         // Should return to msglist (Composer header gone)
         expect(screen.queryByText(/РЕДАКТОР СООБЩЕНИЙ/)).not.toBeInTheDocument();
     });
+
+    it('sends a message using clickable buttons', async () => {
+        const store = createTestStore();
+        const { container } = render(
+            <Provider store={store}>
+                <GoldED />
+            </Provider>
+        );
+
+        // 1. Click [ Select ] in Areas
+        fireEvent.click(screen.getByText('[ Select ]'));
+        
+        // 2. Click [ New ] in MsgList
+        fireEvent.click(screen.getByText('[ New ]'));
+
+        // 3. Verify we are in composer
+        expect(screen.getByText(/РЕДАКТОР СООБЩЕНИЙ/)).toBeInTheDocument();
+
+        // 4. Fill inputs
+        const inputs = container.querySelectorAll('input');
+        const subjInput = inputs[1];
+        fireEvent.change(subjInput, { target: { value: 'Button Test' } });
+        
+        const textArea = container.querySelector('textarea');
+        fireEvent.change(textArea, { target: { value: 'Body Content' } });
+
+        // 5. Click [ Send ]
+        fireEvent.click(screen.getByText('[ Send ]'));
+
+        // 6. Assertions
+        expect(fs.cat).toHaveBeenCalledWith('C:\\FIDO\\GOLDED.CFG');
+        
+        expect(eventBus.publish).toHaveBeenCalledWith(MESSAGE_POSTED, expect.objectContaining({
+            subj: 'Button Test',
+        }));
+        
+        // Should return to msglist
+        expect(screen.queryByText(/РЕДАКТОР СООБЩЕНИЙ/)).not.toBeInTheDocument();
+    });
 });

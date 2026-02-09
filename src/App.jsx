@@ -337,7 +337,7 @@ function App() {
 
             case 'golded-reader':
                 return (
-                    <GoldED />
+                    <GoldED windowId={windowId} />
                 );
 
             case 'radio-market':
