@@ -34,11 +34,22 @@ export function handleMessageCommand({ appendOutput }) {
  * Handle 'C' - Chat with SysOp
  */
 export function handleChatCommand({ dispatch, actions, appendOutput, gameState }) {
-    dispatch(actions.setTerminalMode('BBS_CHAT'));
-    appendOutput(BBS_CHAT_SYSOP);
-    
-    // Immediately start the chat dialogue
-    startChat({ gameState, dispatch, actions, appendOutput });
+    try {
+        dispatch(actions.setTerminalMode('BBS_CHAT'));
+        appendOutput(BBS_CHAT_SYSOP);
+        
+        if (!gameState || !gameState.network || !gameState.quests) {
+            console.error('Invalid gameState in handleChatCommand', gameState);
+            appendOutput("Error: Game state is invalid. Cannot start chat.");
+            return { handled: true };
+        }
+
+        // Immediately start the chat dialogue
+        startChat({ gameState, dispatch, actions, appendOutput });
+    } catch (error) {
+        console.error('Error starting chat:', error);
+        appendOutput(`Error starting chat: ${error.message}`);
+    }
     
     return { handled: true };
 }
