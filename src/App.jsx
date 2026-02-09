@@ -38,6 +38,7 @@ import {
     setZMH as setZMHAction,
     advanceDay as advanceDayAction,
     updateStat as updateStatAction,
+    setTimeSpeed as setTimeSpeedAction,
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -73,6 +74,24 @@ const BuildInfo = styled.div`
   pointer-events: none;
   line-height: 1.2;
   text-shadow: 1px 1px 2px #000000;
+`;
+
+const TimeControls = styled.div`
+  position: absolute;
+  bottom: 100px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+`;
+
+const SpeedButton = styled(Button)`
+  min-width: 40px;
+  font-weight: bold;
+  opacity: ${props => props.active ? 1 : 0.7};
+  background-color: ${props => props.active ? '#000080' : undefined};
+  color: ${props => props.active ? '#FFFFFF' : undefined};
 `;
 
 function App() {
@@ -125,14 +144,16 @@ function App() {
         return () => clearTimeout(timer);
     }, [gameState, player, quests, network, windows]);
 
-    // Game Clock (1 game minute per 1 real second)
+    // Game Clock (1 game minute per 1 real second * timeSpeed)
     React.useEffect(() => {
+        const timeSpeed = gameState.timeSpeed || 1;
+        
         const clockInterval = setInterval(() => {
             // Only advance time if not game over
             if (!gameState.gameOver) {
                 // Calculate next tick
                 const { newMinutes, newTimeString, newPhase, newZMH, daysAdvanced, atmosphereDelta } = 
-                    computeTickEffects(gameState.timeMinutes, 1, network.connected);
+                    computeTickEffects(gameState.timeMinutes, 1 * timeSpeed, network.connected);
 
                 // Dispatch updates
                 dispatch(setTimeMinutesAction(newMinutes));
@@ -157,7 +178,7 @@ function App() {
         }, 1000);
 
         return () => clearInterval(clockInterval);
-    }, [dispatch, gameState.gameOver, gameState.timeMinutes, gameState.phase, gameState.zmh, network.connected]);
+    }, [dispatch, gameState.gameOver, gameState.timeMinutes, gameState.phase, gameState.zmh, gameState.timeSpeed, network.connected]);
 
     const handleSaveGame = async () => {
         const longLink = getSaveLink();
@@ -541,6 +562,12 @@ function App() {
                         {renderWindowContent(window.id, window.component)}
                     </DesktopWindow>
                 ))}
+
+                <TimeControls>
+                    <SpeedButton active={!gameState.timeSpeed || gameState.timeSpeed === 1} onClick={() => dispatch(setTimeSpeedAction(1))}>x1</SpeedButton>
+                    <SpeedButton active={gameState.timeSpeed === 5} onClick={() => dispatch(setTimeSpeedAction(5))}>x5</SpeedButton>
+                    <SpeedButton active={gameState.timeSpeed === 10} onClick={() => dispatch(setTimeSpeedAction(10))}>x10</SpeedButton>
+                </TimeControls>
 
                 <BuildInfo>
                     Ver: {buildHash}<br/>

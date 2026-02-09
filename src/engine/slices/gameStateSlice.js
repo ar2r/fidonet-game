@@ -9,6 +9,7 @@ const gameStateSlice = createSlice({
         timeMinutes: 1380, // 23:00 in minutes
         zmh: false, // Zone Mail Hour
         act: 1,
+        timeSpeed: 1, // 1x, 5x, 10x
         gameOver: false,
         gameOverReason: null,
         virusActive: false,
@@ -18,6 +19,9 @@ const gameStateSlice = createSlice({
     reducers: {
         setOnboardingSeen: (state) => {
             state.onboardingSeen = true;
+        },
+        setTimeSpeed: (state, action) => {
+            state.timeSpeed = action.payload;
         },
         advanceTime: (state, action) => {
             state.time = action.payload;
@@ -69,7 +73,7 @@ const gameStateSlice = createSlice({
 export const {
     advanceTime, setTimeMinutes, setPhase, setZMH,
     advanceDay, setAct, setGameOver, setVirusActive, setVirusStage, resetGame,
-    setOnboardingSeen,
+    setOnboardingSeen, setTimeSpeed,
     loadState: loadGameState
 } = gameStateSlice.actions;
 
