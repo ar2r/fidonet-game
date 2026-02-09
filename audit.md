@@ -33,6 +33,11 @@ The following files in `src/engine` are candidates for future cleanup, but not c
 *   `economy.js` -> `domain/economy/service.js`
 *   `gameTick.js` -> `domain/time/service.js`
 
+### 3.2. UI/React Warnings
+*   **Issue:** Tests reveal console warnings about non-boolean attributes (`active`, `primary`, `square`, `shadow`, `fixed`) and unknown props (`fullWidth`, `noPadding`) being passed to DOM elements.
+*   **Location:** `src/components/StatusBar.jsx`, `src/components/TaskbarButton.jsx` (likely), `src/App.jsx`.
+*   **Recommendation:** Use transient props (e.g., `$active`) for styled-components or ensure these props are not passed to underlying HTML elements if they are only for styling logic.
+
 ## 4. Action Plan (Next Steps)
 
 1.  **Refactor Economy**: Move `checkBills` and `checkDebtGameOver` from `src/engine/economy.js` to a domain service.

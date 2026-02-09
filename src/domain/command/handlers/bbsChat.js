@@ -206,6 +206,11 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
             dispatch(actions.setTerminalMode('BBS_MENU'));
             appendOutput("");
             appendOutput("Архитектор сейчас занят. Заходите позже.");
+            
+            if (quests.active === 'hardware_upgrade') {
+                appendOutput("(Подсказка: Сначала выполните квест 'Железный вопрос' - купите модем)");
+            }
+
             appendOutput("");
             appendOutput(BBS_MENU);
             return { handled: true };
@@ -220,11 +225,19 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     const dialogue = DIALOGUES[network.activeDialogue];
     const currentStep = dialogue.steps[network.dialogueStep];
     
+    let option = null;
     const choice = parseInt(command);
-    const option = currentStep.options.find(o => o.id === choice);
+    
+    if (!isNaN(choice)) {
+        option = currentStep.options.find(o => o.id === choice);
+    } else {
+        // Try fuzzy text matching
+        const normalizedCmd = command.toLowerCase();
+        option = currentStep.options.find(o => o.text.toLowerCase().includes(normalizedCmd));
+    }
 
     if (!option) {
-        appendOutput("Выберите один из вариантов: " + currentStep.options.map(o => o.id).join(', '));
+        appendOutput(`Непонятно. Выберите вариант (${currentStep.options.map(o => o.id).join(', ')}) или напишите ключевое слово.`);
         return { handled: true };
     }
 

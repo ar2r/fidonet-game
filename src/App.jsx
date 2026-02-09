@@ -53,7 +53,7 @@ const ENABLE_ONBOARDING = true;
 
 const BuildInfo = styled.div`
   position: absolute;
-  bottom: 35px;
+  bottom: 55px;
   right: 8px;
   color: rgba(255, 255, 255, 0.7);
   font-family: 'ms_sans_serif';
