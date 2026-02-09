@@ -365,18 +365,21 @@ function GoldED() {
     };
 
     const renderComposer = () => (
-        <div style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div
+            style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}
+            onKeyDown={handleComposerKeyDown}
+        >
             <ComposerHeader>
                 ■ РЕДАКТОР СООБЩЕНИЙ ■  Область: {formatAreaName(currentAreaId) || '???'}
             </ComposerHeader>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '5px 10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{width: '60px', color: '#AAAAAA'}}>To  :</span>
-                    <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} onKeyDown={handleComposerKeyDown} />
+                    <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{width: '60px', color: '#AAAAAA'}}>Subj:</span>
-                    <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} onKeyDown={handleComposerKeyDown} />
+                    <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} />
                 </div>
             </div>
             <div style={{ borderTop: '1px solid #0000AA', margin: '2px 0' }} />
@@ -384,7 +387,6 @@ function GoldED() {
                 ref={textAreaRef}
                 value={composeData.body}
                 onChange={e => setComposeData({...composeData, body: e.target.value})}
-                onKeyDown={handleComposerKeyDown}
                 placeholder="Введите текст сообщения..."
                 style={{ flex: 1 }}
             />
@@ -413,7 +415,7 @@ function GoldED() {
                 {view === 'areas' && <span>Enter:Select  F10:Exit</span>}
                 {view === 'msglist' && <span>Enter:Read  Ins/n:New  Esc:Exit</span>}
                 {view === 'msgview' && <span>Esc:Exit  Ins/r:Reply</span>}
-                {view === 'composer' && <span>Ctrl/Cmd+Enter:Отправить  Esc:Отмена</span>}
+                {view === 'composer' && <span><span onClick={handleSend} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Ctrl+Enter:Отправить</span>  <span onClick={() => setView('msglist')} style={{ cursor: 'pointer', textDecoration: 'underline' }}>Esc:Отмена</span></span>}
                 <span>{view === 'areas' ? '0 unread' : ''}</span>
             </Footer>
         </TuiContainer>
