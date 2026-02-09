@@ -29,7 +29,8 @@ import {
     setActiveQuest as setActiveQuestAction,
     updateSkill as updateSkillAction,
     setAct as setActAction,
-    completeStep as completeStepAction
+    completeStep as completeStepAction,
+    advanceTime as advanceTimeAction,
 } from './engine/store';
 import { openWindow } from './engine/windowManager';
 import { generateTMailConfig } from './engine/configValidator';
@@ -121,18 +122,6 @@ function App() {
         const clockInterval = setInterval(() => {
             // Only advance time if not game over
             if (!gameState.gameOver) {
-                dispatch(setActAction(gameState.act)); // Keep act sync if needed? No.
-                // Advance time by 1 minute
-                // We need to use the action that calculates phase changes etc.
-                // But `advanceTime` reducer in slice might just add minutes.
-                // We likely need a thunk or just dispatch `advanceTime(1)`.
-                // However, `advanceTime` is imported from store.js which exports actions.
-                // Let's verify `gameStateSlice` logic for `advanceTime`.
-                // If it's a simple reducer, it won't handle day changes automatically?
-                // `gameTick.js` has `computeTickEffects`.
-                // `gameStateSlice` usually uses `computeTickEffects` inside the reducer?
-                // Let's check `gameStateSlice.js`.
-                // Assuming `advanceTime` handles logic.
                 dispatch(advanceTimeAction(1));
             }
         }, 1000);

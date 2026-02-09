@@ -167,8 +167,8 @@ describe('commandParser', () => {
             expect(output.some(l => l.includes('Архитектор'))).toBe(true);
         });
 
-        it('G disconnects', () => {
-            processCommand('G', baseState, dispatch, actions, appendOutput);
+        it('Q disconnects', () => {
+            processCommand('Q', baseState, dispatch, actions, appendOutput);
             expect(dispatch).toHaveBeenCalled();
             expect(output.some(l => l.includes('NO CARRIER'))).toBe(true);
         });

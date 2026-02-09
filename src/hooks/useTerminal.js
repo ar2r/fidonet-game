@@ -56,7 +56,7 @@ const ACTIONS = {
 };
 
 function getPromptForMode(network) {
-    if (network.terminalProgramRunning) return '';
+    if (network.terminalProgramRunning) return '>';
     if (network.terminalMode === 'BBS_MENU') return '>';
     if (network.terminalMode === 'BBS_FILES') return '>';
     if (network.terminalMode === 'BBS_CHAT') return '>';
