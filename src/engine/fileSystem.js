@@ -21,7 +21,7 @@ export const initialFileSystem = {
             "AUTOEXEC.BAT": { type: "FILE", content: "@echo off\npath C:\\FIDO;C:\\GAMES\nprompt $p$g" },
             "CONFIG.SYS": { type: "FILE", content: "FILES=20\nBUFFERS=20" },
             "NOTE.TXT": { type: "FILE", content: "ПЛАН ДЕЙСТВИЙ:\n1. Настроить модем (команда ATZ в терминале)\n2. Найти телефон BBS (см. BBSLIST.TXT)\n3. Позвонить и скачать софт (T-Mail, GoldED)\n4. Не забыть про ZMH в 2:00 ночи!" },
-            "BBSLIST.TXT": { type: "FILE", content: "========================================\n       S P B   B B S   L I S T\n========================================\n\nName             Phone       SysOp\n----------------------------------------\nThe Nexus        555-3389    Архитектор\nMad House        555-1234    Troll.Master\nHoly War         555-6666    Crusader\n\n========================================" }
+            "BBSLIST.TXT": { type: "FILE", content: "========================================\n       S P B   B B S   L I S T\n========================================\n\nName             Phone       SysOp\n----------------------------------------\nThe Nexus        555-3389    Архитектор\nMad House        555-1234    Troll.Master.SU\nHoly War         555-6666    Crusader\n\n========================================" }
         }
     }
 };

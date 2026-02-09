@@ -56,10 +56,10 @@ describe('matchesMetadata', () => {
     });
 
     it('matches compound command + args', () => {
-        const meta = { command: 'TRACE', args: 'TROLL.MASTER' };
-        expect(matchesMetadata(meta, { command: 'TRACE', args: 'TROLL.MASTER', success: true })).toBe(true);
+        const meta = { command: 'TRACE', args: 'TROLL.MASTER.SU' };
+        expect(matchesMetadata(meta, { command: 'TRACE', args: 'TROLL.MASTER.SU', success: true })).toBe(true);
         expect(matchesMetadata(meta, { command: 'TRACE', args: 'OTHER' })).toBe(false);
-        expect(matchesMetadata(meta, { command: 'OTHER', args: 'TROLL.MASTER' })).toBe(false);
+        expect(matchesMetadata(meta, { command: 'OTHER', args: 'TROLL.MASTER.SU' })).toBe(false);
     });
 
     it('matches compound dialogueId + success', () => {
@@ -305,14 +305,14 @@ describe('setupQuestListeners', () => {
                     id: 'exec_trace',
                     type: 'event',
                     event: COMMAND_EXECUTED,
-                    metadata: { command: 'TRACE', args: 'TROLL.MASTER' },
+                    metadata: { command: 'TRACE', args: 'TROLL.MASTER.SU' },
                 },
             ],
         });
 
         setupWithState({ active: 'trace_troll', completed: [], stepProgress: {} });
 
-        eventBus.publish(COMMAND_EXECUTED, { command: 'TRACE', args: 'TROLL.MASTER', success: true });
+        eventBus.publish(COMMAND_EXECUTED, { command: 'TRACE', args: 'TROLL.MASTER.SU', success: true });
 
         expect(dispatch).toHaveBeenCalledWith(
             actions.completeStep({ questId: 'trace_troll', stepId: 'exec_trace' })

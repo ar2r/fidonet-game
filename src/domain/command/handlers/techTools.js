@@ -23,15 +23,15 @@ export function handleTrace({ command, appendOutput }) {
         setTimeout(() => {
             appendOutput(` 2  2:5020/123 (The Nexus)  20ms`);
             setTimeout(() => {
-                if (target === 'TROLL.MASTER') {
+                if (target === 'TROLL.MASTER.SU') {
                     appendOutput(` 3  2:5020/666 (DarkSide)  45ms`);
                     appendOutput(`Target found! Address: 2:5020/666`);
                     appendOutput("Log saved to disk.");
-                    
+
                     // Publish event for quest completion
                     eventBus.publish(COMMAND_EXECUTED, {
                         command: 'TRACE',
-                        args: 'TROLL.MASTER',
+                        args: 'TROLL.MASTER.SU',
                         success: true
                     });
                 } else {

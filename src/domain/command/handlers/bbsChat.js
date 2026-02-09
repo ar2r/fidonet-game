@@ -47,7 +47,7 @@ const DIALOGUES = {
     act3_strategy_dialogue: {
         steps: [
             {
-                text: "Архитектор: Видел, что творится в SU.FLAME? Troll.Master совсем озверел. Что думаешь делать?",
+                text: "Архитектор: Видел, что творится в SU.FLAME? Troll.Master.SU совсем озверел. Что думаешь делать?",
                 options: [
                     { id: 1, text: "Попробую с ним поговорить. (Путь Дипломата)", nextStep: 1 },
                     { id: 2, text: "Вычислю его адрес и сдам. (Путь Технаря)", nextStep: 2 },
@@ -64,7 +64,7 @@ const DIALOGUES = {
                 ]
             },
             {
-                text: "Архитектор: Хакерский подход? Мне нравится. Используй команду TRACE в терминале, чтобы найти его узел.",
+                text: "Архитектор: Хакерский подход? Мне нравится. Набери в терминале TRACE TROLL.MASTER.SU — увидишь, откуда он на самом деле пишет.",
                 onEnter: (dispatch, actions) => {
                     dispatch(actions.completeQuest('choose_strategy'));
                     dispatch(actions.setActiveQuest('trace_troll'));
@@ -111,7 +111,7 @@ const DIALOGUES = {
     flame_war_peace: {
         steps: [
             {
-                text: "Troll.Master: ТЫ КТО ТАКОЙ? ВАЛИ ОТСЮДА ПОКА ЦЕЛ! ЛАМЕР!",
+                text: "Troll.Master.SU: ТЫ КТО ТАКОЙ? ВАЛИ ОТСЮДА ПОКА ЦЕЛ! ЛАМЕР!",
                 options: [
                     { id: 1, text: "Сам ламер. (Атака)", nextStep: 3 },
                     { id: 2, text: "Давайте успокоимся и обсудим всё конструктивно. (Дипломатия)", nextStep: 1 },
@@ -124,7 +124,7 @@ const DIALOGUES = {
                 ]
             },
             {
-                text: "Troll.Master: ...Ладно. Может ты и прав. Скучно с вами.",
+                text: "Troll.Master.SU: ...Ладно. Может ты и прав. Скучно с вами.",
                 onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: true });
                 },
@@ -133,7 +133,7 @@ const DIALOGUES = {
                 ]
             },
             {
-                text: "Troll.Master: АХАХА! СЛИВ ЗАЩИТАН! (Вас забанили)",
+                text: "Troll.Master.SU: АХАХА! СЛИВ ЗАЩИТАН! (Вас забанили)",
                 onEnter: () => {
                     eventBus.publish(DIALOGUE_COMPLETED, { dialogueId: 'flame_war_peace', success: false });
                 },

@@ -86,7 +86,7 @@ Dixi.
         },
         {
             id: 'msg_f4',
-            from: 'Troll.Master',
+            from: 'Troll.Master.SU',
             to: 'All',
             subj: 'Re: Windows 95 MUST DIE',
             date: '07 Feb 1995',

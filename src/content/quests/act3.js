@@ -126,18 +126,18 @@ export const ACT3_QUESTS = [
         hints: [
             'Вам понадобятся сетевые утилиты.',
             'Команда трассировки (TRACE) поможет найти источник.',
-            'Цель: TROLL.MASTER.'
+            'Набери: TRACE TROLL.MASTER.SU'
         ],
         prerequisites: ['choose_strategy'],
         steps: [
             {
                 id: 'exec_trace',
                 type: StepType.EVENT,
-                event: COMMAND_EXECUTED, // Need to implement TRACE command
-                description: 'Вычислить узел Troll.Master',
+                event: COMMAND_EXECUTED,
+                description: 'Вычислить узел Troll.Master.SU',
                 metadata: {
                     command: 'TRACE',
-                    args: 'TROLL.MASTER'
+                    args: 'TROLL.MASTER.SU'
                 }
             }
         ],
