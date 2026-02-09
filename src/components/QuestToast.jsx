@@ -64,7 +64,7 @@ function ToastItemWithTimer({ toast, onDismiss }) {
         const timer = setTimeout(() => {
             setClosing(true);
             setTimeout(() => onDismiss(toast.id), 300);
-        }, 3000);
+        }, 5000);
         return () => clearTimeout(timer);
     }, [toast.id, onDismiss]);
 
