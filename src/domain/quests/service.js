@@ -1,4 +1,4 @@
-import { completeQuestAndProgress } from '../../engine/questEngine';
+import { completeQuestAndProgress } from './completion';
 import { validateTMailConfig, checkConfigCorrectness } from '../../engine/configValidator';
 import { eventBus } from '../events/bus';
 import { FILE_SAVED } from '../events/types';

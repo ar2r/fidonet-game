@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { completeQuestAndProgress, checkDownloadQuestCompletion } from './questEngine';
+import { completeQuestAndProgress, checkDownloadQuestCompletion } from './completion';
 
 describe('questEngine', () => {
     describe('completeQuestAndProgress', () => {

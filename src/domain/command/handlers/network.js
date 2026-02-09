@@ -1,7 +1,7 @@
 import { eventBus } from '../../events/bus';
 import { MODEM_INITIALIZED, BBS_CONNECTED } from '../../events/types';
 import { BBS_WELCOME, BBS_MENU } from '../../../assets/ascii';
-import { completeQuestAndProgress } from '../../../engine/questEngine';
+import { completeQuestAndProgress } from '../../quests/completion';
 
 /**
  * Network / Modem Handlers

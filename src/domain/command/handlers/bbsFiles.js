@@ -4,7 +4,7 @@ import { README_FIDO } from '../../../assets/text';
 import { BBS_FILES, BBS_MENU } from '../../../assets/ascii';
 import { eventBus } from '../../events/bus';
 import { DOWNLOAD_COMPLETED } from '../../events/types';
-import { checkDownloadQuestCompletion, completeQuestAndProgress } from '../../../engine/questEngine';
+import { checkDownloadQuestCompletion, completeQuestAndProgress } from '../../quests/completion';
 
 function triggerQuest(questId, gameState, dispatch, actions, appendOutput) {
     if (gameState.quests?.active !== questId) return;

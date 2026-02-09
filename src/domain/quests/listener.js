@@ -1,5 +1,5 @@
 import { eventBus } from '../events/bus';
-import { completeQuestAndProgress } from '../../engine/questEngine';
+import { completeQuestAndProgress } from './completion';
 import { getQuestById } from '../../content/quests';
 import { StepType } from './schema';
 

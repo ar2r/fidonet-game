@@ -16,7 +16,7 @@ import {
 } from '../events/types';
 
 // Mock questEngine
-vi.mock('../../engine/questEngine', () => ({
+vi.mock('./completion', () => ({
     completeQuestAndProgress: vi.fn(() => ['quest completed']),
 }));
 
@@ -25,7 +25,7 @@ vi.mock('../../content/quests', () => ({
     getQuestById: vi.fn(),
 }));
 
-import { completeQuestAndProgress } from '../../engine/questEngine';
+import { completeQuestAndProgress } from './completion';
 import { getQuestById } from '../../content/quests';
 
 describe('matchesMetadata', () => {

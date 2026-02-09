@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from 'react95';
 import { useDispatch, useSelector } from 'react-redux';
-import { completeQuestAndProgress } from '../engine/questEngine';
+import { completeQuestAndProgress } from '../domain/quests/completion';
 import { 
     completeQuest as completeQuestAction, 
     setActiveQuest as setActiveQuestAction, 
