@@ -4,6 +4,7 @@
  */
 
 import { BBS_MENU, BBS_FILES, BBS_CHAT_SYSOP } from '../../../assets/ascii';
+import { startChat } from './bbsChat';
 
 /**
  * Handle 'F' - Enter file area
@@ -32,11 +33,13 @@ export function handleMessageCommand({ appendOutput }) {
 /**
  * Handle 'C' - Chat with SysOp
  */
-export function handleChatCommand({ dispatch, actions, appendOutput }) {
+export function handleChatCommand({ dispatch, actions, appendOutput, gameState }) {
     dispatch(actions.setTerminalMode('BBS_CHAT'));
     appendOutput(BBS_CHAT_SYSOP);
-    appendOutput("");
-    appendOutput("Нажмите ENTER (или введите любое слово), чтобы начать разговор.");
+    
+    // Immediately start the chat dialogue
+    startChat({ gameState, dispatch, actions, appendOutput });
+    
     return { handled: true };
 }
 

@@ -318,6 +318,54 @@ export function handleChatInput({ command, gameState, dispatch, actions, appendO
     return { handled: true };
 }
 
+/**
+ * Start chat dialogue immediately (used by BBS menu)
+ */
+export function startChat({ gameState, dispatch, actions, appendOutput }) {
+    const network = gameState.network;
+    const quests = gameState.quests;
+
+    let dialogueId = 'default';
+        
+    // Context-aware dialogue selection
+    if (quests.active === 'request_node') {
+        dialogueId = 'request_node_status';
+    } else if (quests.active === 'choose_strategy') {
+        dialogueId = 'act3_strategy_dialogue';
+    } else if (quests.active === 'crisis_choice') {
+        dialogueId = 'crisis_dialogue';
+    } else if (quests.active === 'negotiate_peace') {
+        dialogueId = 'flame_war_peace';
+    } else if (quests.active === 'meet_coordinator') {
+        dialogueId = 'coordinator_finale';
+    }
+
+    if (dialogueId === 'default') {
+        // Check for specific quest hints or fallback to generic chat
+        if (quests.active === 'hardware_upgrade') {
+            dispatch(actions.setTerminalMode('BBS_MENU'));
+            if (actions.setOptions) dispatch(actions.setOptions([]));
+            appendOutput("");
+            appendOutput("Архитектор сейчас занят. Заходите позже.");
+            appendOutput("(Подсказка: Сначала выполните квест 'Железный вопрос' - купите модем)");
+            appendOutput("");
+            appendOutput(BBS_MENU);
+            return;
+        }
+        
+        // Use generic chat instead of immediate exit
+        dialogueId = 'generic_chat';
+    }
+
+    // Start the dialogue
+    dispatch(actions.setDialogue({ id: dialogueId, step: 0 }));
+    
+    // Render first step
+    const dialogue = DIALOGUES[dialogueId];
+    const currentStep = dialogue.steps[0];
+    renderStep(currentStep, appendOutput, dispatch, actions);
+}
+
 function renderStep(step, appendOutput, dispatch, actions) {
     if (dispatch && actions && actions.setOptions) {
         dispatch(actions.setOptions(step.options));
