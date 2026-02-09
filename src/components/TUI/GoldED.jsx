@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { ECHO_AREAS, MESSAGES } from '../../content/messages/data';
 import { eventBus } from '../../domain/events/bus';
 import { MESSAGE_READ, MESSAGE_POSTED } from '../../domain/events/types';
+import fs from '../../engine/fileSystemInstance';
 
 const TuiContainer = styled.div`
   background-color: #000000; /* Black Background */
@@ -236,17 +237,30 @@ function GoldED() {
         }
     };
 
+    const getGoldEDConfig = () => {
+        const file = fs.cat('C:\\FIDO\\GOLDED.CFG');
+        if (!file) return {};
+        const originMatch = file.match(/^ORIGIN\s+(.+)$/m);
+        const usernameMatch = file.match(/^USERNAME\s+(.+)$/m);
+        return {
+            origin: originMatch ? originMatch[1].trim() : null,
+            username: usernameMatch ? usernameMatch[1].trim() : null,
+        };
+    };
+
     const handleSend = () => {
         if (!composeData.body.trim()) return;
 
+        const cfg = getGoldEDConfig();
         const newMsg = {
             id: `msg_${Date.now()}`,
-            from: playerName,
+            from: cfg.username || playerName,
             to: composeData.to,
             subj: composeData.subj,
             date: getGameDate(),
             body: composeData.body,
             read: true,
+            ...(cfg.origin && { origin: cfg.origin }),
         };
 
         if (!MESSAGES[currentAreaId]) MESSAGES[currentAreaId] = [];
