@@ -1,16 +1,51 @@
-# React + Vite
+# FidoNet Simulator 1995
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> "Welcome to the matrix, Neo... I mean, SysOp."
 
-Currently, two official plugins are available:
+A text-based RPG/Simulator about the FidoNet culture in the mid-90s. Experience the nostalgia of dial-up modems, BBS exploration, mailer configuration, and virus outbreaks.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Terminal Interface**: Authentic MS-DOS style CLI with `DIR`, `CD`, `TYPE`, and more.
+- **BBS Simulation**: Connect to bulletin board systems using `TERMINAL.EXE` and a simulated 14400 modem.
+- **Quest System**: Story-driven campaign to set up your node, gain points, and become a respected SysOp.
+- **Realistic Configuration**: Edit `T-MAIL.CTL` and `GOLDED.CFG` files just like in the old days.
+- **Economy**: Manage your phone bill and savings. Don't let your debt get too high!
+- **Virus Outbreaks**: Protect your system from viruses like "OneHalf" and "Win95".
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Framework**: React 19 (Vite)
+- **State Management**: Redux Toolkit
+- **UI Components**: `react95` for Windows 95 aesthetics, `react-rnd` for window management.
+- **Testing**: Vitest, React Testing Library
+- **Linting**: ESLint
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+1.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+2.  **Start development server**:
+    ```bash
+    npm run dev
+    ```
+
+3.  **Run tests**:
+    ```bash
+    npm test
+    ```
+
+## Project Structure
+
+- `src/domain/`: Core business logic (Commands, Quests, Events) - *Clean Architecture*
+- `src/engine/`: Legacy game engine components (gradually migrating to domain)
+- `src/components/`: React UI components (Terminal, Desktop, Apps)
+- `src/content/`: Game data (Quests, Messages)
+- `src/hooks/`: Custom React hooks
+
+## License
+
+MIT

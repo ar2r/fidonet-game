@@ -127,6 +127,8 @@ const MessageBody = ({ text }) => {
     );
 };
 
+const formatAreaName = (id) => id ? id.toUpperCase().replace(/_/g, '.') : '';
+
 function GoldED() {
     const [view, setView] = useState('areas'); // areas, msglist, msgview, composer
     const [selectedAreaIndex, setSelectedAreaIndex] = useState(0);
@@ -136,26 +138,28 @@ function GoldED() {
     const [composeData, setComposeData] = useState({ to: 'All', subj: '', body: '' });
 
     const { time, day } = useSelector(state => state.gameState);
+    const playerName = useSelector(state => state.player.name);
     const containerRef = useRef(null);
     const subjInputRef = useRef(null);
     const textAreaRef = useRef(null);
 
-    // Focus management
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (view === 'composer') {
-                // Focus subject input if empty, otherwise textarea
-                if (subjInputRef.current && !composeData.subj) {
-                    subjInputRef.current.focus();
-                } else if (textAreaRef.current) {
-                    textAreaRef.current.focus();
-                }
-            } else if (containerRef.current) {
-                containerRef.current.focus();
+    // Focus the container on mount and view changes
+    const focusContainer = React.useCallback(() => {
+        if (view === 'composer') {
+            if (subjInputRef.current) {
+                subjInputRef.current.focus();
             }
-        }, 10);
-        return () => clearTimeout(timer);
-    }, [view, composeData.subj]);
+        } else if (containerRef.current) {
+            containerRef.current.focus();
+        }
+    }, [view]);
+
+    useEffect(() => {
+        // Try multiple times to ensure focus after window mount
+        const t1 = setTimeout(focusContainer, 50);
+        const t2 = setTimeout(focusContainer, 200);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [focusContainer]);
 
     const getGameDate = () => {
         const date = new Date(1995, 1, 6); // Feb 6, 1995
@@ -201,7 +205,8 @@ function GoldED() {
                 setSelectedMsgIndex(prev => Math.max(prev - 1, 0));
             } else if (e.key === 'Enter') {
                 if (msgs.length > 0) {
-                    const msg = msgs[selectedMsgIndex];
+                    const reversed = [...msgs].reverse();
+                    const msg = reversed[selectedMsgIndex];
                     setCurrentMsg(msg);
                     setView('msgview');
                     eventBus.publish(MESSAGE_READ, {
@@ -236,7 +241,7 @@ function GoldED() {
 
         const newMsg = {
             id: `msg_${Date.now()}`,
-            from: 'SysOp',
+            from: playerName,
             to: composeData.to,
             subj: composeData.subj,
             date: getGameDate(),
@@ -275,22 +280,25 @@ function GoldED() {
 
     const renderMsgList = () => {
         const msgs = MESSAGES[currentAreaId] || [];
+        const reversed = [...msgs].reverse();
         return (
             <>
-                <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Messages in {currentAreaId.toUpperCase()} ({msgs.length})</div>
+                <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Messages in {formatAreaName(currentAreaId)} ({msgs.length})</div>
                 {msgs.length === 0 && <div>No messages. Press Ins to write.</div>}
-                {msgs.map((msg, idx) => (
-                    <ListItem 
-                        key={msg.id} 
-                        selected={idx === selectedMsgIndex}
-                        onClick={() => { setSelectedMsgIndex(idx); setCurrentMsg(msg); setView('msgview'); }}
-                        style={{ display: 'flex', justifyContent: 'space-between' }}
-                    >
-                        <span style={{ width: '160px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{msg.from}</span>
-                        <span style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingRight: '10px' }}>{msg.subj}</span>
-                        <span style={{ whiteSpace: 'nowrap' }}>{msg.date}</span>
-                    </ListItem>
-                ))}
+                {reversed.map((msg, dispIdx) => {
+                    return (
+                        <ListItem
+                            key={msg.id}
+                            selected={dispIdx === selectedMsgIndex}
+                            onClick={() => { setSelectedMsgIndex(dispIdx); setCurrentMsg(msg); setView('msgview'); eventBus.publish(MESSAGE_READ, { area: currentAreaId, subj_contains: msg.subj, from: msg.from }); }}
+                            style={{ display: 'flex', justifyContent: 'space-between' }}
+                        >
+                            <span style={{ width: '160px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{msg.from}</span>
+                            <span style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', paddingRight: '10px' }}>{msg.subj}</span>
+                            <span style={{ whiteSpace: 'nowrap' }}>{msg.date}</span>
+                        </ListItem>
+                    );
+                })}
             </>
         );
     };
@@ -330,7 +338,7 @@ function GoldED() {
     const renderComposer = () => (
         <div style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <ComposerHeader>
-                ■ РЕДАКТОР СООБЩЕНИЙ ■  Область: {currentAreaId?.toUpperCase() || '???'}
+                ■ РЕДАКТОР СООБЩЕНИЙ ■  Область: {formatAreaName(currentAreaId) || '???'}
             </ComposerHeader>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '5px 10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -354,14 +362,15 @@ function GoldED() {
     );
 
     return (
-        <TuiContainer 
-            tabIndex="0" 
-            ref={containerRef} 
+        <TuiContainer
+            tabIndex="0"
+            ref={containerRef}
             onKeyDown={handleKeyDown}
+            onClick={focusContainer}
         >
             <Header>
                 <span>GoldEd (2:5020/123.45)</span>
-                <span>{currentAreaId ? currentAreaId.toUpperCase() : 'AREA LIST'}</span>
+                <span>{currentAreaId ? formatAreaName(currentAreaId) : 'AREA LIST'}</span>
                 <span>{time}</span>
             </Header>
             <ContentArea>

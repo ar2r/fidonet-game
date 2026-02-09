@@ -242,8 +242,8 @@ const idleCommands = commandRegistry.getCommands(TerminalMode.IDLE);
 
 ## Roadmap
 
-- [ ] Migrate all IDLE commands to handlers
-- [ ] Migrate BBS mode commands
+- [x] Migrate all IDLE commands to handlers
+- [x] Migrate BBS mode commands
 - [ ] Add command aliasing (DIR = LS)
 - [ ] Add command autocomplete data
 - [ ] Add command help text in registry
