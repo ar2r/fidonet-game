@@ -96,7 +96,7 @@ export class FileSystem {
     }
 
     promptPath() {
-        return this.pwd() + '>';
+        return this.pwd() + '> ';
     }
 
     cd(pathStr) {
