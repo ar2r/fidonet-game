@@ -188,6 +188,9 @@ function GoldED() {
     };
 
     const handleKeyDown = (e) => {
+        // Stop propagation so the terminal's global window listener doesn't steal keys
+        e.stopPropagation();
+
         if (view === 'areas') {
             if (e.key === 'ArrowDown') {
                 setSelectedAreaIndex(prev => Math.min(prev + 1, ECHO_AREAS.length - 1));
