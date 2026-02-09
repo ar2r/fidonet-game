@@ -7,9 +7,7 @@ import * as bbsFiles from '../domain/command/handlers/bbsFiles';
 import * as bbsMenu from '../domain/command/handlers/bbsMenu';
 import * as bbsChat from '../domain/command/handlers/bbsChat';
 import * as techTools from '../domain/command/handlers/techTools';
-import { getTimeCost, computeTickEffects } from './gameTick';
-import { checkRandomEvents } from '../domain/events/random/scheduler';
-import { checkBills, checkDebtGameOver } from './economy';
+import { afterCommand } from '../domain/game/gameLoopService';
 
 // --- Registration ---
 
@@ -106,48 +104,7 @@ export const processCommand = (cmd, gameState, dispatch, actions, appendOutput) 
     const result = commandRegistry.execute(terminalMode, command, context);
 
     if (result && result.handled) {
-        // --- Game Loop: Time & Events ---
-        
-        // 1. Calculate Time Cost
-        const cost = getTimeCost(command);
-        
-        // 2. Advance Time
-        // Note: actions should include setTimeMinutes, advanceTime, setPhase, setZMH, advanceDay
-        // We need to ensure 'actions' object passed to processCommand has these.
-        // Assuming 'actions' comes from mapDispatchToProps or similar in App.jsx.
-        
-        const currentMinutes = gameState.gameState?.timeMinutes || 1380;
-        const isConnected = gameState.network?.connected || false;
-        
-        const effects = computeTickEffects(currentMinutes, cost, isConnected);
-        
-        if (effects.newMinutes !== currentMinutes) {
-            dispatch(actions.setTimeMinutes(effects.newMinutes));
-            dispatch(actions.advanceTime(effects.newTimeString));
-            
-            if (effects.newPhase !== gameState.gameState.phase) {
-                dispatch(actions.setPhase(effects.newPhase));
-            }
-            
-            if (effects.newZMH !== gameState.gameState.zmh) {
-                dispatch(actions.setZMH(effects.newZMH));
-            }
-            
-            if (effects.daysAdvanced > 0) {
-                dispatch(actions.advanceDay(effects.daysAdvanced));
-            }
-            
-            if (effects.atmosphereDelta !== 0) {
-                dispatch(actions.updateStat({ stat: 'atmosphere', value: effects.atmosphereDelta }));
-            }
-        }
-
-        // 3. Random Events
-        checkRandomEvents(gameState, dispatch, actions, appendOutput);
-
-        // 4. Economy Checks
-        checkBills(gameState, dispatch, actions, appendOutput);
-        checkDebtGameOver(gameState, dispatch, actions);
+        afterCommand(command, gameState, dispatch, actions, appendOutput);
 
         if (result.output === 'CLEAR') return 'CLEAR';
         return;

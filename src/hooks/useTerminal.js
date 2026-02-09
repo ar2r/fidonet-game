@@ -24,6 +24,7 @@ import {
     updateStat as updateStatAction,
     setVirusActive as setVirusActiveAction,
     setVirusStage as setVirusStageAction,
+    setGameOver as setGameOverAction,
     payBill as payBillAction,
     setLastBillDay as setLastBillDayAction,
 } from '../engine/store';
@@ -41,6 +42,7 @@ const ACTIONS = {
     setAct: setActAction,
     setVirusActive: setVirusActiveAction,
     setVirusStage: setVirusStageAction,
+    setGameOver: setGameOverAction,
     updateStat: updateStatAction,
     setTimeMinutes: setTimeMinutesAction,
     advanceTime: advanceTimeAction,
