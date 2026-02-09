@@ -94,6 +94,19 @@ const SpeedButton = styled(Button)`
   color: ${props => props.active ? '#FFFFFF' : undefined};
 `;
 
+const DesktopContainer = styled.div`
+  padding: 10px;
+  display: grid;
+  grid-template-rows: repeat(auto-fill, 90px);
+  grid-auto-flow: column;
+  grid-auto-columns: 80px;
+  gap: 8px;
+  height: calc(100vh - 50px);
+  align-content: start;
+  justify-items: center;
+  align-items: start;
+`;
+
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
@@ -474,7 +487,7 @@ function App() {
                 />
 
                 {/* Desktop Icons Area */}
-                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-start', alignContent: 'flex-start', maxHeight: 'calc(100vh - 70px)', overflow: 'hidden' }}>
+                <DesktopContainer>
                     {/* MS-DOS Prompt (Terminal) */}
                     <div onDoubleClick={() => handleOpenWindow('terminal')} style={{ textAlign: 'center', width: '64px', cursor: 'pointer', color: 'white' }}>
                         <div style={{ width: '32px', height: '32px', background: 'black', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>C:\</div>
@@ -554,7 +567,7 @@ function App() {
                         <div style={{ width: '32px', height: '32px', background: 'maroon', margin: '0 auto', border: '2px solid gray', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: 'bold' }}>$</div>
                         <span style={{ background: '#008080', padding: '2px' }}>Рынок</span>
                     </div>
-                </div>
+                </DesktopContainer>
 
                 {/* Render all open windows */}
                 {Object.values(windows).filter(w => w.isOpen && !w.isMinimized).map(window => (
