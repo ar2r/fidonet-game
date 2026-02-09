@@ -349,6 +349,16 @@ function GoldED() {
         </div>
     );
 
+    const handleComposerKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            setView('msglist');
+        } else if (e.key === 'Enter' && e.ctrlKey) {
+            e.preventDefault();
+            handleSend();
+        }
+    };
+
     const renderComposer = () => (
         <div style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <ComposerHeader>
@@ -357,11 +367,11 @@ function GoldED() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '5px 10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{width: '60px', color: '#AAAAAA'}}>To  :</span>
-                    <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} />
+                    <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} onKeyDown={handleComposerKeyDown} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{width: '60px', color: '#AAAAAA'}}>Subj:</span>
-                    <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} />
+                    <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} onKeyDown={handleComposerKeyDown} />
                 </div>
             </div>
             <div style={{ borderTop: '1px solid #0000AA', margin: '2px 0' }} />
@@ -369,6 +379,7 @@ function GoldED() {
                 ref={textAreaRef}
                 value={composeData.body}
                 onChange={e => setComposeData({...composeData, body: e.target.value})}
+                onKeyDown={handleComposerKeyDown}
                 placeholder="Введите текст сообщения..."
                 style={{ flex: 1 }}
             />
