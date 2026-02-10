@@ -307,6 +307,7 @@ function App() {
 
     const handleResetGame = () => {
         if (confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?')) {
+            isLoadingRef.current = true; // Suppress auto-save during reset
             clearLocalStorage();
             window.history.replaceState(null, '', window.location.pathname);
             window.location.reload();
