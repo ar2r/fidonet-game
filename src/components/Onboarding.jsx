@@ -24,10 +24,9 @@ const Content = styled.div`
 `;
 
 const Slide = styled.div`
-  min-height: 350px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 `;
 
 const Title = styled.h2`
@@ -187,17 +186,17 @@ function Onboarding() {
 
     return (
         <Overlay>
-            <Window style={{ width: 550 }}>
+            <Window style={{ width: 550, height: 500, display: 'flex', flexDirection: 'column' }}>
                 <WindowHeader className="window-header">
                     <span>FidoNet Simulator 1995 - Setup</span>
                 </WindowHeader>
-                <WindowContent>
+                <WindowContent style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
                     <Slide>
-                        <Content>
+                        <Content style={{ flex: 1 }}>
                             <Title>{currentStep.title}</Title>
                             {currentStep.type === 'setup' ? renderSetup() : currentStep.content}
                         </Content>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16 }}>
                             <div style={{ fontSize: 12, color: '#888' }}>
                                 Шаг {step + 1} из {STEPS.length}
                             </div>
