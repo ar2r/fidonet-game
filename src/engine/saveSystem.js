@@ -76,6 +76,50 @@ export function getSaveLink() {
     return url.toString();
 }
 
+const STORAGE_KEY = 'fidonet_save';
+
+/**
+ * Save game state to localStorage
+ */
+export function saveToLocalStorage() {
+    try {
+        const encoded = saveGame();
+        if (encoded) {
+            localStorage.setItem(STORAGE_KEY, encoded);
+            return true;
+        }
+        return false;
+    } catch (e) {
+        console.warn('Failed to save to localStorage:', e);
+        return false;
+    }
+}
+
+/**
+ * Load game state from localStorage
+ */
+export function loadFromLocalStorage() {
+    try {
+        const encoded = localStorage.getItem(STORAGE_KEY);
+        if (!encoded) return false;
+        return loadGame(encoded);
+    } catch (e) {
+        console.warn('Failed to load from localStorage:', e);
+        return false;
+    }
+}
+
+/**
+ * Clear saved game from localStorage
+ */
+export function clearLocalStorage() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+        console.warn('Failed to clear localStorage:', e);
+    }
+}
+
 /**
  * Shorten URL using TinyURL (via CORS proxy)
  */

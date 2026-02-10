@@ -50,7 +50,7 @@ import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, QUEST_STEP_COMPLETED } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
-import { loadGame, getSaveLink, shortenLink, saveGame } from './engine/saveSystem';
+import { loadGame, getSaveLink, shortenLink, saveToLocalStorage, loadFromLocalStorage, clearLocalStorage } from './engine/saveSystem';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -144,32 +144,27 @@ function App() {
     const windows = useSelector(state => state.windowManager.windows);
     const network = useSelector(state => state.network);
 
-    // Load Game on Mount
+    // Load Game on Mount: URL hash → localStorage → fresh game
     React.useEffect(() => {
         const hash = window.location.hash;
         if (hash && hash.startsWith('#save=')) {
             const encoded = hash.substring(6);
             if (loadGame(encoded)) {
-                // Keep the hash so reloading works, but notify success
-                // window.history.replaceState(null, '', window.location.pathname); // Removing creates loop if we auto-save immediately
-                // Instead, just load. Auto-save will overwrite it later with current state.
-                console.log('Game loaded from URL');
+                saveToLocalStorage();
+                window.history.replaceState(null, '', window.location.pathname);
+                console.log('Game loaded from URL, saved to localStorage');
             } else {
                 alert('Ошибка загрузки сохранения: неверный код.');
             }
+        } else {
+            loadFromLocalStorage();
         }
     }, []);
 
-    // Auto-Save Game Logic (Update URL hash)
+    // Auto-Save Game Logic (localStorage)
     React.useEffect(() => {
         const timer = setTimeout(() => {
-            const saveString = saveGame();
-            if (saveString) {
-                const newHash = `#save=${saveString}`;
-                if (window.location.hash !== newHash) {
-                    window.history.replaceState(null, '', newHash);
-                }
-            }
+            saveToLocalStorage();
         }, 1000); // Debounce 1s
 
         return () => clearTimeout(timer);
@@ -296,6 +291,7 @@ function App() {
 
     const handleResetGame = () => {
         if (confirm('Вы уверены, что хотите сбросить весь прогресс и начать заново?')) {
+            clearLocalStorage();
             window.history.replaceState(null, '', window.location.pathname);
             window.location.reload();
         }
