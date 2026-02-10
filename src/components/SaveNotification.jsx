@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Window, WindowHeader, WindowContent, Button } from 'react95';
 import styled from 'styled-components';
 
@@ -54,21 +54,6 @@ const InfoIcon = styled.div`
   flex-shrink: 0;
 `;
 
-const ProgressBar = styled.div`
-  height: 8px;
-  background-color: #C0C0C0;
-  border: 1px solid #808080;
-  position: relative;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div`
-  height: 100%;
-  background-color: #0000AA;
-  width: ${props => props.progress}%;
-  transition: width 0.1s linear;
-`;
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -79,26 +64,10 @@ const ButtonContainer = styled.div`
  * Автоматически закрывается через 5 секунд
  */
 function SaveNotification({ message, title, onClose }) {
-  const [progress, setProgress] = React.useState(100);
-  const duration = 5000; // 5 секунд
-  const intervalTime = 100; // обновление каждые 100мс
-
   useEffect(() => {
-    const startTime = Date.now();
-
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
-      setProgress(remaining);
-
-      if (remaining === 0) {
-        clearInterval(interval);
-        onClose();
-      }
-    }, intervalTime);
-
-    return () => clearInterval(interval);
-  }, [onClose, duration, intervalTime]);
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
 
   return (
     <Overlay onClick={onClose}>
@@ -111,10 +80,6 @@ function SaveNotification({ message, title, onClose }) {
             <InfoIcon>i</InfoIcon>
             <MessageText>{message}</MessageText>
           </IconArea>
-
-          <ProgressBar>
-            <ProgressFill progress={progress} />
-          </ProgressBar>
 
           <ButtonContainer>
             <Button onClick={onClose}>OK</Button>
