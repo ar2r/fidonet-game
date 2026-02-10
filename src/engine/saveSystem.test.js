@@ -215,10 +215,10 @@ describe('saveSystem', () => {
             vi.unstubAllGlobals();
         });
 
-        it('uploads save and returns blob ID from Location header', async () => {
+        it('uploads save and returns blob ID from x-jsonblob-id header', async () => {
             fetch.mockResolvedValue({
                 ok: true,
-                headers: { get: (h) => h === 'Location' ? 'https://jsonblob.com/api/jsonBlob/abc123' : null },
+                headers: { get: (h) => h === 'x-jsonblob-id' ? 'abc123' : null },
             });
 
             const id = await uploadSave('v1:data');
@@ -227,6 +227,16 @@ describe('saveSystem', () => {
                 'https://jsonblob.com/api/jsonBlob',
                 expect.objectContaining({ method: 'POST', body: JSON.stringify({ s: 'v1:data' }) })
             );
+        });
+
+        it('falls back to Location header when x-jsonblob-id is missing', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                headers: { get: (h) => h === 'Location' ? '/api/jsonBlob/def456' : null },
+            });
+
+            const id = await uploadSave('v1:data');
+            expect(id).toBe('def456');
         });
 
         it('throws on network error', async () => {
@@ -239,12 +249,12 @@ describe('saveSystem', () => {
             await expect(uploadSave('v1:data')).rejects.toThrow('Upload failed: 500');
         });
 
-        it('throws when Location header is missing', async () => {
+        it('throws when both headers are missing', async () => {
             fetch.mockResolvedValue({
                 ok: true,
                 headers: { get: () => null },
             });
-            await expect(uploadSave('v1:data')).rejects.toThrow('No Location header');
+            await expect(uploadSave('v1:data')).rejects.toThrow('No blob ID in response');
         });
     });
 
@@ -302,7 +312,7 @@ describe('saveSystem', () => {
         it('returns short URL on successful upload', async () => {
             fetch.mockResolvedValue({
                 ok: true,
-                headers: { get: (h) => h === 'Location' ? 'https://jsonblob.com/api/jsonBlob/xyz789' : null },
+                headers: { get: (h) => h === 'x-jsonblob-id' ? 'xyz789' : null },
             });
 
             const result = await createShareLink();

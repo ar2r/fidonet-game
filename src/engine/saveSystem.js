@@ -152,11 +152,12 @@ export async function uploadSave(saveString) {
         body: JSON.stringify({ s: saveString }),
     });
     if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+    // Prefer x-jsonblob-id (always accessible via CORS), fall back to Location
+    const id = response.headers.get('x-jsonblob-id');
+    if (id) return id;
     const location = response.headers.get('Location');
-    if (!location) throw new Error('No Location header in response');
-    // Location is like https://jsonblob.com/api/jsonBlob/<id>
-    const id = location.split('/').pop();
-    return id;
+    if (!location) throw new Error('No blob ID in response headers');
+    return location.split('/').pop();
 }
 
 /**
