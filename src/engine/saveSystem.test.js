@@ -126,5 +126,48 @@ describe('saveSystem', () => {
             const result = loadFromLocalStorage();
             expect(result).toBe(false);
         });
+
+        it('loadFromLocalStorage returns false for corrupted data in localStorage', () => {
+            mockStorage.getItem.mockReturnValue('v1:corrupted-garbage!!!');
+            const result = loadFromLocalStorage();
+            expect(result).toBe(false);
+        });
+
+        it('clearLocalStorage handles errors gracefully', () => {
+            mockStorage.removeItem.mockImplementation(() => {
+                throw new Error('SecurityError');
+            });
+            // Should not throw
+            expect(() => clearLocalStorage()).not.toThrow();
+        });
+
+        it('saveToLocalStorage returns false when saveGame returns null', () => {
+            // saveGame() serializes the store, it should always work,
+            // but we test the null guard by mocking JSON.stringify to fail
+            const spy = vi.spyOn(JSON, 'stringify').mockImplementation(() => {
+                throw new Error('circular');
+            });
+
+            const result = saveToLocalStorage();
+            expect(result).toBe(false);
+            expect(mockStorage.setItem).not.toHaveBeenCalled();
+
+            spy.mockRestore();
+        });
+
+        it('saveToLocalStorage + loadFromLocalStorage full roundtrip via mock', () => {
+            // Save
+            saveToLocalStorage();
+            expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
+            const key = mockStorage.setItem.mock.calls[0][0];
+            const value = mockStorage.setItem.mock.calls[0][1];
+
+            expect(key).toBe('fidonet_save');
+
+            // Load with same value
+            mockStorage.getItem.mockReturnValue(value);
+            const result = loadFromLocalStorage();
+            expect(result).toBe(true);
+        });
     });
 });
