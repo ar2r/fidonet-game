@@ -50,6 +50,10 @@ export const MESSAGE_POSTED = 'message.posted';
 
 // Random events
 export const MOM_PICKUP = 'event.random.mom_pickup';
+export const MOM_KNOCKS = 'event.random.mom_knocks';
+export const POWER_FLICKER = 'event.random.power_flicker';
+export const WRONG_NUMBER = 'event.random.wrong_number';
+export const NEIGHBOR_HELP = 'event.random.neighbor_help';
 
 // Economy events
 export const ITEM_BOUGHT = 'economy.item.bought';

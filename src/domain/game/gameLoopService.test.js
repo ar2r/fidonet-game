@@ -11,6 +11,7 @@ function makeActions() {
         setZMH: vi.fn(v => ({ type: 'setZMH', payload: v })),
         advanceDay: vi.fn(v => ({ type: 'advanceDay', payload: v })),
         updateStat: vi.fn(v => ({ type: 'updateStat', payload: v })),
+        updateSkill: vi.fn(v => ({ type: 'updateSkill', payload: v })),
         setGameOver: vi.fn(v => ({ type: 'setGameOver', payload: v })),
         disconnect: vi.fn(() => ({ type: 'disconnect' })),
         setLastBillDay: vi.fn(v => ({ type: 'setLastBillDay', payload: v })),
