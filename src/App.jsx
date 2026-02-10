@@ -18,7 +18,6 @@ import BinkleyTerm from './components/TUI/BinkleyTerm';
 import RadioMarket from './components/TUI/RadioMarket';
 import VirusAnimation from './components/VirusAnimation';
 import MailTossingAnimation from './components/MailTossingAnimation';
-import SaveNotification from './components/SaveNotification';
 import QuestJournal from './features/quests/QuestJournal';
 import HistoryLogFile from './components/HistoryLogFile';
 import Winamp from './components/Winamp';
@@ -50,7 +49,7 @@ import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, QUEST_STEP_COMPLETED } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
-import { loadGame, saveToLocalStorage, loadFromLocalStorage, clearLocalStorage, createShareLink, downloadSave, parseShareHash } from './engine/saveSystem';
+import { loadGame, saveToLocalStorage, loadFromLocalStorage, clearLocalStorage, downloadSave, parseShareHash } from './engine/saveSystem';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -128,8 +127,7 @@ const DesktopIcon = styled.div`
 function App() {
     const [startMenuOpen, setStartMenuOpen] = useState(false);
     const [mailTossingActive, setMailTossingActive] = useState(false);
-    const [saveNotification, setSaveNotification] = useState(null); // { message: string } | null
-    const [questToasts, setQuestToasts] = useState([]);
+const [questToasts, setQuestToasts] = useState([]);
 
     // eslint-disable-next-line no-undef
     const buildHash = __COMMIT_HASH__;
@@ -225,27 +223,6 @@ function App() {
 
         return () => clearInterval(clockInterval);
     }, [dispatch, gameState.gameOver, gameState.timeMinutes, gameState.phase, gameState.zmh, gameState.timeSpeed, network.connected]);
-
-    const handleSaveGame = async () => {
-        setSaveNotification({ message: 'Загрузка на сервер...' });
-
-        const { url, isShort } = await createShareLink();
-        if (!url) {
-            setSaveNotification({ message: 'Не удалось сохранить игру.' });
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(url);
-            if (isShort) {
-                setSaveNotification({ message: `Ссылка скопирована!\n${url}` });
-            } else {
-                setSaveNotification({ message: `Сервер недоступен — длинная ссылка скопирована.\n${url}` });
-            }
-        } catch {
-            setSaveNotification({ message: `Скопируйте ссылку:\n${url}` });
-        }
-    };
 
     // Setup global quest event listeners
     React.useEffect(() => {
@@ -502,15 +479,6 @@ function App() {
                     />
                 )}
 
-                {/* Save Notification overlay */}
-                {saveNotification && (
-                    <SaveNotification
-                        message={saveNotification.message}
-                        title={saveNotification.title}
-                        onClose={() => setSaveNotification(null)}
-                    />
-                )}
-
                 {/* Quest Step Toasts */}
                 <QuestToast
                     toasts={questToasts}
@@ -541,12 +509,6 @@ function App() {
                     <DesktopIcon onDoubleClick={() => handleOpenWindow('artmoney')}>
                         <div style={{ width: '32px', height: '32px', background: 'silver', border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red', fontSize: '14px', fontWeight: 'bold', fontFamily: 'serif' }}>AM</div>
                         <span>ArtMoney</span>
-                    </DesktopIcon>
-
-                    {/* Save Game */}
-                    <DesktopIcon onDoubleClick={handleSaveGame}>
-                        <div style={{ width: '32px', height: '32px', background: 'blue', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px' }}>💾</div>
-                        <span>SAVE.EXE</span>
                     </DesktopIcon>
 
                     {/* T-Mail Setup */}
