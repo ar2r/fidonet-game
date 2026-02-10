@@ -6,6 +6,10 @@ import {
     saveToLocalStorage,
     loadFromLocalStorage,
     clearLocalStorage,
+    parseShareHash,
+    uploadSave,
+    downloadSave,
+    createShareLink,
 } from './saveSystem';
 
 // Mock localStorage for environments where it's not available
@@ -168,6 +172,150 @@ describe('saveSystem', () => {
             mockStorage.getItem.mockReturnValue(value);
             const result = loadFromLocalStorage();
             expect(result).toBe(true);
+        });
+    });
+
+    describe('parseShareHash', () => {
+        it('parses #id=<blobId> as blob type', () => {
+            expect(parseShareHash('#id=abc123def456')).toEqual({ type: 'blob', id: 'abc123def456' });
+        });
+
+        it('parses #save=<data> as inline type', () => {
+            expect(parseShareHash('#save=v1:compressed')).toEqual({ type: 'inline', data: 'v1:compressed' });
+        });
+
+        it('returns null for empty string', () => {
+            expect(parseShareHash('')).toBeNull();
+        });
+
+        it('returns null for null/undefined', () => {
+            expect(parseShareHash(null)).toBeNull();
+            expect(parseShareHash(undefined)).toBeNull();
+        });
+
+        it('returns null for unrelated hash', () => {
+            expect(parseShareHash('#section1')).toBeNull();
+        });
+
+        it('returns null for #id= with empty id', () => {
+            expect(parseShareHash('#id=')).toBeNull();
+        });
+
+        it('returns null for #save= with empty data', () => {
+            expect(parseShareHash('#save=')).toBeNull();
+        });
+    });
+
+    describe('uploadSave', () => {
+        beforeEach(() => {
+            vi.stubGlobal('fetch', vi.fn());
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+        });
+
+        it('uploads save and returns blob ID from Location header', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                headers: { get: (h) => h === 'Location' ? 'https://jsonblob.com/api/jsonBlob/abc123' : null },
+            });
+
+            const id = await uploadSave('v1:data');
+            expect(id).toBe('abc123');
+            expect(fetch).toHaveBeenCalledWith(
+                'https://jsonblob.com/api/jsonBlob',
+                expect.objectContaining({ method: 'POST', body: JSON.stringify({ s: 'v1:data' }) })
+            );
+        });
+
+        it('throws on network error', async () => {
+            fetch.mockRejectedValue(new Error('Network error'));
+            await expect(uploadSave('v1:data')).rejects.toThrow('Network error');
+        });
+
+        it('throws on HTTP error', async () => {
+            fetch.mockResolvedValue({ ok: false, status: 500 });
+            await expect(uploadSave('v1:data')).rejects.toThrow('Upload failed: 500');
+        });
+
+        it('throws when Location header is missing', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                headers: { get: () => null },
+            });
+            await expect(uploadSave('v1:data')).rejects.toThrow('No Location header');
+        });
+    });
+
+    describe('downloadSave', () => {
+        beforeEach(() => {
+            vi.stubGlobal('fetch', vi.fn());
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+        });
+
+        it('downloads save data by blob ID', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                json: () => Promise.resolve({ s: 'v1:saved-data' }),
+            });
+
+            const data = await downloadSave('abc123');
+            expect(data).toBe('v1:saved-data');
+            expect(fetch).toHaveBeenCalledWith(
+                'https://jsonblob.com/api/jsonBlob/abc123',
+                expect.objectContaining({ headers: { 'Accept': 'application/json' } })
+            );
+        });
+
+        it('throws on network error', async () => {
+            fetch.mockRejectedValue(new Error('Network error'));
+            await expect(downloadSave('abc123')).rejects.toThrow('Network error');
+        });
+
+        it('throws on HTTP error', async () => {
+            fetch.mockResolvedValue({ ok: false, status: 404 });
+            await expect(downloadSave('abc123')).rejects.toThrow('Download failed: 404');
+        });
+
+        it('throws when s field is missing', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                json: () => Promise.resolve({ other: 'data' }),
+            });
+            await expect(downloadSave('abc123')).rejects.toThrow('missing save field');
+        });
+    });
+
+    describe('createShareLink', () => {
+        beforeEach(() => {
+            vi.stubGlobal('fetch', vi.fn());
+        });
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+        });
+
+        it('returns short URL on successful upload', async () => {
+            fetch.mockResolvedValue({
+                ok: true,
+                headers: { get: (h) => h === 'Location' ? 'https://jsonblob.com/api/jsonBlob/xyz789' : null },
+            });
+
+            const result = await createShareLink();
+            expect(result.isShort).toBe(true);
+            expect(result.url).toContain('#id=xyz789');
+        });
+
+        it('falls back to long URL on upload failure', async () => {
+            fetch.mockRejectedValue(new Error('Network error'));
+
+            const result = await createShareLink();
+            expect(result.isShort).toBe(false);
+            expect(result.url).toContain('#save=v1:');
         });
     });
 });

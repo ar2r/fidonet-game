@@ -50,7 +50,7 @@ import { eventBus } from './domain/events/bus';
 import { MAIL_TOSSING_COMPLETED, UI_START_MAIL_TOSSING, UI_OPEN_WINDOW, QUEST_STEP_COMPLETED } from './domain/events/types';
 import { audioManager } from './engine/audio/AudioManager';
 import { WINDOW_DEFINITIONS } from './config/windows';
-import { loadGame, getSaveLink, shortenLink, saveToLocalStorage, loadFromLocalStorage, clearLocalStorage } from './engine/saveSystem';
+import { loadGame, saveToLocalStorage, loadFromLocalStorage, clearLocalStorage, createShareLink, downloadSave, parseShareHash } from './engine/saveSystem';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -144,15 +144,33 @@ function App() {
     const windows = useSelector(state => state.windowManager.windows);
     const network = useSelector(state => state.network);
 
-    // Load Game on Mount: URL hash → localStorage → fresh game
+    // Guard: suppress auto-save while loading from blob URL
+    const isLoadingRef = React.useRef(false);
+
+    // Load Game on Mount: URL hash (#id= or #save=) → localStorage → fresh game
     React.useEffect(() => {
-        const hash = window.location.hash;
-        if (hash && hash.startsWith('#save=')) {
-            const encoded = hash.substring(6);
-            if (loadGame(encoded)) {
+        const parsed = parseShareHash(window.location.hash);
+
+        if (parsed?.type === 'blob') {
+            isLoadingRef.current = true;
+            downloadSave(parsed.id).then((saveData) => {
+                if (loadGame(saveData)) {
+                    saveToLocalStorage();
+                    window.history.replaceState(null, '', window.location.pathname);
+                } else {
+                    alert('Ошибка загрузки сохранения: неверный код.');
+                    loadFromLocalStorage();
+                }
+            }).catch(() => {
+                alert('Не удалось загрузить сохранение с сервера.');
+                loadFromLocalStorage();
+            }).finally(() => {
+                isLoadingRef.current = false;
+            });
+        } else if (parsed?.type === 'inline') {
+            if (loadGame(parsed.data)) {
                 saveToLocalStorage();
                 window.history.replaceState(null, '', window.location.pathname);
-                console.log('Game loaded from URL, saved to localStorage');
             } else {
                 alert('Ошибка загрузки сохранения: неверный код.');
             }
@@ -161,10 +179,12 @@ function App() {
         }
     }, []);
 
-    // Auto-Save Game Logic (localStorage)
+    // Auto-Save Game Logic (localStorage) — suppressed while loading from blob
     React.useEffect(() => {
         const timer = setTimeout(() => {
-            saveToLocalStorage();
+            if (!isLoadingRef.current) {
+                saveToLocalStorage();
+            }
         }, 1000); // Debounce 1s
 
         return () => clearTimeout(timer);
@@ -207,27 +227,23 @@ function App() {
     }, [dispatch, gameState.gameOver, gameState.timeMinutes, gameState.phase, gameState.zmh, gameState.timeSpeed, network.connected]);
 
     const handleSaveGame = async () => {
-        const longLink = getSaveLink();
-        if (!longLink) return;
+        setSaveNotification({ message: 'Загрузка на сервер...' });
 
-        // Optimistic UI: Copy long link first (fastest)
-        // navigator.clipboard.writeText(longLink);
-        
-        // Try to shorten
-        // Show some feedback? For now, we just wait.
-        // Or prompt user?
-        // Let's try to shorten immediately.
-        
+        const { url, isShort } = await createShareLink();
+        if (!url) {
+            setSaveNotification({ message: 'Не удалось сохранить игру.' });
+            return;
+        }
+
         try {
-            const shortLink = await shortenLink(longLink);
-            navigator.clipboard.writeText(shortLink).then(() => {
-                setSaveNotification({ message: `Ссылка скопирована!\n${shortLink}` });
-            }).catch(() => {
-                setSaveNotification({ message: `Скопируйте ссылку:\n${shortLink}` });
-            });
+            await navigator.clipboard.writeText(url);
+            if (isShort) {
+                setSaveNotification({ message: `Ссылка скопирована!\n${url}` });
+            } else {
+                setSaveNotification({ message: `Сервер недоступен — длинная ссылка скопирована.\n${url}` });
+            }
         } catch {
-            // Fallback to long link
-            setSaveNotification({ message: `Не удалось сократить ссылку.\nСкопируйте длинную версию:\n${longLink}` });
+            setSaveNotification({ message: `Скопируйте ссылку:\n${url}` });
         }
     };
 

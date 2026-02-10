@@ -120,23 +120,77 @@ export function clearLocalStorage() {
     }
 }
 
+const JSONBLOB_API = 'https://jsonblob.com/api/jsonBlob';
+
 /**
- * Shorten URL using TinyURL (via CORS proxy)
+ * Parse URL hash to determine save type
+ * @param {string} hash - window.location.hash
+ * @returns {{ type: 'blob', id: string } | { type: 'inline', data: string } | null}
  */
-export async function shortenLink(longUrl) {
+export function parseShareHash(hash) {
+    if (!hash) return null;
+    if (hash.startsWith('#id=')) {
+        const id = hash.substring(4);
+        return id ? { type: 'blob', id } : null;
+    }
+    if (hash.startsWith('#save=')) {
+        const data = hash.substring(6);
+        return data ? { type: 'inline', data } : null;
+    }
+    return null;
+}
+
+/**
+ * Upload save string to jsonblob.com
+ * @param {string} saveString - compressed save data
+ * @returns {Promise<string>} blob ID
+ */
+export async function uploadSave(saveString) {
+    const response = await fetch(JSONBLOB_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ s: saveString }),
+    });
+    if (!response.ok) throw new Error(`Upload failed: ${response.status}`);
+    const location = response.headers.get('Location');
+    if (!location) throw new Error('No Location header in response');
+    // Location is like https://jsonblob.com/api/jsonBlob/<id>
+    const id = location.split('/').pop();
+    return id;
+}
+
+/**
+ * Download save string from jsonblob.com by blob ID
+ * @param {string} blobId
+ * @returns {Promise<string>} save string
+ */
+export async function downloadSave(blobId) {
+    const response = await fetch(`${JSONBLOB_API}/${blobId}`, {
+        headers: { 'Accept': 'application/json' },
+    });
+    if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+    const data = await response.json();
+    if (!data.s) throw new Error('Invalid blob data: missing save field');
+    return data.s;
+}
+
+/**
+ * Create a shareable link: upload to jsonblob for short URL, fall back to long #save= URL
+ * @returns {Promise<{ url: string, isShort: boolean }>}
+ */
+export async function createShareLink() {
+    const code = saveGame();
+    if (!code) return { url: null, isShort: false };
+
     try {
-        // TinyURL API
-        const api = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
-        // Use a public CORS proxy (corsproxy.io) to bypass browser restrictions
-        const proxy = `https://corsproxy.io/?${encodeURIComponent(api)}`;
-        
-        const response = await fetch(proxy);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const shortUrl = await response.text();
-        return shortUrl;
+        const blobId = await uploadSave(code);
+        const url = new URL(window.location.href);
+        url.hash = `id=${blobId}`;
+        return { url: url.toString(), isShort: true };
     } catch (e) {
-        console.warn('Shortener failed, falling back to long URL', e);
-        return longUrl;
+        console.warn('jsonblob upload failed, using long URL:', e);
+        const url = new URL(window.location.href);
+        url.hash = `save=${code}`;
+        return { url: url.toString(), isShort: false };
     }
 }

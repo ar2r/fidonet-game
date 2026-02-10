@@ -150,4 +150,40 @@ describe('Save/Load integration', () => {
 
         alertSpy.mockRestore();
     });
+
+    it('loads from blob URL (#id=) and restores game', async () => {
+        window.location.hash = '#id=testblob123';
+        const downloadSaveSpy = vi.spyOn(saveSystem, 'downloadSave').mockResolvedValue('v1:blobdata');
+        loadGameSpy.mockReturnValue(true);
+        saveToLocalStorageSpy.mockReturnValue(true);
+
+        await act(async () => {
+            renderWithStore(<App />);
+        });
+
+        expect(downloadSaveSpy).toHaveBeenCalledWith('testblob123');
+        expect(loadGameSpy).toHaveBeenCalledWith('v1:blobdata');
+        expect(saveToLocalStorageSpy).toHaveBeenCalled();
+        expect(replaceStateSpy).toHaveBeenCalledWith(null, '', window.location.pathname);
+
+        downloadSaveSpy.mockRestore();
+    });
+
+    it('falls back to localStorage when blob download fails', async () => {
+        window.location.hash = '#id=badblob';
+        const downloadSaveSpy = vi.spyOn(saveSystem, 'downloadSave').mockRejectedValue(new Error('Network error'));
+        const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+        loadFromLocalStorageSpy.mockReturnValue(false);
+
+        await act(async () => {
+            renderWithStore(<App />);
+        });
+
+        expect(downloadSaveSpy).toHaveBeenCalledWith('badblob');
+        expect(alertSpy).toHaveBeenCalledWith('Не удалось загрузить сохранение с сервера.');
+        expect(loadFromLocalStorageSpy).toHaveBeenCalled();
+
+        downloadSaveSpy.mockRestore();
+        alertSpy.mockRestore();
+    });
 });
