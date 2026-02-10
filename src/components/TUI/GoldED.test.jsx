@@ -107,11 +107,11 @@ USERNAME TestUser
             </Provider>
         );
 
-        // 1. Click [ Select ] in Areas
-        fireEvent.click(screen.getByText('[ Select ]'));
-        
-        // 2. Click [ New ] in MsgList
-        fireEvent.click(screen.getByText('[ New ]'));
+        // 1. Click [ Выбрать ] in Areas
+        fireEvent.click(screen.getByText('[ Выбрать ]'));
+
+        // 2. Click [ Новое ] in MsgList
+        fireEvent.click(screen.getByText('[ Новое ]'));
 
         // 3. Verify we are in composer
         expect(screen.getByText(/РЕДАКТОР СООБЩЕНИЙ/)).toBeInTheDocument();
@@ -124,8 +124,8 @@ USERNAME TestUser
         const textArea = container.querySelector('textarea');
         fireEvent.change(textArea, { target: { value: 'Body Content' } });
 
-        // 5. Click [ Send ]
-        fireEvent.click(screen.getByText('[ Send ]'));
+        // 5. Click [ Отправить ]
+        fireEvent.click(screen.getByText('[ Отправить ]'));
 
         // 6. Assertions
         expect(fs.cat).toHaveBeenCalledWith('C:\\FIDO\\GOLDED.CFG');

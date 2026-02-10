@@ -185,9 +185,24 @@ function GoldED({ windowId }) {
         const date = new Date(1995, 1, 6); // Feb 6, 1995
         date.setDate(date.getDate() + (day - 1));
         const dayStr = String(date.getDate()).padStart(2, '0');
-        const monthStr = date.toLocaleString('en-US', { month: 'short' });
+        const RU_MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+        const monthStr = RU_MONTHS[date.getMonth()];
         const yearStr = date.getFullYear();
         return `${dayStr} ${monthStr} ${yearStr}`;
+    };
+
+    const getAreaCounts = (areaId) => {
+        const msgs = MESSAGES[areaId] || [];
+        const total = msgs.length;
+        const unread = msgs.filter(m => !m.read).length;
+        return { total, unread };
+    };
+
+    const getTotalUnread = () => {
+        return ECHO_AREAS.reduce((sum, area) => {
+            const msgs = MESSAGES[area.id] || [];
+            return sum + msgs.filter(m => !m.read).length;
+        }, 0);
     };
 
     const handleReply = () => {
@@ -331,15 +346,18 @@ function GoldED({ windowId }) {
             <div style={{ padding: '0 10px', color: '#FFFF55', borderBottom: '1px solid #0000AA' }}>
                 {' #'.padEnd(4)} {'Описание'.padEnd(35)} {'Сообщ'.padEnd(8)} {'Новых'.padEnd(8)} {'Эха'}
             </div>
-            {ECHO_AREAS.map((area, idx) => (
-                <ListItem 
-                    key={area.id} 
-                    selected={idx === selectedAreaIndex}
-                    onClick={() => { setSelectedAreaIndex(idx); setCurrentAreaId(area.id); setView('msglist'); }}
-                >
-                    {String(idx + 1).padStart(2).padEnd(4)} {area.description.padEnd(35)} {String(area.msgs).padStart(5).padEnd(8)} {String(area.unread).padStart(5).padEnd(8)} {area.name}
-                </ListItem>
-            ))}
+            {ECHO_AREAS.map((area, idx) => {
+                const counts = getAreaCounts(area.id);
+                return (
+                    <ListItem
+                        key={area.id}
+                        selected={idx === selectedAreaIndex}
+                        onClick={() => { setSelectedAreaIndex(idx); setCurrentAreaId(area.id); setView('msglist'); }}
+                    >
+                        {String(idx + 1).padStart(2).padEnd(4)} {area.description.padEnd(35)} {String(counts.total).padStart(5).padEnd(8)} {String(counts.unread).padStart(5).padEnd(8)} {area.name}
+                    </ListItem>
+                );
+            })}
         </>
     );
 
@@ -348,8 +366,8 @@ function GoldED({ windowId }) {
         const reversed = [...msgs].reverse();
         return (
             <>
-                <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Messages in {formatAreaName(currentAreaId)} ({msgs.length})</div>
-                {msgs.length === 0 && <div>No messages. Press Ins to write.</div>}
+                <div style={{ marginBottom: '10px', color: '#55FFFF' }}>Сообщения в {formatAreaName(currentAreaId)} ({msgs.length})</div>
+                {msgs.length === 0 && <div>Нет сообщений. Нажмите Ins для создания.</div>}
                 {reversed.map((msg, dispIdx) => {
                     return (
                         <ListItem
@@ -372,23 +390,23 @@ function GoldED({ windowId }) {
         <div style={{ whiteSpace: 'pre-wrap', fontFamily: "'Courier New', Courier, monospace", height: '100%', display: 'flex', flexDirection: 'column' }}>
             <div style={{ backgroundColor: '#000000', color: '#AAAAAA', borderBottom: '1px solid #0000AA', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
-                    <span>Msg  : {selectedMsgIndex + 1} of {MESSAGES[currentAreaId]?.length || 0}</span>
-                    <span>Loc</span>
+                    <span>Сообщ: {selectedMsgIndex + 1} из {MESSAGES[currentAreaId]?.length || 0}</span>
+                    <span>Лок</span>
                 </div>
                 <div style={{ display: 'flex', padding: '0 10px' }}>
-                    <span style={{ width: '80px' }}>From :</span> 
+                    <span style={{ width: '80px' }}>От   :</span>
                     <span style={{ width: '300px', color: '#FFFFFF', fontWeight: 'bold' }}>{currentMsg.from}</span>
                     <span style={{ flex: 1 }}>2:5020/123.45</span>
                     <span>{currentMsg.date}</span>
                 </div>
                 <div style={{ display: 'flex', padding: '0 10px' }}>
-                    <span style={{ width: '80px' }}>To   :</span> 
+                    <span style={{ width: '80px' }}>Кому :</span>
                     <span style={{ width: '300px', color: '#FFFFFF', fontWeight: 'bold' }}>{currentMsg.to}</span>
                     <span style={{ flex: 1 }}></span>
                     <span>{currentMsg.date}</span>
                 </div>
                 <div style={{ display: 'flex', padding: '0 10px' }}>
-                    <span style={{ width: '80px' }}>Subj :</span> 
+                    <span style={{ width: '80px' }}>Тема :</span>
                     <span style={{ color: '#55FFFF', fontWeight: 'bold' }}>{currentMsg.subj}</span>
                 </div>
             </div>
@@ -422,11 +440,11 @@ function GoldED({ windowId }) {
             </ComposerHeader>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '5px 10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{width: '60px', color: '#AAAAAA'}}>To  :</span>
+                    <span style={{width: '60px', color: '#AAAAAA'}}>Кому:</span>
                     <Input value={composeData.to} onChange={e => setComposeData({...composeData, to: e.target.value})} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{width: '60px', color: '#AAAAAA'}}>Subj:</span>
+                    <span style={{width: '60px', color: '#AAAAAA'}}>Тема:</span>
                     <Input ref={subjInputRef} value={composeData.subj} onChange={e => setComposeData({...composeData, subj: e.target.value})} />
                 </div>
             </div>
@@ -450,7 +468,7 @@ function GoldED({ windowId }) {
         >
             <Header>
                 <span>GoldEd (2:5020/123.45)</span>
-                <span>{currentAreaId ? formatAreaName(currentAreaId) : 'AREA LIST'}</span>
+                <span>{currentAreaId ? formatAreaName(currentAreaId) : 'СПИСОК ЭХ'}</span>
                 <span>{time}</span>
             </Header>
             <ContentArea>
@@ -462,30 +480,30 @@ function GoldED({ windowId }) {
             <Footer>
                 {view === 'areas' && (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                         <FooterButton onClick={handleSelect}>[ Select ]</FooterButton>
-                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                         <FooterButton onClick={handleSelect}>[ Выбрать ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Выход ]</FooterButton>
                     </div>
                 )}
                 {view === 'msglist' && (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                         <FooterButton onClick={handleSelect}>[ Read ]</FooterButton>
-                         <FooterButton onClick={handleNew}>[ New ]</FooterButton>
-                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                         <FooterButton onClick={handleSelect}>[ Читать ]</FooterButton>
+                         <FooterButton onClick={handleNew}>[ Новое ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Выход ]</FooterButton>
                     </div>
                 )}
                 {view === 'msgview' && (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                         <FooterButton onClick={handleReply}>[ Reply ]</FooterButton>
-                         <FooterButton onClick={handleExit}>[ Exit ]</FooterButton>
+                         <FooterButton onClick={handleReply}>[ Ответ ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Выход ]</FooterButton>
                     </div>
                 )}
                 {view === 'composer' && (
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                         <FooterButton onClick={handleSend}>[ Send ]</FooterButton>
-                         <FooterButton onClick={handleExit}>[ Cancel ]</FooterButton>
+                         <FooterButton onClick={handleSend}>[ Отправить ]</FooterButton>
+                         <FooterButton onClick={handleExit}>[ Отмена ]</FooterButton>
                     </div>
                 )}
-                <span>{view === 'areas' ? '0 unread' : ''}</span>
+                <span>{view === 'areas' ? `${getTotalUnread()} непрочитано` : ''}</span>
             </Footer>
         </TuiContainer>
     );
